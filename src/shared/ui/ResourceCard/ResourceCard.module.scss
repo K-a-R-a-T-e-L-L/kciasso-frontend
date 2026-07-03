@@ -1,0 +1,43 @@
+.card {
+  display: flex;
+  min-height: 190px;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  padding: 24px;
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    border-color: rgba(7, 84, 155, 0.35);
+    box-shadow: var(--shadow-soft);
+  }
+
+  h3 {
+    margin: 16px 0 10px;
+    font-size: 1.32rem;
+    line-height: 1.18;
+  }
+
+  p {
+    margin: 0;
+    color: var(--color-muted);
+    line-height: 1.6;
+  }
+}
+
+.badge {
+  color: var(--color-primary);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.action {
+  margin-top: 26px;
+  color: var(--color-primary);
+  font-weight: 800;
+}

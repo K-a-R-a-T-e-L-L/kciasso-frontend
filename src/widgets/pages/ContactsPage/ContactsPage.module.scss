@@ -1,0 +1,140 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.card {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  padding: 24px;
+  box-shadow: 0 12px 32px rgba(5, 45, 100, 0.05);
+
+  span {
+    display: block;
+    margin-bottom: 12px;
+    color: var(--color-primary);
+    font-size: 0.75rem;
+    font-weight: 900;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  a,
+  strong {
+    color: var(--color-text);
+    font-size: 1.15rem;
+    line-height: 1.35;
+  }
+}
+
+.infoPanel {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.78fr) 1fr;
+  gap: 24px;
+  margin-top: 28px;
+  border: 1px solid rgba(7, 84, 155, 0.14);
+  border-radius: var(--radius-xl);
+  background: linear-gradient(135deg, #ffffff, #eef5ff);
+  padding: clamp(24px, 4vw, 38px);
+
+  p {
+    margin: 0 0 10px;
+    color: var(--color-primary);
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  h2 {
+    margin: 0;
+    color: var(--color-text);
+    font-size: clamp(1.9rem, 3vw, 2.8rem);
+    line-height: 1.08;
+  }
+}
+
+.hotlineList {
+  display: grid;
+  gap: 14px;
+}
+
+.hotlineItem {
+  display: grid;
+  gap: 6px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.82);
+  padding: 18px 20px;
+
+  span {
+    color: var(--color-muted);
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  a,
+  strong {
+    color: var(--color-primary-dark);
+    font-size: 1.22rem;
+    font-weight: 900;
+    line-height: 1.35;
+  }
+}
+
+.mapPlaceholder {
+  display: grid;
+  min-height: 360px;
+  place-items: center;
+  margin-top: 28px;
+  border: 1px dashed rgba(7, 84, 155, 0.3);
+  border-radius: var(--radius-xl);
+  background:
+    linear-gradient(45deg, rgba(7, 84, 155, 0.04) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(7, 84, 155, 0.04) 25%, transparent 25%),
+    var(--color-surface);
+  background-size: 34px 34px;
+  padding: 28px;
+  text-align: center;
+
+  p {
+    margin: 0 0 12px;
+    color: var(--color-primary);
+    font-size: 0.75rem;
+    font-weight: 900;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+  }
+
+  span {
+    display: block;
+    max-width: 600px;
+    margin-top: 14px;
+    color: var(--color-muted);
+    line-height: 1.7;
+  }
+}
+
+@media (max-width: 920px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .infoPanel {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

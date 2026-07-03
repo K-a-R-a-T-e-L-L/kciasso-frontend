@@ -1,0 +1,54 @@
+.hero {
+  padding: 34px 0 28px;
+}
+
+.card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(7, 84, 155, 0.14);
+  border-radius: var(--radius-xl);
+  background:
+    radial-gradient(circle at 90% 16%, rgba(19, 168, 199, 0.18), transparent 22rem),
+    linear-gradient(135deg, #ffffff, #eef6ff);
+  padding: clamp(28px, 5vw, 58px);
+  box-shadow: var(--shadow-soft);
+
+  &::after {
+    content: "";
+    position: absolute;
+    right: -80px;
+    bottom: -110px;
+    width: 310px;
+    height: 310px;
+    border: 42px solid rgba(7, 84, 155, 0.06);
+    border-radius: 50%;
+  }
+
+  h1 {
+    position: relative;
+    max-width: 890px;
+    margin: 0;
+    color: var(--color-text);
+    font-size: clamp(2.25rem, 5vw, 4.4rem);
+    line-height: 0.98;
+    letter-spacing: -0.05em;
+  }
+
+  p:not(.eyebrow) {
+    position: relative;
+    max-width: 780px;
+    margin: 22px 0 0;
+    color: var(--color-muted);
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    line-height: 1.7;
+  }
+}
+
+.eyebrow {
+  margin: 0 0 16px;
+  color: var(--color-primary);
+  font-size: 0.77rem;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}

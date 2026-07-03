@@ -1,0 +1,69 @@
+name: Build and Deploy Frontend
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: kciasso-frontend
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --progress=false
+
+      - name: Build app
+        run: npm run build
+
+      - name: Login to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Validate required deploy variables
+        run: |
+          test -n "${{ vars.GHCR_NAMESPACE }}" || (echo "Missing vars.GHCR_NAMESPACE" && exit 1)
+          test -n "${{ vars.DOKPLOY_URL }}" || (echo "Missing vars.DOKPLOY_URL" && exit 1)
+          test -n "${{ secrets.DOKPLOY_API_KEY }}" || (echo "Missing secrets.DOKPLOY_API_KEY" && exit 1)
+          test -n "${{ secrets.DOKPLOY_APPLICATION_ID }}" || (echo "Missing secrets.DOKPLOY_APPLICATION_ID" && exit 1)
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ vars.GHCR_NAMESPACE }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.REGISTRY }}/${{ vars.GHCR_NAMESPACE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+      - name: Trigger Dokploy deploy
+        run: |
+          curl -X POST "${{ vars.DOKPLOY_URL }}/api/application.deploy" \
+            -H "accept: application/json" \
+            -H "x-api-key: ${{ secrets.DOKPLOY_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d "{\"applicationId\":\"${{ secrets.DOKPLOY_APPLICATION_ID }}\"}"
