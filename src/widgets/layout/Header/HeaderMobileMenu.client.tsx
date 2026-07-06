@@ -14,6 +14,10 @@ const mobileNavigation = navigation.map((item) => ({
   children: item.groups?.flatMap((group) => group.items) ?? item.items ?? [],
 }));
 
+function isHashLink(href: string) {
+  return href.startsWith("/") && href.includes("#");
+}
+
 export default function HeaderMobileMenu() {
   const [portalReady, setPortalReady] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -100,9 +104,15 @@ export default function HeaderMobileMenu() {
                     return (
                       <div key={item.title} className={cls.mobileItem}>
                         <div className={cls.mobileRow}>
-                          <Link href={item.href} onClick={closeMenu}>
-                            {item.title}
-                          </Link>
+                          {isHashLink(item.href) ? (
+                            <a href={item.href} onClick={closeMenu}>
+                              {item.title}
+                            </a>
+                          ) : (
+                            <Link href={item.href} onClick={closeMenu}>
+                              {item.title}
+                            </Link>
+                          )}
                           {hasChildren ? (
                             <button
                               type="button"
@@ -116,14 +126,20 @@ export default function HeaderMobileMenu() {
                         </div>
                         {hasChildren ? (
                           <div className={cls.mobileSubLinksWrap} data-open={isExpanded ? "true" : "false"}>
-                            <div className={cls.mobileSubLinks}>
-                              {children.map((link) => (
+                          <div className={cls.mobileSubLinks}>
+                            {children.map((link) => (
+                              isHashLink(link.href) ? (
+                                <a key={link.href} href={link.href} onClick={closeMenu}>
+                                  {link.title}
+                                </a>
+                              ) : (
                                 <Link key={link.href} href={link.href} onClick={closeMenu}>
                                   {link.title}
                                 </Link>
-                              ))}
-                            </div>
+                              )
+                            ))}
                           </div>
+                        </div>
                         ) : null}
                       </div>
                     );

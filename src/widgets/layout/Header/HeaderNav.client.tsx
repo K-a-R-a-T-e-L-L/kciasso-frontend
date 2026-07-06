@@ -10,6 +10,10 @@ type ActiveDropdown = {
   centerX: number;
 } | null;
 
+function isHashLink(href: string) {
+  return href.startsWith("/") && href.includes("#");
+}
+
 export default function HeaderNav() {
   const [active, setActive] = useState<ActiveDropdown>(null);
   const activeItem = navigation.find((item) => item.title === active?.title);
@@ -96,13 +100,19 @@ function NavigationPanel({
           <Link href={item.href}>Перейти в раздел</Link>
         </div>
         <div className={cls.panelColumns}>
-          {item.groups.map((group) => (
+              {item.groups.map((group) => (
             <div key={group.title} className={cls.panelGroup}>
               <h4>{group.title}</h4>
               {group.items.map((link) => (
-                <Link key={link.href} href={link.href}>
-                  {link.title}
-                </Link>
+                isHashLink(link.href) ? (
+                  <a key={link.href} href={link.href}>
+                    {link.title}
+                  </a>
+                ) : (
+                  <Link key={link.href} href={link.href}>
+                    {link.title}
+                  </Link>
+                )
               ))}
             </div>
           ))}
@@ -124,9 +134,15 @@ function NavigationPanel({
       </div>
       <div className={cls.dropdownList}>
         {item.items?.map((link) => (
-          <Link key={link.href} href={link.href}>
-            {link.title}
-          </Link>
+          isHashLink(link.href) ? (
+            <a key={link.href} href={link.href}>
+              {link.title}
+            </a>
+          ) : (
+            <Link key={link.href} href={link.href}>
+              {link.title}
+            </Link>
+          )
         ))}
       </div>
     </div>

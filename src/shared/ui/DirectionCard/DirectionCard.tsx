@@ -7,13 +7,25 @@ type Props = CardItem & {
 };
 
 export default function DirectionCard({ title, href, description, badge, index = 0 }: Props) {
-  return (
-    <Link className={cls.card} href={href}>
+  const isHashLink = href.startsWith("/") && href.includes("#");
+
+  const content = (
+    <>
       <span className={cls.number}>{String(index + 1).padStart(2, "0")}</span>
       {badge ? <span className={cls.badge}>{badge}</span> : null}
       <h3>{title}</h3>
       <p>{description}</p>
       <span className={cls.more}>Перейти</span>
+    </>
+  );
+
+  return isHashLink ? (
+    <a className={cls.card} href={href}>
+      {content}
+    </a>
+  ) : (
+    <Link className={cls.card} href={href}>
+      {content}
     </Link>
   );
 }

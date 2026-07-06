@@ -18,7 +18,9 @@ export default function SectionHubPage({ page }: { page: HubPageData }) {
         <Container>
           <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
             {page.cards.map((item, index) => (
-              <DirectionCard key={item.href} {...item} index={index} />
+              <div key={item.href} id={item.href.includes("#") ? item.href.split("#")[1] : undefined} className="scroll-mt-32">
+                <DirectionCard {...item} index={index} />
+              </div>
             ))}
           </div>
         </Container>

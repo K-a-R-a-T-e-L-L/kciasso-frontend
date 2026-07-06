@@ -9,11 +9,23 @@ type Props = {
 };
 
 export default function NewsCard({ title, date, href, text }: Props) {
-  return (
-    <Link className={cls.card} href={href}>
+  const isHashLink = href.startsWith("/") && href.includes("#");
+
+  const content = (
+    <>
       <time>{date}</time>
       <h3>{title}</h3>
       <p>{text}</p>
+    </>
+  );
+
+  return isHashLink ? (
+    <a className={cls.card} href={href}>
+      {content}
+    </a>
+  ) : (
+    <Link className={cls.card} href={href}>
+      {content}
     </Link>
   );
 }
