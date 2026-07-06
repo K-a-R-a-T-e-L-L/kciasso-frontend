@@ -7,7 +7,7 @@ import { navigation } from "@/shared/config/navigation";
 import cls from "./Header.module.scss";
 
 const CLOSE_DURATION_MS = 240;
-const DEFAULT_EXPANDED_SECTION = "Региональный проект";
+const DEFAULT_EXPANDED_SECTION = "Главная";
 const mobileNavigation = navigation.map((item) => ({
   title: item.title,
   href: item.href,

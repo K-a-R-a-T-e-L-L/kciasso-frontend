@@ -32,3 +32,29 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 640px) {
+  .tabNav {
+    flex-wrap: nowrap;
+    gap: 8px;
+    width: 100%;
+    margin: 0 0 22px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    padding: 0 0 6px;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    a {
+      flex: 0 0 auto;
+      scroll-snap-align: start;
+      white-space: nowrap;
+      font-size: 0.9rem;
+      padding: 10px 13px;
+    }
+  }
+}

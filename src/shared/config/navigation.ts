@@ -24,13 +24,29 @@ export const topLinks: NavLink[] = [
 ];
 
 export const navigation: NavItem[] = [
-  { title: "Главная", href: "/", kind: "simple" },
+  {
+    title: "Главная",
+    href: "/",
+    kind: "dropdown",
+    items: [
+      {
+        title: "Основные разделы",
+        href: "#quick-access",
+      },
+      { title: "Важные ресурсы", href: "#important-resources" },
+      { title: "Актуальная информация", href: "#current-information" },
+      { title: "Контакты", href: "#contacts" },
+    ],
+  },
   {
     title: "Региональный проект",
     href: "/regionalnyy-proekt",
     kind: "dropdown",
     items: [
-      { title: "ЕГЭ: от выбора до зачисления", href: "/regionalnyy-proekt#ege" },
+      {
+        title: "ЕГЭ: от выбора до зачисления",
+        href: "/regionalnyy-proekt#ege",
+      },
       { title: "Вузы Кузбасса", href: "/regionalnyy-proekt#vuz" },
       { title: "Видеоматериалы вузов", href: "/regionalnyy-proekt#video" },
     ],
@@ -47,7 +63,10 @@ export const navigation: NavItem[] = [
           { title: "ВПР", href: "/kachestvo-obrazovaniya/vpr" },
           { title: "НИКО", href: "/kachestvo-obrazovaniya/niko" },
           { title: "Проект 500+", href: "/kachestvo-obrazovaniya/proekt-500" },
-          { title: "Функциональная грамотность", href: "/kachestvo-obrazovaniya/funkcionalnaya-gramotnost" },
+          {
+            title: "Функциональная грамотность",
+            href: "/kachestvo-obrazovaniya/funkcionalnaya-gramotnost",
+          },
         ],
       },
       {
@@ -57,14 +76,23 @@ export const navigation: NavItem[] = [
           { title: "PIRLS", href: "/kachestvo-obrazovaniya/pirls" },
           { title: "PISA", href: "/kachestvo-obrazovaniya/pisa" },
           { title: "TIMSS", href: "/kachestvo-obrazovaniya/timss" },
-          { title: "Оценка по модели PISA", href: "/kachestvo-obrazovaniya/ocenka-po-modeli-pisa" },
+          {
+            title: "Оценка по модели PISA",
+            href: "/kachestvo-obrazovaniya/ocenka-po-modeli-pisa",
+          },
         ],
       },
       {
         title: "Дополнительно",
         items: [
-          { title: "Механизмы управления качеством", href: "/kachestvo-obrazovaniya/mehanizmy-upravleniya" },
-          { title: "Компетенции учителей", href: "/kachestvo-obrazovaniya/kompetencii-uchiteley" },
+          {
+            title: "Механизмы управления качеством",
+            href: "/kachestvo-obrazovaniya/mehanizmy-upravleniya",
+          },
+          {
+            title: "Компетенции учителей",
+            href: "/kachestvo-obrazovaniya/kompetencii-uchiteley",
+          },
           { title: "ВПР СПО", href: "/kachestvo-obrazovaniya/vpr-spo" },
         ],
       },
@@ -103,7 +131,10 @@ export const navigation: NavItem[] = [
     items: [
       { title: "Контакты", href: "/o-centre/kontakty" },
       { title: "Об учреждении", href: "/o-centre/ob-uchrezhdenii" },
-      { title: "Противодействие коррупции", href: "/o-centre/protivodeystvie-korruptsii" },
+      {
+        title: "Противодействие коррупции",
+        href: "/o-centre/protivodeystvie-korruptsii",
+      },
       { title: "Совещания", href: "/o-centre/soveshchaniya" },
       { title: "Обучение", href: "/o-centre/obuchenie" },
     ],
@@ -111,10 +142,34 @@ export const navigation: NavItem[] = [
 ];
 
 export const usefulResources: NavLink[] = [
-  { title: "РЦОИ России", href: "https://rcoi.ru", description: "Региональные центры обработки информации" },
-  { title: "ФИПИ", href: "https://fipi.ru", description: "Федеральный институт педагогических измерений" },
-  { title: "Рособрнадзор", href: "https://obrnadzor.gov.ru", description: "Федеральная служба по надзору в сфере образования и науки" },
-  { title: "Минпросвещения", href: "https://edu.gov.ru", description: "Министерство просвещения Российской Федерации" },
-  { title: "ФЦТ", href: "https://rustest.ru", description: "Федеральный центр тестирования" },
-  { title: "Вузы Кузбасса", href: "/regionalnyy-proekt#vuz", description: "Список образовательных организаций региона" },
+  {
+    title: "РЦОИ России",
+    href: "https://rcoi.ru",
+    description: "Региональные центры обработки информации",
+  },
+  {
+    title: "ФИПИ",
+    href: "https://fipi.ru",
+    description: "Федеральный институт педагогических измерений",
+  },
+  {
+    title: "Рособрнадзор",
+    href: "https://obrnadzor.gov.ru",
+    description: "Федеральная служба по надзору в сфере образования и науки",
+  },
+  {
+    title: "Минпросвещения",
+    href: "https://edu.gov.ru",
+    description: "Министерство просвещения Российской Федерации",
+  },
+  {
+    title: "ФЦТ",
+    href: "https://rustest.ru",
+    description: "Федеральный центр тестирования",
+  },
+  {
+    title: "Вузы Кузбасса",
+    href: "/regionalnyy-proekt#vuz",
+    description: "Список образовательных организаций региона",
+  },
 ];

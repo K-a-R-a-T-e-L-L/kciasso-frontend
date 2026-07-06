@@ -4,6 +4,8 @@ import Section from "@/shared/ui/Section/Section";
 import DirectionCard from "@/shared/ui/DirectionCard/DirectionCard";
 import DocumentPlaceholder from "@/shared/ui/DocumentPlaceholder/DocumentPlaceholder";
 import type { HubPageData } from "@/shared/content/mock";
+import ClientWrapperCard from "../../../shared/ui/DirectionCard/ClientCardsGrid";
+import ClientCardsGrid from "../../../shared/ui/DirectionCard/ClientCardsGrid";
 
 export default function SectionHubPage({ page }: { page: HubPageData }) {
   return (
@@ -16,13 +18,7 @@ export default function SectionHubPage({ page }: { page: HubPageData }) {
       />
       <Section>
         <Container>
-          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-            {page.cards.map((item, index) => (
-              <div key={item.href} id={item.href.includes("#") ? item.href.split("#")[1] : undefined} className="scroll-mt-32">
-                <DirectionCard {...item} index={index} />
-              </div>
-            ))}
-          </div>
+          <ClientCardsGrid cards={page.cards} />
         </Container>
       </Section>
       <Section muted>

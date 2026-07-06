@@ -18,9 +18,9 @@ export default function HomePage() {
             <div className={cls.heroCopy}>
               <p className={cls.badge}>Кемеровская область — Кузбасс</p>
               <h1>
-                <span>Кузбасский центр</span>
+                <span>«Кузбасский центр</span>
                 <span>информационно-аналитического</span>
-                <span>сопровождения системы образования</span>
+                <span>сопровождения системы образования»</span>
               </h1>
               <p>
                 Информационно-аналитическое сопровождение государственной итоговой аттестации, оценочных процедур и мониторинга
@@ -71,7 +71,7 @@ export default function HomePage() {
         </Container>
       </section>
 
-      <Section id="directions">
+      <Section id="quick-access">
         <Container>
           <SectionHeader
             eyebrow="Быстрый доступ"
@@ -86,7 +86,7 @@ export default function HomePage() {
         </Container>
       </Section>
 
-      <Section muted>
+      <Section id="important-resources">
         <Container>
           <div className={cls.splitSection}>
             <div>
@@ -108,7 +108,7 @@ export default function HomePage() {
         </Container>
       </Section>
 
-      <Section>
+      <Section id="current-information">
         <Container>
           <div className={cls.newsLayout}>
             <SectionHeader
@@ -125,7 +125,7 @@ export default function HomePage() {
         </Container>
       </Section>
 
-      <Section muted>
+      <Section id="contacts">
         <Container>
           <div className={cls.contactCta}>
             <div>

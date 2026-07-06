@@ -3,7 +3,7 @@ import "@/styles/globals.scss";
 import MainLayout from "@/widgets/layout/MainLayout/MainLayout";
 
 export const metadata: Metadata = {
-  title: "ГКУ КЦМКО",
+  title: "ГКУ КЦИАССО",
   description: "Кузбасский центр мониторинга качества образования",
   icons: {
     icon: "/logo.png",

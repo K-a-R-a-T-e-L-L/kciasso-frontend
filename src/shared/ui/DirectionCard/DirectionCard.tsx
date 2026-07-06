@@ -4,9 +4,17 @@ import cls from "./DirectionCard.module.scss";
 
 type Props = CardItem & {
   index?: number;
+  isActive?: boolean;
 };
 
-export default function DirectionCard({ title, href, description, badge, index = 0 }: Props) {
+export default function DirectionCard({
+  title,
+  href,
+  description,
+  badge,
+  index = 0,
+  isActive = false,
+}: Props) {
   const isHashLink = href.startsWith("/") && href.includes("#");
 
   const content = (
@@ -19,12 +27,14 @@ export default function DirectionCard({ title, href, description, badge, index =
     </>
   );
 
+  const className = `${cls.card} ${isActive ? cls.active : ""}`.trim();
+
   return isHashLink ? (
-    <a className={cls.card} href={href}>
+    <a className={className} href={href}>
       {content}
     </a>
   ) : (
-    <Link className={cls.card} href={href}>
+    <Link className={className} href={href}>
       {content}
     </Link>
   );

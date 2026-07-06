@@ -92,6 +92,12 @@ export const homeDirections: CardItem[] = [
     badge: "Экзамены",
   },
   {
+    title: "ВПР",
+    href: "/kachestvo-obrazovaniya/vpr-spo",
+    description: "Информация о сроках проведения ВПР, а также порядке ознакомления с результатами.",
+    badge: "Экзамены",
+  },
+  {
     title: "Качество образования",
     href: "/kachestvo-obrazovaniya",
     description: "Региональные и федеральные оценочные процедуры, исследования и аналитические материалы.",
