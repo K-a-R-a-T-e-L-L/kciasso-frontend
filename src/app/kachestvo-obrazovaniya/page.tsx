@@ -1,6 +1,7 @@
+import { getQualityHub } from "@/shared/api/adapters/quality.adapter";
 import SectionHubPage from "@/widgets/pages/SectionHubPage/SectionHubPage";
-import { qualityHub } from "@/shared/content/mock";
 
-export default function Page() {
-  return <SectionHubPage page={qualityHub} />;
+export default async function Page() {
+  const page = await getQualityHub();
+  return <SectionHubPage page={page} />;
 }

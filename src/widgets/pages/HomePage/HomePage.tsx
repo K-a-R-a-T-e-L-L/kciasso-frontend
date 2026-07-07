@@ -5,11 +5,24 @@ import SectionHeader from "@/shared/ui/SectionHeader/SectionHeader";
 import DirectionCard from "@/shared/ui/DirectionCard/DirectionCard";
 import ResourceCard from "@/shared/ui/ResourceCard/ResourceCard";
 import NewsCard from "@/shared/ui/NewsCard/NewsCard";
+import { getHomePageData } from "@/shared/api/adapters/home.adapter";
 import { topLinks } from "@/shared/config/navigation";
-import { homeDirections, newsPreview, services, contacts, primaryContacts } from "@/shared/content/mock";
 import cls from "./HomePage.module.scss";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const { homeDirections, latestNewsPreview, services, contacts, primaryContacts } = await getHomePageData();
+  const quickDirections = [
+    homeDirections[0],
+    homeDirections[1],
+    {
+      title: "ГИА",
+      href: "/gia",
+      description: "Результаты, апелляции, итоговое сочинение, итоговое собеседование, ППЭ, сроки и образцы заявлений.",
+      badge: "Справка",
+    },
+    ...homeDirections.slice(3),
+  ];
+
   return (
     <>
       <section className={cls.hero}>
@@ -23,11 +36,11 @@ export default function HomePage() {
                 <span>сопровождения системы образования»</span>
               </h1>
               <p>
-                Информационно-аналитическое сопровождение государственной итоговой аттестации, оценочных процедур и мониторинга
-                качества образования в Кузбассе.
+                Информационно-аналитическое сопровождение государственной итоговой аттестации, оценочных процедур и
+                мониторинга качества образования в Кузбассе.
               </p>
               <div className={cls.actions}>
-                <Link href="#directions">Выбрать раздел</Link>
+                <Link href="#quick-access">Выбрать раздел</Link>
                 <Link href="/o-centre/kontakty">Контакты</Link>
               </div>
               <div className={cls.officialLinks}>
@@ -79,7 +92,7 @@ export default function HomePage() {
             text="Выберите нужный раздел, чтобы перейти к материалам по экзаменам, оценке качества образования, полезным ресурсам и информации о центре."
           />
           <div className={cls.directionsGrid}>
-            {homeDirections.map((item, index) => (
+            {quickDirections.map((item, index) => (
               <DirectionCard key={item.href} {...item} index={index} />
             ))}
           </div>
@@ -111,13 +124,18 @@ export default function HomePage() {
       <Section id="current-information">
         <Container>
           <div className={cls.newsLayout}>
-            <SectionHeader
-              eyebrow="Новости"
-              title="Актуальная информация"
-              text="Оперативные сообщения по государственной итоговой аттестации, апелляциям, срокам проведения и другим важным вопросам."
-            />
+            <div className={cls.newsIntro}>
+              <SectionHeader
+                eyebrow="Новости"
+                title="Актуальная информация"
+                text="Оперативные сообщения по государственной итоговой аттестации, апелляциям, срокам проведения и другим важным вопросам."
+              />
+              <Link className={cls.newsLink} href="/news">
+                Все новости
+              </Link>
+            </div>
             <div className={cls.newsList}>
-              {newsPreview.map((item) => (
+              {latestNewsPreview.map((item) => (
                 <NewsCard key={item.title} {...item} />
               ))}
             </div>
@@ -132,8 +150,8 @@ export default function HomePage() {
               <p className={cls.badge}>Справочная информация</p>
               <h2>Контакты для обращений по вопросам ГИА и работы сайта</h2>
               <p>
-                По вопросам государственной итоговой аттестации, размещенных материалов и работы сервисов можно воспользоваться
-                телефонами справочной службы или перейти на страницу контактов.
+                По вопросам государственной итоговой аттестации, размещенных материалов и работы сервисов можно
+                воспользоваться телефонами справочной службы или перейти на страницу контактов.
               </p>
             </div>
             <div className={cls.contactBox}>

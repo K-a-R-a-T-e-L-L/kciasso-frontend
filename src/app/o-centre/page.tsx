@@ -1,6 +1,7 @@
+import { getAboutHub } from "@/shared/api/adapters/about.adapter";
 import SectionHubPage from "@/widgets/pages/SectionHubPage/SectionHubPage";
-import { aboutHub } from "@/shared/content/mock";
 
-export default function Page() {
-  return <SectionHubPage page={aboutHub} />;
+export default async function Page() {
+  const page = await getAboutHub();
+  return <SectionHubPage page={page} />;
 }

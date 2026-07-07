@@ -1,8 +1,14 @@
 import PageHero from "@/shared/ui/PageHero/PageHero";
-import type { ExamPageData } from "@/shared/content/mock";
+import type { ExamPageData } from "@/shared/content/content.types";
 import ExamPageTabs from "./ExamPageTabs.client";
 
-export default function ExamPage({ page }: { page: ExamPageData }) {
+export default function ExamPage({
+  page,
+  initialSectionId,
+}: {
+  page: ExamPageData;
+  initialSectionId?: string;
+}) {
   return (
     <>
       <PageHero
@@ -11,7 +17,7 @@ export default function ExamPage({ page }: { page: ExamPageData }) {
         description={page.description}
         breadcrumbs={[{ title: "Главная", href: "/" }, { title: page.title }]}
       />
-      <ExamPageTabs page={page} />
+      <ExamPageTabs page={page} initialSectionId={initialSectionId} />
     </>
   );
 }

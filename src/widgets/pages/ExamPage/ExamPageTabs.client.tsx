@@ -1,68 +1,102 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 import Container from "@/shared/ui/Container/Container";
 import Section from "@/shared/ui/Section/Section";
 import DocumentPlaceholder from "@/shared/ui/DocumentPlaceholder/DocumentPlaceholder";
-import type { ExamPageData } from "@/shared/content/mock";
+import ButtonTabsNav from "@/shared/ui/TabsNav/ButtonTabsNav.client";
+import type { ExamPageData } from "@/shared/content/content.types";
 import cls from "./ExamPage.module.scss";
 
-function getInitialSectionId(page: ExamPageData) {
+function getDefaultSectionId(page: ExamPageData) {
   return page.sections[0]?.id ?? "";
 }
 
 function getSectionIdFromHash(page: ExamPageData) {
   const hash = window.location.hash.replace("#", "");
   const exists = page.sections.some((section) => section.id === hash);
-  return exists ? hash : page.sections[0]?.id ?? "";
+  return exists ? hash : "";
 }
 
-export default function ExamPageTabs({ page }: { page: ExamPageData }) {
-  const [activeId, setActiveId] = useState(() => getInitialSectionId(page));
+function getSectionIdFromQuery(page: ExamPageData, value: string | null) {
+  if (!value) return "";
+
+  const queryAliases: Record<string, string> = {
+    "normative-documents": "docs",
+    demo: "demo",
+    deadlines: "dates",
+    results: "results",
+    reports: "reports",
+    essay: "essay",
+    analytics: "analytics",
+  };
+
+  const normalized = queryAliases[value] ?? value;
+  const exists = page.sections.some((section) => section.id === normalized);
+  return exists ? normalized : "";
+}
+
+function getSectionSlug(id: string) {
+  const slugAliases: Record<string, string> = {
+    docs: "normative-documents",
+    demo: "demo",
+    dates: "deadlines",
+    results: "results",
+    reports: "reports",
+    essay: "essay",
+    analytics: "analytics",
+  };
+
+  return slugAliases[id] ?? id;
+}
+
+export default function ExamPageTabs({
+  page,
+  initialSectionId,
+}: {
+  page: ExamPageData;
+  initialSectionId?: string;
+}) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const normalizedInitialSectionId = getSectionIdFromQuery(page, initialSectionId ?? null);
+  const [activeId, setActiveId] = useState(() => normalizedInitialSectionId || getDefaultSectionId(page));
 
   useEffect(() => {
     const syncWithHash = () => {
-      const nextId = getSectionIdFromHash(page);
-      setActiveId(nextId);
+      const fromQuery = getSectionIdFromQuery(page, searchParams.get("section"));
+      const fromHash = getSectionIdFromHash(page);
+      setActiveId(fromQuery || fromHash || normalizedInitialSectionId || getDefaultSectionId(page));
     };
 
     syncWithHash();
     window.addEventListener("hashchange", syncWithHash);
     return () => window.removeEventListener("hashchange", syncWithHash);
-  }, [page]);
+  }, [normalizedInitialSectionId, page, searchParams]);
 
   const activeSection = page.sections.find((section) => section.id === activeId) ?? page.sections[0];
   const activeIndex = page.sections.findIndex((section) => section.id === activeSection.id);
 
   const handleTabClick = (id: string) => {
     setActiveId(id);
-    window.history.replaceState(null, "", `${page.href}#${id}`);
+    const next = new URLSearchParams(searchParams.toString());
+    next.set("section", getSectionSlug(id));
+    window.history.replaceState(null, "", `${pathname}?${next.toString()}#${id}`);
   };
 
   return (
     <>
       <Container>
-        <div className={cls.tabNav} role="tablist" aria-label="Навигация по разделам">
-          {page.sections.map((section) => {
-            const isActive = section.id === activeSection.id;
-
-            return (
-              <button
-                key={section.id}
-                type="button"
-                role="tab"
-                id={`tab-${section.id}`}
-                aria-selected={isActive}
-                aria-controls={`panel-${section.id}`}
-                tabIndex={isActive ? 0 : -1}
-                className={isActive ? cls.activeTab : undefined}
-                onClick={() => handleTabClick(section.id)}
-              >
-                {section.title}
-              </button>
-            );
-          })}
-        </div>
+        <ButtonTabsNav
+          ariaLabel="Навигация по разделам"
+          activeKey={activeSection.id}
+          onTabClick={handleTabClick}
+          items={page.sections.map((section) => ({
+            key: section.id,
+            title: section.title,
+          }))}
+        />
       </Container>
 
       <Section id={activeSection.id} muted={activeIndex % 2 === 1}>

@@ -1,12 +1,12 @@
 import { notFound } from "next/navigation";
-import ContentPage from "@/widgets/pages/ContentPage/ContentPage";
-import { aboutPages } from "@/shared/content/mock";
+import { getAboutPageBySlug } from "@/shared/api/adapters/about.adapter";
+import AboutCenterPage from "@/widgets/pages/AboutCenterPage/AboutCenterPage";
 
 type Props = { params: Promise<{ slug: string }> };
 
 export default async function Page({ params }: Props) {
   const { slug } = await params;
-  const page = aboutPages.find((item) => item.slug === slug);
+  const page = await getAboutPageBySlug(slug);
   if (!page) notFound();
-  return <ContentPage page={page} />;
+  return <AboutCenterPage page={page} />;
 }

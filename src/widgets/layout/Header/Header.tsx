@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { MEDIA } from "@/shared/lib/media";
-import { contacts } from "@/shared/content/mock";
+import { contacts } from "@/shared/content/contacts.mock";
 import HeaderNav from "./HeaderNav.client";
 import HeaderMobileMenu from "./HeaderMobileMenu.client";
 import cls from "./Header.module.scss";

@@ -3,7 +3,7 @@ import Image from "next/image";
 import Container from "@/shared/ui/Container/Container";
 import { MEDIA } from "@/shared/lib/media";
 import { navigation, usefulResources } from "@/shared/config/navigation";
-import { contacts, primaryContacts } from "@/shared/content/mock";
+import { contacts, primaryContacts } from "@/shared/content/contacts.mock";
 import cls from "./Footer.module.scss";
 
 export default function Footer() {

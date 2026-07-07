@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import DirectionCard from "@/shared/ui/DirectionCard/DirectionCard";
-import type { CardItem } from "@/shared/content/mock";
+import type { CardItem } from "@/shared/content/content.types";
 
 function getHash() {
   return window.location.hash.replace("#", "");

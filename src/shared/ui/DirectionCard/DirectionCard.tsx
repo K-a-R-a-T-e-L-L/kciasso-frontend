@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { CardItem } from "@/shared/content/mock";
+import type { CardItem } from "@/shared/content/content.types";
 import cls from "./DirectionCard.module.scss";
 
 type Props = CardItem & {

@@ -1,10 +1,11 @@
 import PageHero from "@/shared/ui/PageHero/PageHero";
 import Container from "@/shared/ui/Container/Container";
 import Section from "@/shared/ui/Section/Section";
+import { getUsefulResources } from "@/shared/api/adapters/resources.adapter";
 import ResourceCard from "@/shared/ui/ResourceCard/ResourceCard";
-import { usefulResources } from "@/shared/content/mock";
 
-export default function ResourcesPage() {
+export default async function ResourcesPage() {
+  const usefulResources = await getUsefulResources();
   return (
     <>
       <PageHero

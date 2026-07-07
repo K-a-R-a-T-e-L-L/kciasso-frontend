@@ -1,0 +1,64 @@
+.tabList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 4px 0 26px;
+}
+
+.tabLink,
+.tabButton {
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  color: var(--color-primary);
+  font-size: 0.75rem;
+  font-weight: 850;
+  line-height: 1.2;
+  padding: 8px 12px;
+  transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease;
+  user-select: none;
+}
+
+.tabButton {
+  cursor: pointer;
+}
+
+.tabLink:hover,
+.tabLink:focus-visible,
+.tabButton:hover,
+.tabButton:focus-visible {
+  border-color: rgba(7, 84, 155, 0.28);
+  outline: none;
+}
+
+.active {
+  border-color: var(--color-text) !important;
+  background: #fff !important;
+  color: var(--color-text) !important;
+}
+
+@media (max-width: 640px) {
+  .tabList {
+    flex-wrap: nowrap;
+    width: 100%;
+    margin: 0 0 22px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    padding: 0 0 6px;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .tabLink,
+  .tabButton {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+    white-space: nowrap;
+    font-size: 0.7rem;
+    padding: 6px 10px;
+  }
+}

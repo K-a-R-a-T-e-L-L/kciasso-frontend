@@ -1,15 +1,42 @@
-import Link from "next/link";
+import type { DocumentGroup } from "@/shared/content/documents.types";
+import DocumentList from "@/shared/ui/DocumentList/DocumentList";
 import cls from "./DocumentPlaceholder.module.scss";
 
 type Props = {
   oldUrl?: string;
   title?: string;
+  groups?: DocumentGroup[];
 };
 
 export default function DocumentPlaceholder({
   oldUrl = "https://www.ocmko.ru/",
   title = "Документы и материалы раздела",
+  groups,
 }: Props) {
+  const fallbackGroups: DocumentGroup[] =
+    groups && groups.length > 0
+      ? groups
+      : [
+          {
+            id: "official-site",
+            title: "Материалы раздела",
+            description: "Временный источник до подключения backend и локального файлового хранилища.",
+            items: [
+              {
+                id: "official-site-link",
+                title,
+                description:
+                  "Документы, справочные материалы и полезные ссылки пока доступны через официальный сайт учреждения.",
+                url: oldUrl,
+                extension: "html",
+                mimeType: "text/html",
+                isExternal: true,
+                category: "Внешний ресурс",
+              },
+            ],
+          },
+        ];
+
   return (
     <div className={cls.placeholder}>
       <div className={cls.icon} aria-hidden="true">
@@ -23,12 +50,10 @@ export default function DocumentPlaceholder({
         <p className={cls.kicker}>Материалы раздела</p>
         <h3>{title}</h3>
         <p>
-          В этом разделе размещаются документы, справочные материалы и полезные ссылки. При необходимости можно
-          открыть соответствующий раздел на официальном сайте учреждения.
+          В этом разделе отображаются документы, внешние ссылки и архивные материалы. Компонент уже подготовлен к
+          работе с backend и локальным файловым хранилищем.
         </p>
-        <Link href={oldUrl} target="_blank" rel="noreferrer">
-          Открыть официальный сайт
-        </Link>
+        <DocumentList groups={fallbackGroups} />
       </div>
     </div>
   );
