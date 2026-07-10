@@ -1,0 +1,23 @@
+{
+  "type": "object",
+  "properties": {
+    "id": { "type": "integer", "format": "int32" },
+    "token": { "type": "string" },
+    "user_id": { "type": "integer", "format": "int32" },
+    "user": { "$ref": "#/components/schemas/User" },
+    "expire_at": { "type": "string", "format": "date-time", "nullable": true },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "deleted_at": { "type": "string", "format": "date-time", "nullable": true }
+  },
+  "required": [
+    "id",
+    "token",
+    "user_id",
+    "expire_at",
+    "created_at",
+    "updated_at",
+    "deleted_at"
+  ],
+  "x-readme-ref-name": "Session"
+}

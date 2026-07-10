@@ -1,0 +1,12 @@
+{
+  "type": "object",
+  "properties": {
+    "name": { "type": "string" },
+    "email": { "type": "string" },
+    "password": { "type": "string" },
+    "isSuperAdmin": { "type": "boolean" },
+    "sectionIds": { "type": "array", "items": { "type": "string" } }
+  },
+  "required": ["name", "email", "password"],
+  "x-readme-ref-name": "CreateAdminUserDto"
+}

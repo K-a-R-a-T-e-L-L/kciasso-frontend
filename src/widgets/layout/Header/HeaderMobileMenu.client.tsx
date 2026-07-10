@@ -19,11 +19,11 @@ function isHashLink(href: string) {
 }
 
 export default function HeaderMobileMenu() {
-  const [portalReady, setPortalReady] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(DEFAULT_EXPANDED_SECTION);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const portalTarget = typeof document === "undefined" ? null : document.body;
 
   const clearCloseTimer = () => {
     if (closeTimer.current) {
@@ -56,10 +56,7 @@ export default function HeaderMobileMenu() {
     openMenu();
   };
 
-  useEffect(() => {
-    setPortalReady(true);
-    return () => clearCloseTimer();
-  }, []);
+  useEffect(() => () => clearCloseTimer(), []);
 
   useEffect(() => {
     document.body.style.overflow = mounted ? "hidden" : "";
@@ -83,7 +80,7 @@ export default function HeaderMobileMenu() {
         <span />
       </button>
 
-      {portalReady && mounted
+      {portalTarget && mounted
         ? createPortal(
             <div className={cls.mobileOverlay} data-state={visible ? "open" : "closed"} onClick={closeMenu}>
               <div
@@ -126,20 +123,20 @@ export default function HeaderMobileMenu() {
                         </div>
                         {hasChildren ? (
                           <div className={cls.mobileSubLinksWrap} data-open={isExpanded ? "true" : "false"}>
-                          <div className={cls.mobileSubLinks}>
-                            {children.map((link) => (
-                              isHashLink(link.href) ? (
-                                <a key={link.href} href={link.href} onClick={closeMenu}>
-                                  {link.title}
-                                </a>
-                              ) : (
-                                <Link key={link.href} href={link.href} onClick={closeMenu}>
-                                  {link.title}
-                                </Link>
-                              )
-                            ))}
+                            <div className={cls.mobileSubLinks}>
+                              {children.map((link) =>
+                                isHashLink(link.href) ? (
+                                  <a key={link.href} href={link.href} onClick={closeMenu}>
+                                    {link.title}
+                                  </a>
+                                ) : (
+                                  <Link key={link.href} href={link.href} onClick={closeMenu}>
+                                    {link.title}
+                                  </Link>
+                                ),
+                              )}
+                            </div>
                           </div>
-                        </div>
                         ) : null}
                       </div>
                     );
@@ -150,7 +147,7 @@ export default function HeaderMobileMenu() {
                 </Link>
               </div>
             </div>,
-            document.body,
+            portalTarget,
           )
         : null}
     </div>

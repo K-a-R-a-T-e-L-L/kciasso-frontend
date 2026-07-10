@@ -51,12 +51,7 @@ export type ContactEntry = {
   href?: string;
 };
 
-export type NewsCategoryId =
-  | "appeals"
-  | "gia-11"
-  | "gia-9"
-  | "quality"
-  | "center";
+export type NewsCategoryId = string;
 
 export type NewsCategory = {
   id: NewsCategoryId;

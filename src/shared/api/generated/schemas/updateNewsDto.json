@@ -1,0 +1,14 @@
+{
+  "type": "object",
+  "properties": {
+    "title": { "type": "string" },
+    "slug": { "type": "string" },
+    "excerpt": { "type": "string" },
+    "content": { "type": "string" },
+    "coverImageUrl": { "type": "string" },
+    "categoryId": { "type": "number" },
+    "isPublished": { "type": "boolean" },
+    "publishedAt": { "format": "date-time", "type": "string" }
+  },
+  "x-readme-ref-name": "UpdateNewsDto"
+}

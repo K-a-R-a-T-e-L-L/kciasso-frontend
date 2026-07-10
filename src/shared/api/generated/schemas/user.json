@@ -1,0 +1,36 @@
+{
+  "type": "object",
+  "properties": {
+    "id": { "type": "integer", "format": "int32" },
+    "name": { "type": "string" },
+    "email": { "type": "string" },
+    "password": { "type": "string" },
+    "is_super_admin": { "type": "boolean" },
+    "sessions": {
+      "type": "array",
+      "items": { "$ref": "#/components/schemas/Session" }
+    },
+    "section_permissions": {
+      "type": "array",
+      "items": { "$ref": "#/components/schemas/UserSectionPermission" }
+    },
+    "authored_news": {
+      "type": "array",
+      "items": { "$ref": "#/components/schemas/News" }
+    },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "deleted_at": { "type": "string", "format": "date-time", "nullable": true }
+  },
+  "required": [
+    "id",
+    "name",
+    "email",
+    "password",
+    "is_super_admin",
+    "created_at",
+    "updated_at",
+    "deleted_at"
+  ],
+  "x-readme-ref-name": "User"
+}

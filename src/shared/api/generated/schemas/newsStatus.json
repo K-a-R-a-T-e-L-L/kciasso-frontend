@@ -1,0 +1,5 @@
+{
+  "type": "string",
+  "enum": ["draft", "scheduled", "published"],
+  "x-readme-ref-name": "NewsStatus"
+}

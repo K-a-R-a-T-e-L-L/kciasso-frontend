@@ -1,0 +1,11 @@
+{
+  "type": "object",
+  "properties": {
+    "id": { "type": "number" },
+    "slug": { "type": "string" },
+    "title": { "type": "string" },
+    "description": { "type": "string", "nullable": true }
+  },
+  "required": ["id", "slug", "title"],
+  "x-readme-ref-name": "NewsCategoryDto"
+}

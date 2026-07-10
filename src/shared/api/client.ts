@@ -51,7 +51,11 @@ function getAccessToken() {
 export default async function client<TData = unknown, TError = unknown, TVariables = unknown>(
   config: RequestConfig<TVariables>,
 ): Promise<ResponseConfig<TData> & { __errorType?: TError }> {
-  const baseURL = config.baseURL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+  const baseURL =
+    config.baseURL ||
+    process.env.API_BASE_URL ||
+    process.env.NEXT_PUBLIC_API_URL ||
+    "http://localhost:3000";
   const rawUrl = config.url ?? "";
   const url = new URL(rawUrl, baseURL.endsWith("/") ? baseURL : `${baseURL}/`);
 

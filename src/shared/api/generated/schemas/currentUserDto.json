@@ -1,0 +1,12 @@
+{
+  "type": "object",
+  "properties": {
+    "id": { "type": "number" },
+    "name": { "type": "string" },
+    "email": { "type": "string" },
+    "isSuperAdmin": { "type": "boolean" },
+    "permissions": { "type": "array", "items": { "type": "string" } }
+  },
+  "required": ["id", "name", "email", "isSuperAdmin", "permissions"],
+  "x-readme-ref-name": "CurrentUserDto"
+}

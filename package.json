@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "api:generate": "kubb generate",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint ."
   },
   "dependencies": {
     "next": "^16.0.7",
@@ -15,11 +16,19 @@
     "sass": "^1.83.0"
   },
   "devDependencies": {
+    "@kubb/plugin-client": "^4.39.2",
+    "@kubb/plugin-oas": "^4.39.2",
+    "@kubb/plugin-ts": "^4.39.2",
     "@types/node": "^22.10.5",
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",
     "autoprefixer": "^10.4.20",
+    "dotenv": "^17.4.2",
+    "eslint": "^9.39.4",
+    "eslint-config-next": "^16.2.10",
+    "kubb": "^3.2.2",
     "postcss": "^8.4.49",
+    "prettier": "^3.9.4",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.7.2"
   }

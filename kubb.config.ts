@@ -1,27 +1,17 @@
-﻿import { defineConfig } from "@kubb/core";
+import { defineConfig } from "kubb";
 import { pluginClient } from "@kubb/plugin-client";
 import { pluginOas } from "@kubb/plugin-oas";
-import { pluginReactQuery } from "@kubb/plugin-react-query";
 import { pluginTs } from "@kubb/plugin-ts";
 import { configDotenv } from "dotenv";
 
 configDotenv({ path: ".env.local", override: false });
-configDotenv({ override: false });
+configDotenv({ path: ".env", override: false });
 
-const openApiPath = process.env.OPENAPI_PATH || "remote";
-const apiDocs = process.env.API_DOCS_URL || "http://localhost:4000/api-docs-json";
-
-const sourcePath =
-  openApiPath === "remote"
-    ? apiDocs
-    : openApiPath === "local"
-      ? "./openapi.json"
-      : openApiPath;
+const schemaUrl = process.env.OPENAPI_SCHEMA_URL || "http://localhost:3000/api/docs-json";
 
 export default defineConfig({
-  root: ".",
   input: {
-    path: sourcePath,
+    path: schemaUrl,
   },
   output: {
     path: "./src/shared/api/generated",
@@ -32,35 +22,25 @@ export default defineConfig({
   },
   plugins: [
     pluginOas(),
-    pluginTs(),
+    pluginTs({
+      output: {
+        path: "./types",
+        barrelType: "named",
+      },
+    }),
     pluginClient({
       output: {
         path: "./clients",
         barrelType: "named",
       },
-      group: { type: "tag" },
-      operations: true,
-      pathParamsType: "inline",
-      dataReturnType: "data",
-      importPath: "@/shared/api/client",
-    }),
-    pluginReactQuery({
-      client: {
-        importPath: "@/shared/api/client",
-        dataReturnType: "data",
-      },
-      output: {
-        path: "./hooks",
-      },
       group: {
         type: "tag",
       },
-      mutation: {
-        methods: ["post", "put", "patch", "delete"],
-      },
-      paramsType: "inline",
+      operations: true,
       pathParamsType: "inline",
-      suspense: false,
+      paramsType: "inline",
+      dataReturnType: "data",
+      importPath: "@/shared/api/client",
     }),
   ],
 });

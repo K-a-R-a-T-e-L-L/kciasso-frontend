@@ -1,0 +1,15 @@
+{
+  "type": "object",
+  "properties": {
+    "id": { "type": "number" },
+    "sectionId": { "type": "string" },
+    "title": { "type": "string" },
+    "kind": { "type": "string" },
+    "route": { "type": "string", "nullable": true },
+    "parentId": { "type": "number", "nullable": true },
+    "order": { "type": "number" },
+    "isEditable": { "type": "boolean" }
+  },
+  "required": ["id", "sectionId", "title", "kind", "order", "isEditable"],
+  "x-readme-ref-name": "AdminSectionDto"
+}

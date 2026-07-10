@@ -1,0 +1,33 @@
+{
+  "type": "object",
+  "properties": {
+    "id": { "type": "number" },
+    "slug": { "type": "string" },
+    "title": { "type": "string" },
+    "excerpt": { "type": "string" },
+    "coverImageUrl": { "type": "string", "nullable": true },
+    "publishedAt": {
+      "format": "date-time",
+      "type": "string",
+      "nullable": true
+    },
+    "category": {
+      "nullable": true,
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "id": { "type": "number" },
+            "slug": { "type": "string" },
+            "title": { "type": "string" },
+            "description": { "type": "string", "nullable": true }
+          },
+          "required": ["id", "slug", "title"],
+          "x-readme-ref-name": "NewsCategoryDto"
+        }
+      ]
+    }
+  },
+  "required": ["id", "slug", "title", "excerpt"],
+  "x-readme-ref-name": "NewsListItemDto"
+}

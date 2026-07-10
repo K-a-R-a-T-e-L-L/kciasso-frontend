@@ -1,0 +1,12 @@
+{
+  "type": "object",
+  "properties": {
+    "slug": { "type": "string" },
+    "title": { "type": "string" },
+    "description": { "type": "string" },
+    "order": { "type": "number", "default": 0 },
+    "isActive": { "type": "boolean", "default": true }
+  },
+  "required": ["slug", "title"],
+  "x-readme-ref-name": "CreateNewsCategoryDto"
+}

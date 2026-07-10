@@ -8,13 +8,17 @@ import cls from "./NewsArchivePage.module.scss";
 
 type Props = {
   page?: number;
+  limit?: number;
   category?: string;
+  search?: string;
 };
 
-function buildArchiveHref(page: number, category?: string | null) {
+function buildArchiveHref(page: number, options?: { category?: string | null; limit?: number; search?: string }) {
   const params = new URLSearchParams();
 
-  if (category) params.set("category", category);
+  if (options?.category) params.set("category", options.category);
+  if (options?.limit) params.set("limit", String(options.limit));
+  if (options?.search) params.set("search", options.search);
   if (page > 1) params.set("page", String(page));
 
   const query = params.toString();
@@ -22,8 +26,8 @@ function buildArchiveHref(page: number, category?: string | null) {
   return query ? `/news?${query}` : "/news";
 }
 
-export default async function NewsArchivePage({ page = 1, category }: Props) {
-  const archive = await getNewsArchive({ page, category });
+export default async function NewsArchivePage({ page = 1, limit, category, search }: Props) {
+  const archive = await getNewsArchive({ page, limit, category, search });
   const selectedCategoryTitle = archive.selectedCategory
     ? (await getNewsCategory(archive.selectedCategory)).title
     : null;
@@ -56,7 +60,7 @@ export default async function NewsArchivePage({ page = 1, category }: Props) {
                   {archive.categories.map((item) => (
                     <Link
                       key={item.id}
-                      href={buildArchiveHref(1, item.id)}
+                      href={buildArchiveHref(1, { category: item.id, limit, search })}
                       className={archive.selectedCategory === item.id ? cls.filterActive : undefined}
                     >
                       {item.title}
@@ -90,7 +94,11 @@ export default async function NewsArchivePage({ page = 1, category }: Props) {
 
               <div className={cls.pagination}>
                 <Link
-                  href={buildArchiveHref(archive.currentPage - 1, archive.selectedCategory)}
+                  href={buildArchiveHref(archive.currentPage - 1, {
+                    category: archive.selectedCategory,
+                    limit,
+                    search,
+                  })}
                   aria-disabled={archive.currentPage <= 1}
                   className={archive.currentPage <= 1 ? cls.paginationDisabled : undefined}
                 >
@@ -101,7 +109,11 @@ export default async function NewsArchivePage({ page = 1, category }: Props) {
                   {Array.from({ length: archive.totalPages }, (_, index) => index + 1).map((value) => (
                     <Link
                       key={value}
-                      href={buildArchiveHref(value, archive.selectedCategory)}
+                      href={buildArchiveHref(value, {
+                        category: archive.selectedCategory,
+                        limit,
+                        search,
+                      })}
                       className={value === archive.currentPage ? cls.paginationActive : undefined}
                     >
                       {value}
@@ -110,7 +122,11 @@ export default async function NewsArchivePage({ page = 1, category }: Props) {
                 </div>
 
                 <Link
-                  href={buildArchiveHref(archive.currentPage + 1, archive.selectedCategory)}
+                  href={buildArchiveHref(archive.currentPage + 1, {
+                    category: archive.selectedCategory,
+                    limit,
+                    search,
+                  })}
                   aria-disabled={archive.currentPage >= archive.totalPages}
                   className={archive.currentPage >= archive.totalPages ? cls.paginationDisabled : undefined}
                 >

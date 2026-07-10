@@ -1,0 +1,82 @@
+{
+  "type": "object",
+  "properties": {
+    "id": { "type": "number" },
+    "slug": { "type": "string" },
+    "title": { "type": "string" },
+    "excerpt": { "type": "string" },
+    "content": { "type": "string" },
+    "coverImageUrl": { "type": "string", "nullable": true },
+    "publishedAt": {
+      "format": "date-time",
+      "type": "string",
+      "nullable": true
+    },
+    "isPublished": { "type": "boolean" },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "scheduled", "published"],
+      "x-readme-ref-name": "NewsStatus"
+    },
+    "category": {
+      "nullable": true,
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "id": { "type": "number" },
+            "slug": { "type": "string" },
+            "title": { "type": "string" },
+            "description": { "type": "string", "nullable": true },
+            "order": { "type": "number" },
+            "isActive": { "type": "boolean" },
+            "newsCount": { "type": "number" },
+            "createdAt": { "format": "date-time", "type": "string" },
+            "updatedAt": { "format": "date-time", "type": "string" }
+          },
+          "required": [
+            "id",
+            "slug",
+            "title",
+            "order",
+            "isActive",
+            "newsCount",
+            "createdAt",
+            "updatedAt"
+          ],
+          "x-readme-ref-name": "AdminNewsCategoryDto"
+        }
+      ]
+    },
+    "author": {
+      "nullable": true,
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "id": { "type": "number" },
+            "name": { "type": "string" },
+            "email": { "type": "string" }
+          },
+          "required": ["id", "name", "email"],
+          "x-readme-ref-name": "AdminNewsAuthorDto"
+        }
+      ]
+    },
+    "createdAt": { "format": "date-time", "type": "string" },
+    "updatedAt": { "format": "date-time", "type": "string" },
+    "deletedAt": { "format": "date-time", "type": "string", "nullable": true }
+  },
+  "required": [
+    "id",
+    "slug",
+    "title",
+    "excerpt",
+    "content",
+    "isPublished",
+    "status",
+    "createdAt",
+    "updatedAt"
+  ],
+  "x-readme-ref-name": "AdminNewsDto"
+}
