@@ -53,11 +53,15 @@ function isStatusError(error: unknown, status: number) {
 }
 
 function shouldUseMockFallback(error: unknown) {
-  if (process.env.NODE_ENV === "production") {
+  if (isStatusError(error, 404)) {
     return false;
   }
 
-  return !isStatusError(error, 404);
+  if (typeof error === "object" && error !== null && "status" in error) {
+    return false;
+  }
+
+  return true;
 }
 
 function toDateLabel(value?: string | null) {
