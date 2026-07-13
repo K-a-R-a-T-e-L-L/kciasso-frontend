@@ -104,4 +104,16 @@ export const operations = {
     path: "/api/admin/news-categories/:id",
     method: "delete",
   },
+  PublicSiteSettingsController_getSettings: {
+    path: "/api/public/site-settings",
+    method: "get",
+  },
+  AdminSiteSettingsController_getSettings: {
+    path: "/api/admin/site-settings",
+    method: "get",
+  },
+  AdminSiteSettingsController_updateSettings: {
+    path: "/api/admin/site-settings",
+    method: "patch",
+  },
 };

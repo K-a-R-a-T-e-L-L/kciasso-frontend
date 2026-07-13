@@ -10,17 +10,19 @@
 
 .inner {
   display: flex;
-  width: min(100% - 32px, 1260px);
+  width: min(100% - 32px, 1380px);
   min-height: var(--header-height);
   align-items: center;
   justify-content: space-between;
   margin-inline: auto;
   gap: 22px;
+  min-width: 0;
 }
 
 .brand {
   display: inline-flex;
-  min-width: 290px;
+  min-width: 0;
+  flex: 0 1 290px;
   align-items: center;
   gap: 14px;
 
@@ -54,12 +56,16 @@
 .desktopNav {
   position: relative;
   display: flex;
+  flex: 1 1 auto;
   align-items: center;
-  gap: 14px;
+  justify-content: flex-end;
+  gap: 10px;
+  min-width: 0;
 }
 
 .nav {
   display: flex;
+  min-width: 0;
   align-items: center;
   gap: 4px;
 }
@@ -82,7 +88,7 @@
   font-size: 0.92rem;
   font-weight: 800;
   line-height: 1.2;
-  padding: 12px 15px;
+  padding: 8px 10px;
   white-space: nowrap;
   transition: background 160ms ease, color 160ms ease;
 
@@ -90,6 +96,7 @@
   &:focus-visible {
     background: rgba(7, 84, 155, 0.08);
     color: var(--color-primary);
+    outline: none;
   }
 }
 
@@ -103,14 +110,61 @@
   flex: 0 0 auto;
 }
 
-.contactButton {
+.hotlineCta {
   display: inline-flex;
   align-items: center;
-  border-radius: 999px;
+  gap: 10px;
+  min-height: 50px;
+  min-width: 176px;
+  border-radius: 18px;
   background: var(--color-primary);
   color: #fff;
-  font-weight: 900;
-  padding: 12px 18px;
+  padding: 10px 14px;
+  transition: background 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+  flex: 0 0 auto;
+
+  &:hover,
+  &:focus-visible {
+    background: var(--color-primary-dark);
+    box-shadow: 0 10px 24px rgba(5, 45, 100, 0.16);
+    outline: none;
+  }
+}
+
+.hotlineIcon {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  font-size: 0.82rem;
+}
+
+.hotlineBody {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+
+  span {
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 0.61rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  strong {
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 900;
+    line-height: 1.15;
+    white-space: nowrap;
+  }
 }
 
 .megaPanel,
@@ -177,8 +231,6 @@
     color: var(--color-primary);
     font-size: 0.88rem;
     font-weight: 900;
-    // letter-spacing:;
-    // text-transform: uppercase;
     font-family: sans-serif;
   }
 
@@ -190,9 +242,11 @@
     line-height: 1.35;
     padding: 10px 12px;
 
-    &:hover {
+    &:hover,
+    &:focus-visible {
       background: var(--color-surface-muted);
       color: var(--color-primary);
+      outline: none;
     }
   }
 }
@@ -236,9 +290,11 @@
     line-height: 1.35;
     padding: 11px 12px;
 
-    &:hover {
+    &:hover,
+    &:focus-visible {
       background: var(--color-surface-muted);
       color: var(--color-primary);
+      outline: none;
     }
   }
 }
@@ -356,6 +412,37 @@
   }
 }
 
+.mobileHotline {
+  display: grid;
+  gap: 4px;
+  margin: 14px 14px 0;
+  border: 1px solid rgba(7, 84, 155, 0.12);
+  border-radius: 18px;
+  background: rgba(248, 252, 255, 0.96);
+  padding: 14px 16px;
+
+  &:focus-visible,
+  &:hover {
+    border-color: rgba(7, 84, 155, 0.28);
+    background: #fff;
+    outline: none;
+  }
+}
+
+.mobileHotlineLabel {
+  color: var(--color-muted);
+  font-size: 0.74rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.mobileHotlineValue {
+  color: var(--color-primary-dark);
+  font-size: 1.1rem;
+  font-weight: 900;
+}
+
 .mobileLinks {
   flex: 1 1 auto;
   min-height: 0;
@@ -468,26 +555,61 @@
   transform: translateY(0);
 }
 
-.mobileContact {
-  margin: auto 14px 14px;
-  border-radius: 999px;
-  background: var(--color-primary);
-  color: #fff;
-  font-weight: 900;
-  padding: 14px 18px;
-  text-align: center;
-  transition: background-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+@media (max-width: 1460px) {
+  .brand {
+    small {
+      display: none;
+    }
+  }
 
-  &:hover,
-  &:focus-visible {
-    background: var(--color-primary-dark);
-    box-shadow: 0 12px 24px rgba(7, 84, 155, 0.22);
-    outline: none;
-    transform: translateY(-1px);
+  .desktopNav {
+    gap: 8px;
+  }
+
+  .navLink {
+    min-height: 48px;
+    font-size: 0.84rem;
+    padding: 10px 12px;
+  }
+
+  .hotlineCta {
+    min-width: 166px;
+    gap: 8px;
+    min-height: 48px;
+    padding: 8px 12px;
+  }
+
+  .hotlineIcon {
+    width: 28px;
+    height: 28px;
+    font-size: 0.82rem;
+  }
+
+  .hotlineBody span {
+    font-size: 0.6rem;
+  }
+
+  .hotlineBody strong {
+    font-size: 0.9rem;
   }
 }
 
-@media (max-width: 1120px) {
+@media (max-width: 1380px) {
+  .desktopNav {
+    gap: 8px;
+  }
+
+  .hotlineCta {
+    min-width: 0;
+    padding-inline: 11px;
+  }
+
+  .hotlineBody span {
+    display: none;
+  }
+}
+
+@media (max-width: 1320px) {
   .desktopNav {
     display: none;
   }
@@ -497,7 +619,6 @@
   }
 
   .brand {
-    min-width: 0;
     max-width: calc(100vw - 90px);
   }
 }
@@ -532,5 +653,9 @@
     right: 12px;
     width: calc(100vw - 24px);
     max-width: calc(100vw - 24px);
+  }
+
+  .mobileHotlineValue {
+    font-size: 1rem;
   }
 }

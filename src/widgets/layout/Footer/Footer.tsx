@@ -1,27 +1,35 @@
-import Link from "next/link";
 import Image from "next/image";
-import Container from "@/shared/ui/Container/Container";
-import { MEDIA } from "@/shared/lib/media";
+import Link from "next/link";
+import { getPrimaryContacts } from "@/shared/api/adapters/site-settings.adapter";
 import { navigation, usefulResources } from "@/shared/config/navigation";
-import { contacts, primaryContacts } from "@/shared/content/contacts.mock";
+import type { SiteContacts } from "@/shared/content/content.types";
+import { organizationProfile } from "@/shared/content/default-site-settings";
+import { MEDIA } from "@/shared/lib/media";
+import Container from "@/shared/ui/Container/Container";
 import cls from "./Footer.module.scss";
 
-export default function Footer() {
+type Props = {
+  contacts: SiteContacts;
+};
+
+export default function Footer({ contacts }: Props) {
+  const primaryContacts = getPrimaryContacts(contacts);
+
   return (
     <footer className={cls.footer}>
       <Container>
         <div className={cls.grid}>
           <div className={cls.brandBlock}>
             <Link href="/" className={cls.brand}>
-              <Image src={MEDIA.logo} alt={contacts.shortName} width={52} height={52} />
+              <Image src={MEDIA.images.logo} alt={organizationProfile.shortName} width={52} height={52} />
               <div>
-                <span>{contacts.shortName}</span>
-                <small>{contacts.fullName}</small>
+                <span>{organizationProfile.shortName}</span>
+                <small>{organizationProfile.fullName}</small>
               </div>
             </Link>
             <p>
-              {contacts.legalForm} {contacts.fullName}. Официальный информационный ресурс по вопросам государственной
-              итоговой аттестации, оценки качества образования и деятельности учреждения.
+              {organizationProfile.legalForm} {organizationProfile.fullName}. Официальный информационный ресурс по вопросам
+              государственной итоговой аттестации, оценки качества образования и деятельности учреждения.
             </p>
           </div>
           <div>
@@ -48,9 +56,8 @@ export default function Footer() {
             <h3>Контакты</h3>
             <div className={cls.links}>
               <Link href="/o-centre/kontakty">Страница контактов</Link>
-              <a href="mailto:info@kcias.ru">{contacts.email}</a>
               {primaryContacts.map((item) => (
-                <a key={item.label} href={item.href}>
+                <a key={`${item.label}-${item.value}`} href={item.href}>
                   <span>{item.label}</span>
                   {item.value}
                 </a>
@@ -58,7 +65,7 @@ export default function Footer() {
             </div>
           </div>
         </div>
-        <div className={cls.bottom}>© {contacts.shortName}. Все права защищены.</div>
+        <div className={cls.bottom}>© {organizationProfile.shortName}. Все права защищены.</div>
       </Container>
     </footer>
   );

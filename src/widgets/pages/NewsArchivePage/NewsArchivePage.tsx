@@ -88,6 +88,9 @@ export default async function NewsArchivePage({ page = 1, limit, category, searc
                     date={item.dateLabel}
                     href={`/news/${item.slug}`}
                     text={item.excerpt}
+                    category={item.categoryTitle}
+                    coverImageUrl={item.coverImageUrl}
+                    showImage
                   />
                 ))}
               </div>

@@ -75,6 +75,24 @@ export type {
 } from "./types/AdminNewsControllerUpdateNews";
 export type { AdminNewsDto } from "./types/AdminNewsDto";
 export type { AdminSectionDto } from "./types/AdminSectionDto";
+export type {
+  AdminSiteSettingsControllerGetSettings200,
+  AdminSiteSettingsControllerGetSettings403,
+  AdminSiteSettingsControllerGetSettingsQuery,
+  AdminSiteSettingsControllerGetSettingsQueryResponse,
+} from "./types/AdminSiteSettingsControllerGetSettings";
+export type {
+  AdminSiteSettingsControllerUpdateSettings200,
+  AdminSiteSettingsControllerUpdateSettings400,
+  AdminSiteSettingsControllerUpdateSettings403,
+  AdminSiteSettingsControllerUpdateSettingsMutation,
+  AdminSiteSettingsControllerUpdateSettingsMutationRequest,
+  AdminSiteSettingsControllerUpdateSettingsMutationResponse,
+} from "./types/AdminSiteSettingsControllerUpdateSettings";
+export type {
+  AdminSiteSettingsResponseDto,
+  AdminSiteSettingsResponseDtoHomeSectionsOrderEnumKey,
+} from "./types/AdminSiteSettingsResponseDto";
 export type { AdminUserDto } from "./types/AdminUserDto";
 export type { AdminUserUpdateDto } from "./types/AdminUserUpdateDto";
 export type { CreateAdminUserDto } from "./types/CreateAdminUserDto";
@@ -111,10 +129,23 @@ export type {
   PublicNewsControllerGetNewsBySlugQuery,
   PublicNewsControllerGetNewsBySlugQueryResponse,
 } from "./types/PublicNewsControllerGetNewsBySlug";
+export type {
+  PublicSiteSettingsControllerGetSettings200,
+  PublicSiteSettingsControllerGetSettingsQuery,
+  PublicSiteSettingsControllerGetSettingsQueryResponse,
+} from "./types/PublicSiteSettingsControllerGetSettings";
+export type {
+  PublicSiteSettingsResponseDto,
+  PublicSiteSettingsResponseDtoHomeSectionsOrderEnumKey,
+} from "./types/PublicSiteSettingsResponseDto";
 export type { Section } from "./types/Section";
 export type { Session } from "./types/Session";
 export type { UpdateNewsCategoryDto } from "./types/UpdateNewsCategoryDto";
 export type { UpdateNewsDto } from "./types/UpdateNewsDto";
+export type {
+  UpdateSiteSettingsDto,
+  UpdateSiteSettingsDtoHomeSectionsOrderEnumKey,
+} from "./types/UpdateSiteSettingsDto";
 export type { UpdateUserDto } from "./types/UpdateUserDto";
 export type { UpdateUserPermissionsDto } from "./types/UpdateUserPermissionsDto";
 export type { User } from "./types/User";
@@ -227,10 +258,13 @@ export { adminNewsControllerGetNews } from "./clients/adminNewsController/adminN
 export { adminNewsControllerGetNewsById } from "./clients/adminNewsController/adminNewsControllerGetNewsById";
 export { adminNewsControllerUpdateCategory } from "./clients/adminNewsController/adminNewsControllerUpdateCategory";
 export { adminNewsControllerUpdateNews } from "./clients/adminNewsController/adminNewsControllerUpdateNews";
+export { adminSiteSettingsControllerGetSettings } from "./clients/adminSiteSettingsController/adminSiteSettingsControllerGetSettings";
+export { adminSiteSettingsControllerUpdateSettings } from "./clients/adminSiteSettingsController/adminSiteSettingsControllerUpdateSettings";
 export { operations } from "./clients/operations";
 export { publicNewsControllerGetCategories } from "./clients/publicNewsController/publicNewsControllerGetCategories";
 export { publicNewsControllerGetNews } from "./clients/publicNewsController/publicNewsControllerGetNews";
 export { publicNewsControllerGetNewsBySlug } from "./clients/publicNewsController/publicNewsControllerGetNewsBySlug";
+export { publicSiteSettingsControllerGetSettings } from "./clients/publicSiteSettingsController/publicSiteSettingsControllerGetSettings";
 export { userControllerAuthenticate } from "./clients/usersController/userControllerAuthenticate";
 export { userControllerCreateAdminUser } from "./clients/usersController/userControllerCreateAdminUser";
 export { userControllerDeleteAdminUser } from "./clients/usersController/userControllerDeleteAdminUser";
@@ -244,5 +278,8 @@ export { userControllerRegister } from "./clients/usersController/userController
 export { userControllerUpdate } from "./clients/usersController/userControllerUpdate";
 export { userControllerUpdateAdminUser } from "./clients/usersController/userControllerUpdateAdminUser";
 export { userControllerUpdateUserPermissions } from "./clients/usersController/userControllerUpdateUserPermissions";
+export { adminSiteSettingsResponseDtoHomeSectionsOrderEnum } from "./types/AdminSiteSettingsResponseDto";
 export { errorDtoErrorMessageEnum } from "./types/ErrorDto";
 export { newsStatusEnum } from "./types/NewsStatus";
+export { publicSiteSettingsResponseDtoHomeSectionsOrderEnum } from "./types/PublicSiteSettingsResponseDto";
+export { updateSiteSettingsDtoHomeSectionsOrderEnum } from "./types/UpdateSiteSettingsDto";

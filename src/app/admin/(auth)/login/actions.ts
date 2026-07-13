@@ -2,8 +2,8 @@
 
 import { redirect } from "next/navigation";
 import { getAdminApiErrorMessage } from "@/shared/admin/api-error";
-import { loginAdmin } from "@/shared/api/adapters/admin-auth.adapter";
 import { setAdminTokenCookie } from "@/shared/admin/auth";
+import { loginAdmin } from "@/shared/api/adapters/admin-auth.adapter";
 import type { LoginFormState } from "@/widgets/admin/AdminLoginForm/AdminLoginForm.types";
 
 export async function loginAdminAction(_: LoginFormState, formData: FormData): Promise<LoginFormState> {
@@ -32,5 +32,5 @@ export async function loginAdminAction(_: LoginFormState, formData: FormData): P
     };
   }
 
-  redirect("/admin/news");
+  redirect("/admin");
 }

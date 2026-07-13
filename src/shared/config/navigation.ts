@@ -16,11 +16,11 @@ export type NavItem = NavLink & {
 };
 
 export const topLinks: NavLink[] = [
-  { title: "МОК", href: "https://xn--42-6kcadhwnl3cfdx.xn--p1ai/" },
+  { title: "МОиН Кузбасса", href: "https://xn--42-6kcadhwnl3cfdx.xn--p1ai/" },
   { title: "Минпросвещения", href: "https://edu.gov.ru/" },
-  { title: "Рособрнадзор", href: "http://www.obrnadzor.gov.ru/" },
-  { title: "ФИПИ", href: "http://fipi.ru/" },
-  { title: "ФЦТ", href: "http://www.rustest.ru/" },
+  { title: "Рособрнадзор", href: "https://obrnadzor.gov.ru/" },
+  { title: "ФИПИ", href: "https://fipi.ru/" },
+  { title: "ФЦТ", href: "https://rustest.ru/" },
 ];
 
 export const navigation: NavItem[] = [
@@ -29,12 +29,10 @@ export const navigation: NavItem[] = [
     href: "/",
     kind: "dropdown",
     items: [
-      {
-        title: "Основные разделы",
-        href: "#quick-access",
-      },
+      { title: "Основные разделы", href: "#quick-access" },
       { title: "Важные ресурсы", href: "#important-resources" },
       { title: "Актуальная информация", href: "#current-information" },
+      { title: "Официальные ресурсы", href: "#official-resources" },
       { title: "Контакты", href: "#contacts" },
     ],
   },
@@ -43,10 +41,7 @@ export const navigation: NavItem[] = [
     href: "/regionalnyy-proekt",
     kind: "dropdown",
     items: [
-      {
-        title: "ЕГЭ: от выбора до зачисления",
-        href: "/regionalnyy-proekt#ege",
-      },
+      { title: "ЕГЭ: от выбора до зачисления", href: "/regionalnyy-proekt#ege" },
       { title: "Вузы Кузбасса", href: "/regionalnyy-proekt#vuz" },
       { title: "Видеоматериалы вузов", href: "/regionalnyy-proekt#video" },
     ],
@@ -131,10 +126,7 @@ export const navigation: NavItem[] = [
     items: [
       { title: "Контакты", href: "/o-centre/kontakty" },
       { title: "Об учреждении", href: "/o-centre/ob-uchrezhdenii" },
-      {
-        title: "Противодействие коррупции",
-        href: "/o-centre/protivodeystvie-korruptsii",
-      },
+      { title: "Противодействие коррупции", href: "/o-centre/protivodeystvie-korruptsii" },
       { title: "Совещания", href: "/o-centre/soveshchaniya" },
       { title: "Обучение", href: "/o-centre/obuchenie" },
     ],
@@ -143,33 +135,33 @@ export const navigation: NavItem[] = [
 
 export const usefulResources: NavLink[] = [
   {
-    title: "РЦОИ России",
-    href: "https://rcoi.ru",
-    description: "Региональные центры обработки информации",
-  },
-  {
-    title: "ФИПИ",
-    href: "https://fipi.ru",
-    description: "Федеральный институт педагогических измерений",
-  },
-  {
-    title: "Рособрнадзор",
-    href: "https://obrnadzor.gov.ru",
-    description: "Федеральная служба по надзору в сфере образования и науки",
+    title: "МОиН Кузбасса",
+    href: "https://xn--42-6kcadhwnl3cfdx.xn--p1ai/",
+    description: "Министерство образования Кузбасса",
   },
   {
     title: "Минпросвещения",
-    href: "https://edu.gov.ru",
+    href: "https://edu.gov.ru/",
     description: "Министерство просвещения Российской Федерации",
   },
   {
+    title: "Рособрнадзор",
+    href: "https://obrnadzor.gov.ru/",
+    description: "Федеральная служба по надзору в сфере образования и науки",
+  },
+  {
+    title: "ФИПИ",
+    href: "https://fipi.ru/",
+    description: "Федеральный институт педагогических измерений",
+  },
+  {
     title: "ФЦТ",
-    href: "https://rustest.ru",
+    href: "https://rustest.ru/",
     description: "Федеральный центр тестирования",
   },
   {
-    title: "Вузы Кузбасса",
-    href: "/regionalnyy-proekt#vuz",
-    description: "Список образовательных организаций региона",
+    title: "РЦОИ России",
+    href: "https://rcoi.ru/",
+    description: "Информационный ресурс региональных центров обработки информации",
   },
 ];

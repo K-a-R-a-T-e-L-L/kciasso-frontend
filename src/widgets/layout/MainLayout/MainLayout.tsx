@@ -1,12 +1,17 @@
-import Header from "@/widgets/layout/Header/Header";
+import { getPublicSiteSettings } from "@/shared/api/adapters/site-settings.adapter";
 import Footer from "@/widgets/layout/Footer/Footer";
+import Header from "@/widgets/layout/Header/Header";
+import PublicContactsBoundary from "@/widgets/sections/UniversalContactsSection/PublicContactsBoundary.client";
 
-export default function MainLayout({ children }: { children: React.ReactNode }) {
+export default async function MainLayout({ children }: { children: React.ReactNode }) {
+  const contacts = await getPublicSiteSettings();
+
   return (
     <>
-      <Header />
+      <Header hotline={contacts.giaHotline} />
       <main>{children}</main>
-      <Footer />
+      <PublicContactsBoundary contacts={contacts} />
+      <Footer contacts={contacts} />
     </>
   );
 }

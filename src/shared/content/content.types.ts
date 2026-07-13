@@ -5,6 +5,7 @@ export type CardItem = {
   href: string;
   description: string;
   badge?: string;
+  logoSrc?: string;
 };
 
 export type HubPageData = {
@@ -48,7 +49,14 @@ export type ExamPageData = {
 export type ContactEntry = {
   label: string;
   value: string;
-  href?: string;
+  href: string;
+};
+
+export type SiteContacts = {
+  giaHotline: ContactEntry;
+  informationPhone: ContactEntry;
+  egeTrustPhone: ContactEntry;
+  email: ContactEntry;
 };
 
 export type NewsCategoryId = string;
@@ -66,5 +74,16 @@ export type NewsItem = {
   publishedAt: string;
   dateLabel: string;
   category: NewsCategoryId;
+  categoryTitle?: string;
+  coverImageUrl?: string | null;
   content: string[];
+};
+
+export type NewsPreviewItem = {
+  title: string;
+  date: string;
+  href: string;
+  text: string;
+  categoryTitle: string;
+  coverImageUrl?: string | null;
 };

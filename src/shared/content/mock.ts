@@ -11,7 +11,7 @@ export type {
 } from "@/shared/content/content.types";
 
 export { aboutHub } from "@/shared/content/about.mock";
-export { contacts, primaryContacts } from "@/shared/content/contacts.mock";
+export { defaultSiteSettingsDto, organizationProfile } from "@/shared/content/default-site-settings";
 export { gia11Page, gia9Page, giaReferenceHub, giaReferencePages } from "@/shared/content/gia.mock";
 export { homeDirections, latestNewsPreview, newsPreview } from "@/shared/content/home.mock";
 export {

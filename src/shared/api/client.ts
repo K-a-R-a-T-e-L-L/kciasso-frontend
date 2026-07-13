@@ -55,7 +55,7 @@ export default async function client<TData = unknown, TError = unknown, TVariabl
     config.baseURL ||
     process.env.API_BASE_URL ||
     process.env.NEXT_PUBLIC_API_URL ||
-    "http://localhost:3000";
+    "http://localhost:4000";
   const rawUrl = config.url ?? "";
   const url = new URL(rawUrl, baseURL.endsWith("/") ? baseURL : `${baseURL}/`);
 

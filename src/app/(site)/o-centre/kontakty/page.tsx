@@ -1,5 +1,5 @@
 import ContactsPage from "@/widgets/pages/ContactsPage/ContactsPage";
 
-export default function Page() {
+export default async function Page() {
   return <ContactsPage />;
 }

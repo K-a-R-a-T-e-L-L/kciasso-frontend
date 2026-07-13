@@ -1,17 +1,20 @@
-import PageHero from "@/shared/ui/PageHero/PageHero";
+import { getPrimaryContacts, getPublicSiteSettings } from "@/shared/api/adapters/site-settings.adapter";
+import { organizationProfile } from "@/shared/content/default-site-settings";
+import { aboutCenterTabs, contactEmployees } from "@/shared/content/aboutCenter";
 import Container from "@/shared/ui/Container/Container";
+import PageHero from "@/shared/ui/PageHero/PageHero";
 import Section from "@/shared/ui/Section/Section";
 import LinkTabsNav from "@/shared/ui/TabsNav/LinkTabsNav";
-import { contacts, primaryContacts } from "@/shared/content/contacts.mock";
-import { aboutCenterTabs, contactEmployees } from "@/shared/content/aboutCenter";
 import cls from "./ContactsPage.module.scss";
 
-export default function ContactsPage() {
+export default async function ContactsPage() {
+  const contacts = await getPublicSiteSettings();
+  const primaryContacts = getPrimaryContacts(contacts);
   const cards = [
-    { label: "Приемная", value: contacts.phone, href: "tel:+73842587025" },
-    { label: "Электронная почта", value: contacts.email, href: `mailto:${contacts.email}` },
-    { label: "Адрес", value: "650000, г. Кемерово, пр-т Кузнецкий, 26" },
-    { label: "Режим работы", value: "Пн - Пт с 8:30 до 17:30" },
+    { label: "Приемная", value: contacts.giaHotline.value, href: contacts.giaHotline.href },
+    { label: "Электронная почта", value: contacts.email.value, href: contacts.email.href },
+    { label: "Адрес", value: organizationProfile.address },
+    { label: "Режим работы", value: organizationProfile.worktime },
   ];
 
   return (
@@ -57,7 +60,7 @@ export default function ContactsPage() {
               {primaryContacts.map((item) => (
                 <div key={item.label} className={cls.hotlineItem}>
                   <span>{item.label}</span>
-                  {item.href ? <a href={item.href}>{item.value}</a> : <strong>{item.value}</strong>}
+                  <a href={item.href}>{item.value}</a>
                 </div>
               ))}
             </div>

@@ -7,10 +7,13 @@ export { adminNewsControllerGetNews } from "./adminNewsController/adminNewsContr
 export { adminNewsControllerGetNewsById } from "./adminNewsController/adminNewsControllerGetNewsById";
 export { adminNewsControllerUpdateCategory } from "./adminNewsController/adminNewsControllerUpdateCategory";
 export { adminNewsControllerUpdateNews } from "./adminNewsController/adminNewsControllerUpdateNews";
+export { adminSiteSettingsControllerGetSettings } from "./adminSiteSettingsController/adminSiteSettingsControllerGetSettings";
+export { adminSiteSettingsControllerUpdateSettings } from "./adminSiteSettingsController/adminSiteSettingsControllerUpdateSettings";
 export { operations } from "./operations";
 export { publicNewsControllerGetCategories } from "./publicNewsController/publicNewsControllerGetCategories";
 export { publicNewsControllerGetNews } from "./publicNewsController/publicNewsControllerGetNews";
 export { publicNewsControllerGetNewsBySlug } from "./publicNewsController/publicNewsControllerGetNewsBySlug";
+export { publicSiteSettingsControllerGetSettings } from "./publicSiteSettingsController/publicSiteSettingsControllerGetSettings";
 export { userControllerAuthenticate } from "./usersController/userControllerAuthenticate";
 export { userControllerCreateAdminUser } from "./usersController/userControllerCreateAdminUser";
 export { userControllerDeleteAdminUser } from "./usersController/userControllerDeleteAdminUser";

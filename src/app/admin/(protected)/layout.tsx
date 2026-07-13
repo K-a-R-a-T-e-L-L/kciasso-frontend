@@ -1,14 +1,34 @@
 import Link from "next/link";
 import { ReactNode } from "react";
+import type { CurrentUserDto } from "@/shared/api/generated/types";
+import { isAdminApiTransportError } from "@/shared/admin/api-error";
 import { requireAdmin } from "@/shared/admin/auth";
+import AdminBackendUnavailable from "@/widgets/admin/AdminBackendUnavailable/AdminBackendUnavailable";
 import LogoutButton from "@/widgets/admin/LogoutButton/LogoutButton.client";
 import cls from "@/widgets/admin/AdminShell/AdminShell.module.scss";
 
 export default async function Layout({ children }: { children: ReactNode }) {
-  const admin = await requireAdmin();
+  let admin: CurrentUserDto;
+
+  try {
+    admin = await requireAdmin();
+  } catch (error) {
+    if (isAdminApiTransportError(error)) {
+      return (
+        <main className={cls.page}>
+          <AdminBackendUnavailable retryHref="/admin" />
+        </main>
+      );
+    }
+
+    throw error;
+  }
+
   const canManageNews = admin.isSuperAdmin || admin.permissions.includes("news");
+  const canManageSiteSettings = admin.isSuperAdmin || admin.permissions.includes("site-settings");
   const navigation = [
     canManageNews ? { href: "/admin/news", title: "Новости" } : null,
+    canManageSiteSettings ? { href: "/admin/settings", title: "Настройки сайта" } : null,
     admin.isSuperAdmin ? { href: "/admin/users", title: "Пользователи" } : null,
   ].filter(Boolean) as { href: string; title: string }[];
 
@@ -19,7 +39,7 @@ export default async function Layout({ children }: { children: ReactNode }) {
           <div className={cls.brand}>
             <span className={cls.eyebrow}>Admin</span>
             <strong>ГКУ &quot;КЦИАССО&quot;</strong>
-            <p>Управление новостями и публикациями.</p>
+            <p>Управление новостями, контактами и публикациями.</p>
           </div>
 
           <nav className={cls.nav}>

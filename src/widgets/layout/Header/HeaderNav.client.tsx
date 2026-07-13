@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
+import type { ContactEntry } from "@/shared/content/content.types";
 import { navigation, type NavItem } from "@/shared/config/navigation";
 import cls from "./Header.module.scss";
 
@@ -10,11 +11,15 @@ type ActiveDropdown = {
   centerX: number;
 } | null;
 
+type Props = {
+  hotline: ContactEntry;
+};
+
 function isHashLink(href: string) {
   return href.startsWith("/") && href.includes("#");
 }
 
-export default function HeaderNav() {
+export default function HeaderNav({ hotline }: Props) {
   const [active, setActive] = useState<ActiveDropdown>(null);
   const activeItem = navigation.find((item) => item.title === active?.title);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -65,9 +70,17 @@ export default function HeaderNav() {
           </div>
         ))}
       </nav>
-      <Link className={cls.contactButton} href="/o-centre/kontakty">
-        Контакты
-      </Link>
+
+      <a className={cls.hotlineCta} href={hotline.href}>
+        <span className={cls.hotlineIcon} aria-hidden="true">
+          {"\u260E"}
+        </span>
+        <span className={cls.hotlineBody}>
+          <span>{hotline.label}</span>
+          <strong>{hotline.value}</strong>
+        </span>
+      </a>
+
       {activeItem ? (
         <NavigationPanel
           item={activeItem}
@@ -100,10 +113,10 @@ function NavigationPanel({
           <Link href={item.href}>Перейти в раздел</Link>
         </div>
         <div className={cls.panelColumns}>
-              {item.groups.map((group) => (
+          {item.groups.map((group) => (
             <div key={group.title} className={cls.panelGroup}>
               <h4>{group.title}</h4>
-              {group.items.map((link) => (
+              {group.items.map((link) =>
                 isHashLink(link.href) ? (
                   <a key={link.href} href={link.href}>
                     {link.title}
@@ -112,8 +125,8 @@ function NavigationPanel({
                   <Link key={link.href} href={link.href}>
                     {link.title}
                   </Link>
-                )
-              ))}
+                ),
+              )}
             </div>
           ))}
         </div>
@@ -133,7 +146,7 @@ function NavigationPanel({
         <Link href={item.href}>Открыть раздел</Link>
       </div>
       <div className={cls.dropdownList}>
-        {item.items?.map((link) => (
+        {item.items?.map((link) =>
           isHashLink(link.href) ? (
             <a key={link.href} href={link.href}>
               {link.title}
@@ -142,8 +155,8 @@ function NavigationPanel({
             <Link key={link.href} href={link.href}>
               {link.title}
             </Link>
-          )
-        ))}
+          ),
+        )}
       </div>
     </div>
   );

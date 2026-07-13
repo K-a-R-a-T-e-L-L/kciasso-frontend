@@ -1,24 +1,30 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import Link from "next/link";
+import type { ContactEntry } from "@/shared/content/content.types";
 import { navigation } from "@/shared/config/navigation";
 import cls from "./Header.module.scss";
 
 const CLOSE_DURATION_MS = 240;
 const DEFAULT_EXPANDED_SECTION = "Главная";
+
 const mobileNavigation = navigation.map((item) => ({
   title: item.title,
   href: item.href,
   children: item.groups?.flatMap((group) => group.items) ?? item.items ?? [],
 }));
 
+type Props = {
+  hotline: ContactEntry;
+};
+
 function isHashLink(href: string) {
   return href.startsWith("/") && href.includes("#");
 }
 
-export default function HeaderMobileMenu() {
+export default function HeaderMobileMenu({ hotline }: Props) {
   const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(DEFAULT_EXPANDED_SECTION);
@@ -92,6 +98,12 @@ export default function HeaderMobileMenu() {
                 <div className={cls.mobileTop}>
                   <strong>Разделы сайта</strong>
                 </div>
+
+                <a className={cls.mobileHotline} href={hotline.href}>
+                  <span className={cls.mobileHotlineLabel}>{hotline.label}</span>
+                  <span className={cls.mobileHotlineValue}>{hotline.value}</span>
+                </a>
+
                 <div className={cls.mobileLinks}>
                   {mobileNavigation.map((item) => {
                     const children = item.children;
@@ -142,9 +154,6 @@ export default function HeaderMobileMenu() {
                     );
                   })}
                 </div>
-                <Link className={cls.mobileContact} href="/o-centre/kontakty" onClick={closeMenu}>
-                  Контакты
-                </Link>
               </div>
             </div>,
             portalTarget,

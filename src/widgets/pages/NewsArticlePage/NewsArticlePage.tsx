@@ -58,6 +58,7 @@ export default async function NewsArticlePage({ item }: Props) {
                       date={entry.dateLabel}
                       href={`/news/${entry.slug}`}
                       text={entry.excerpt}
+                      category={entry.categoryTitle}
                     />
                   ))}
                 </div>

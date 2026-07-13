@@ -1,0 +1,29 @@
+{
+  "type": "object",
+  "properties": {
+    "giaHotlinePhone": { "type": "string" },
+    "informationPhone": { "type": "string" },
+    "egeTrustPhone": { "type": "string" },
+    "email": { "type": "string" },
+    "homeSectionsOrder": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "home.quick-access",
+          "home.resources",
+          "home.gia-reference",
+          "home.official-resources"
+        ]
+      }
+    }
+  },
+  "required": [
+    "giaHotlinePhone",
+    "informationPhone",
+    "egeTrustPhone",
+    "email",
+    "homeSectionsOrder"
+  ],
+  "x-readme-ref-name": "PublicSiteSettingsResponseDto"
+}

@@ -1,0 +1,22 @@
+{
+  "type": "object",
+  "properties": {
+    "homeSectionsOrder": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "home.quick-access",
+          "home.resources",
+          "home.gia-reference",
+          "home.official-resources"
+        ]
+      }
+    },
+    "giaHotlinePhone": { "type": "string" },
+    "informationPhone": { "type": "string" },
+    "egeTrustPhone": { "type": "string" },
+    "email": { "type": "string" }
+  },
+  "x-readme-ref-name": "UpdateSiteSettingsDto"
+}

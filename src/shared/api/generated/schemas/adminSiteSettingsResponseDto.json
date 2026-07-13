@@ -1,0 +1,33 @@
+{
+  "type": "object",
+  "properties": {
+    "giaHotlinePhone": { "type": "string" },
+    "informationPhone": { "type": "string" },
+    "egeTrustPhone": { "type": "string" },
+    "email": { "type": "string" },
+    "homeSectionsOrder": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "home.quick-access",
+          "home.resources",
+          "home.gia-reference",
+          "home.official-resources"
+        ]
+      }
+    },
+    "createdAt": { "format": "date-time", "type": "string" },
+    "updatedAt": { "format": "date-time", "type": "string" }
+  },
+  "required": [
+    "giaHotlinePhone",
+    "informationPhone",
+    "egeTrustPhone",
+    "email",
+    "homeSectionsOrder",
+    "createdAt",
+    "updatedAt"
+  ],
+  "x-readme-ref-name": "AdminSiteSettingsResponseDto"
+}

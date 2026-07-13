@@ -10,7 +10,7 @@ import type {
   NewsListItemDto,
   PublicNewsControllerGetNewsQueryParams,
 } from "@/shared/api/generated/types";
-import type { NewsCategory, NewsItem } from "@/shared/content/content.types";
+import type { NewsCategory, NewsItem, NewsPreviewItem } from "@/shared/content/content.types";
 import {
   getNewsArchive as getMockNewsArchive,
   getNewsBySlug as getMockNewsBySlug,
@@ -33,13 +33,6 @@ type NewsArchiveResult = {
   totalItems: number;
   selectedCategory: string | null;
   categories: NewsCategory[];
-};
-
-type NewsPreviewItem = {
-  title: string;
-  date: string;
-  href: string;
-  text: string;
 };
 
 const DEFAULT_CATEGORY: NewsCategory = {
@@ -110,34 +103,46 @@ function mapCategory(dto?: NewsCategoryDto | null): NewsCategory {
 }
 
 function mapListItem(dto: NewsListItemDto): NewsItem {
+  const category = mapCategory(dto.category);
+
   return {
     slug: dto.slug,
     title: dto.title,
     excerpt: dto.excerpt,
     publishedAt: dto.publishedAt ?? "",
     dateLabel: toDateLabel(dto.publishedAt),
-    category: mapCategory(dto.category).id,
+    category: category.id,
+    categoryTitle: category.title,
+    coverImageUrl: dto.coverImageUrl ?? null,
     content: [],
   };
 }
 
 function mapPreviewItem(dto: NewsListItemDto): NewsPreviewItem {
+  const category = mapCategory(dto.category);
+
   return {
     title: dto.title,
     date: toDateLabel(dto.publishedAt),
     href: `/news/${dto.slug}`,
     text: dto.excerpt,
+    categoryTitle: category.title,
+    coverImageUrl: dto.coverImageUrl ?? null,
   };
 }
 
 function mapArticle(dto: NewsArticleDto): NewsItem {
+  const category = mapCategory(dto.category);
+
   return {
     slug: dto.slug,
     title: dto.title,
     excerpt: dto.excerpt,
     publishedAt: dto.publishedAt ?? "",
     dateLabel: toDateLabel(dto.publishedAt),
-    category: mapCategory(dto.category).id,
+    category: category.id,
+    categoryTitle: category.title,
+    coverImageUrl: dto.coverImageUrl ?? null,
     content: toParagraphs(dto.content, dto.excerpt),
   };
 }
@@ -270,7 +275,7 @@ export async function getLatestNewsPreview() {
   try {
     const archive = await publicNewsControllerGetNews({
       page: 1,
-      limit: latestNewsPreview.length || 3,
+      limit: 3,
     });
 
     return archive.items.map(mapPreviewItem);

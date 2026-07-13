@@ -43,10 +43,13 @@
     width: 100%;
     margin: 0 0 22px;
     overflow-x: auto;
+    overflow-y: hidden;
     overscroll-behavior-x: contain;
     padding: 0 0 6px;
     scroll-snap-type: x proximity;
     scrollbar-width: none;
+    max-width: 100%;
+    overscroll-behavior-inline: contain;
 
     &::-webkit-scrollbar {
       display: none;

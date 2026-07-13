@@ -75,6 +75,24 @@ export type {
 } from "./AdminNewsControllerUpdateNews";
 export type { AdminNewsDto } from "./AdminNewsDto";
 export type { AdminSectionDto } from "./AdminSectionDto";
+export type {
+  AdminSiteSettingsControllerGetSettings200,
+  AdminSiteSettingsControllerGetSettings403,
+  AdminSiteSettingsControllerGetSettingsQuery,
+  AdminSiteSettingsControllerGetSettingsQueryResponse,
+} from "./AdminSiteSettingsControllerGetSettings";
+export type {
+  AdminSiteSettingsControllerUpdateSettings200,
+  AdminSiteSettingsControllerUpdateSettings400,
+  AdminSiteSettingsControllerUpdateSettings403,
+  AdminSiteSettingsControllerUpdateSettingsMutation,
+  AdminSiteSettingsControllerUpdateSettingsMutationRequest,
+  AdminSiteSettingsControllerUpdateSettingsMutationResponse,
+} from "./AdminSiteSettingsControllerUpdateSettings";
+export type {
+  AdminSiteSettingsResponseDto,
+  AdminSiteSettingsResponseDtoHomeSectionsOrderEnumKey,
+} from "./AdminSiteSettingsResponseDto";
 export type { AdminUserDto } from "./AdminUserDto";
 export type { AdminUserUpdateDto } from "./AdminUserUpdateDto";
 export type { CreateAdminUserDto } from "./CreateAdminUserDto";
@@ -111,10 +129,23 @@ export type {
   PublicNewsControllerGetNewsBySlugQuery,
   PublicNewsControllerGetNewsBySlugQueryResponse,
 } from "./PublicNewsControllerGetNewsBySlug";
+export type {
+  PublicSiteSettingsControllerGetSettings200,
+  PublicSiteSettingsControllerGetSettingsQuery,
+  PublicSiteSettingsControllerGetSettingsQueryResponse,
+} from "./PublicSiteSettingsControllerGetSettings";
+export type {
+  PublicSiteSettingsResponseDto,
+  PublicSiteSettingsResponseDtoHomeSectionsOrderEnumKey,
+} from "./PublicSiteSettingsResponseDto";
 export type { Section } from "./Section";
 export type { Session } from "./Session";
 export type { UpdateNewsCategoryDto } from "./UpdateNewsCategoryDto";
 export type { UpdateNewsDto } from "./UpdateNewsDto";
+export type {
+  UpdateSiteSettingsDto,
+  UpdateSiteSettingsDtoHomeSectionsOrderEnumKey,
+} from "./UpdateSiteSettingsDto";
 export type { UpdateUserDto } from "./UpdateUserDto";
 export type { UpdateUserPermissionsDto } from "./UpdateUserPermissionsDto";
 export type { User } from "./User";
@@ -218,5 +249,8 @@ export type {
 } from "./UserControllerUpdateUserPermissions";
 export type { UserPermissionsDto } from "./UserPermissionsDto";
 export type { UserSectionPermission } from "./UserSectionPermission";
+export { adminSiteSettingsResponseDtoHomeSectionsOrderEnum } from "./AdminSiteSettingsResponseDto";
 export { errorDtoErrorMessageEnum } from "./ErrorDto";
 export { newsStatusEnum } from "./NewsStatus";
+export { publicSiteSettingsResponseDtoHomeSectionsOrderEnum } from "./PublicSiteSettingsResponseDto";
+export { updateSiteSettingsDtoHomeSectionsOrderEnum } from "./UpdateSiteSettingsDto";

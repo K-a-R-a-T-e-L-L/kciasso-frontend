@@ -540,6 +540,8 @@ export type NewsItem = {
   publishedAt: string;
   dateLabel: string;
   category: NewsCategoryId;
+  categoryTitle?: string;
+  coverImageUrl?: string | null;
   content: string[];
 };
 
@@ -778,4 +780,6 @@ export const latestNewsPreview = newsItems.slice(0, 3).map((item) => ({
   date: item.dateLabel,
   href: `/news/${item.slug}`,
   text: item.excerpt,
+  categoryTitle: newsCategoryMap[item.category]?.title ?? "",
+  coverImageUrl: item.coverImageUrl ?? null,
 }));
