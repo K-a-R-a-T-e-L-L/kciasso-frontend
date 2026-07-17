@@ -22,6 +22,8 @@ export { adminNewsControllerGetNews } from "./adminNewsController/adminNewsContr
 export { adminNewsControllerGetNewsById } from "./adminNewsController/adminNewsControllerGetNewsById";
 export { adminNewsControllerUpdateCategory } from "./adminNewsController/adminNewsControllerUpdateCategory";
 export { adminNewsControllerUpdateNews } from "./adminNewsController/adminNewsControllerUpdateNews";
+export { adminNewsMediaControllerRemoveUnreferenced } from "./adminNewsMediaController/adminNewsMediaControllerRemoveUnreferenced";
+export { adminNewsMediaControllerUpload } from "./adminNewsMediaController/adminNewsMediaControllerUpload";
 export { adminSiteSettingsControllerGetSettings } from "./adminSiteSettingsController/adminSiteSettingsControllerGetSettings";
 export { adminSiteSettingsControllerUpdateSettings } from "./adminSiteSettingsController/adminSiteSettingsControllerUpdateSettings";
 export { operations } from "./operations";
@@ -31,17 +33,14 @@ export { publicDocumentsControllerList } from "./publicDocumentsController/publi
 export { publicNewsControllerGetCategories } from "./publicNewsController/publicNewsControllerGetCategories";
 export { publicNewsControllerGetNews } from "./publicNewsController/publicNewsControllerGetNews";
 export { publicNewsControllerGetNewsBySlug } from "./publicNewsController/publicNewsControllerGetNewsBySlug";
+export { publicNewsMediaControllerGet } from "./publicNewsMediaController/publicNewsMediaControllerGet";
 export { publicSiteSettingsControllerGetSettings } from "./publicSiteSettingsController/publicSiteSettingsControllerGetSettings";
 export { userControllerAuthenticate } from "./usersController/userControllerAuthenticate";
 export { userControllerCreateAdminUser } from "./usersController/userControllerCreateAdminUser";
 export { userControllerDeleteAdminUser } from "./usersController/userControllerDeleteAdminUser";
 export { userControllerGet } from "./usersController/userControllerGet";
-export { userControllerGetAdminSections } from "./usersController/userControllerGetAdminSections";
 export { userControllerGetAdminUserById } from "./usersController/userControllerGetAdminUserById";
 export { userControllerGetAdminUsers } from "./usersController/userControllerGetAdminUsers";
-export { userControllerGetUserPermissions } from "./usersController/userControllerGetUserPermissions";
 export { userControllerMe } from "./usersController/userControllerMe";
-export { userControllerRegister } from "./usersController/userControllerRegister";
 export { userControllerUpdate } from "./usersController/userControllerUpdate";
 export { userControllerUpdateAdminUser } from "./usersController/userControllerUpdateAdminUser";
-export { userControllerUpdateUserPermissions } from "./usersController/userControllerUpdateUserPermissions";

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import type { AdminNewsCategoryDto, AdminNewsDto } from "@/shared/api/generated/types";
 import type { NewsFormState } from "./AdminNewsForm.types";
 import { newsFormInitialState } from "./AdminNewsForm.types";
@@ -14,6 +14,9 @@ type Props = {
 };
 
 type PublishMode = "draft" | "publish-now" | "schedule";
+type ImageMode = "file" | "url";
+
+const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
 
 function toDateTimeLocal(value?: string | null) {
   if (!value) {
@@ -54,6 +57,50 @@ function resolveInitialMode(initialData?: AdminNewsDto): PublishMode {
 export default function AdminNewsForm({ categories, initialData, action, submitLabel }: Props) {
   const [state, formAction, pending] = useActionState(action, newsFormInitialState);
   const [publishMode, setPublishMode] = useState<PublishMode>(resolveInitialMode(initialData));
+  const [imageMode, setImageMode] = useState<ImageMode>(initialData?.coverImageUrl ? "url" : "file");
+  const [imageUrl, setImageUrl] = useState(initialData?.coverImageUrl ?? "");
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [filePreviewUrl, setFilePreviewUrl] = useState("");
+  const [imageError, setImageError] = useState<string | null>(null);
+  const [removeCoverImage, setRemoveCoverImage] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const objectUrlRef = useRef<string | null>(null);
+  const previewUrl = selectedImage ? filePreviewUrl : imageMode === "url" ? imageUrl : "";
+
+  useEffect(() => {
+    return () => {
+      if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
+    };
+  }, []);
+
+  const clearSelectedImage = () => {
+    if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
+    objectUrlRef.current = null;
+    setSelectedImage(null);
+    setFilePreviewUrl("");
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const selectImage = (file: File | null) => {
+    setImageError(null);
+    clearSelectedImage();
+    if (file && file.size > MAX_IMAGE_BYTES) {
+      setImageError("Размер изображения не должен превышать 10 МБ.");
+      return;
+    }
+    if (file) {
+      objectUrlRef.current = URL.createObjectURL(file);
+      setFilePreviewUrl(objectUrlRef.current);
+    }
+    setSelectedImage(file);
+    setRemoveCoverImage(false);
+  };
+
+  const removeImage = () => {
+    clearSelectedImage();
+    setImageUrl("");
+    setRemoveCoverImage(true);
+  };
 
   return (
     <form className={cls.form} action={formAction}>
@@ -90,10 +137,36 @@ export default function AdminNewsForm({ categories, initialData, action, submitL
           <textarea name="content" rows={14} defaultValue={initialData?.content ?? ""} required />
         </label>
 
-        <label className={cls.spanFull}>
-          <span>Cover image URL</span>
-          <input type="url" name="coverImageUrl" defaultValue={initialData?.coverImageUrl ?? ""} />
-        </label>
+        <fieldset className={`${cls.imageField} ${cls.spanFull}`}>
+          <legend>Изображение новости</legend>
+          <div className={cls.imageModeSwitch}>
+            <button type="button" data-active={imageMode === "file"} onClick={() => { setImageMode("file"); clearSelectedImage(); setImageError(null); }}>Загрузить файл</button>
+            <button type="button" data-active={imageMode === "url"} onClick={() => { setImageMode("url"); clearSelectedImage(); setImageError(null); }}>Указать URL</button>
+          </div>
+          {imageMode === "file" ? (
+            <label>
+              <span>Файл изображения</span>
+              <input ref={fileInputRef} type="file" name="coverImageFile" accept="image/jpeg,image/png,image/webp" onChange={(event) => selectImage(event.target.files?.[0] ?? null)} />
+            </label>
+          ) : (
+            <label>
+              <span>URL изображения</span>
+              <input type="url" name="coverImageUrl" value={imageUrl} onChange={(event) => { setImageUrl(event.target.value); setRemoveCoverImage(false); }} />
+            </label>
+          )}
+          <input type="hidden" name="removeCoverImage" value={removeCoverImage ? "true" : "false"} />
+          {imageError ? <p className={cls.error} role="alert">{imageError}</p> : null}
+          {previewUrl ? (
+            <div className={cls.imagePreview}>
+              {/* eslint-disable-next-line @next/next/no-img-element -- preview supports blob and arbitrary external URLs */}
+              <img src={previewUrl} alt="Предпросмотр изображения новости" />
+              <div>
+                {imageMode === "file" ? <button type="button" onClick={() => fileInputRef.current?.click()}>Заменить изображение</button> : null}
+                <button type="button" onClick={removeImage}>Удалить изображение</button>
+              </div>
+            </div>
+          ) : null}
+        </fieldset>
 
         <label>
           <span>Статус публикации</span>

@@ -62,7 +62,14 @@ export async function requireAdmin() {
 }
 
 export function hasAdminSectionPermission(user: CurrentUserDto, sectionId: string) {
-  return user.isSuperAdmin || user.permissions.includes(sectionId);
+  if (user.role === "SUPER_ADMIN") return true;
+  if (sectionId === "news") return user.canManageNews;
+  if (sectionId === "site-settings") return user.canManageSiteSettings;
+  if (sectionId === "documents") {
+    return user.documentsAccessMode === "ALL" ||
+      (user.documentsAccessMode === "SELECTED_GROUPS" && user.documentGroups.length > 0);
+  }
+  return false;
 }
 
 export async function requireAdminSection(sectionId: string) {
@@ -78,7 +85,7 @@ export async function requireAdminSection(sectionId: string) {
 export async function requireSuperAdmin() {
   const user = await requireAdmin();
 
-  if (!user.isSuperAdmin) {
+  if (user.role !== "SUPER_ADMIN") {
     redirect("/admin/forbidden");
   }
 

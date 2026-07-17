@@ -7,22 +7,24 @@ import {
   createAdminUser,
   deleteAdminUser,
   updateAdminUser,
-  updateAdminUserPermissions,
 } from "@/shared/api/adapters/admin-users.adapter";
+import type { CreateAdminUserDto } from "@/shared/api/generated/types";
 import type { AdminUserFormState } from "@/widgets/admin/AdminUserForm/AdminUserForm.types";
 
 function parseUserFormData(formData: FormData) {
-  const rawIsSuperAdmin = String(formData.get("isSuperAdmin") ?? "").trim().toLowerCase();
-
   return {
     name: String(formData.get("name") ?? "").trim(),
     email: String(formData.get("email") ?? "").trim(),
     password: String(formData.get("password") ?? ""),
-    isSuperAdmin: rawIsSuperAdmin === "on" || rawIsSuperAdmin === "true",
-    sectionIds: formData
-      .getAll("sectionIds")
+    role: String(formData.get("role") ?? "ADMIN") as "SUPER_ADMIN" | "ADMIN",
+    isActive: formData.get("isActive") === "on",
+    canManageSiteSettings: formData.get("canManageSiteSettings") === "on",
+    canManageNews: formData.get("canManageNews") === "on",
+    documentsAccessMode: String(formData.get("documentsAccessMode") ?? "NONE") as "NONE" | "ALL" | "SELECTED_GROUPS",
+    documentGroups: formData
+      .getAll("documentGroups")
       .map((item) => String(item).trim())
-      .filter(Boolean),
+      .filter(Boolean) as CreateAdminUserDto["documentGroups"],
   };
 }
 
@@ -105,10 +107,13 @@ export async function updateUserAction(
     await updateAdminUser(token, id, {
       name: payload.name,
       email: payload.email,
-      isSuperAdmin: payload.isSuperAdmin,
-    });
-    await updateAdminUserPermissions(token, id, {
-      sectionIds: payload.sectionIds,
+      role: payload.role,
+      isActive: payload.isActive,
+      canManageSiteSettings: payload.canManageSiteSettings,
+      canManageNews: payload.canManageNews,
+      documentsAccessMode: payload.documentsAccessMode,
+      documentGroups: payload.documentGroups,
+      ...(payload.password ? { password: payload.password } : {}),
     });
   } catch (error) {
     return handleUserError(error, "Не удалось сохранить пользователя.");

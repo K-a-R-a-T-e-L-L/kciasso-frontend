@@ -58,21 +58,18 @@ export default async function Page() {
                     <span>{item.email}</span>
                   </td>
                   <td>
-                    <span className={item.isSuperAdmin ? cls.statusPublished : cls.statusDraft}>
-                      {item.isSuperAdmin ? "Super-admin" : "Admin"}
+                    <span className={item.role === "SUPER_ADMIN" ? cls.statusPublished : cls.statusDraft}>
+                      {item.role === "SUPER_ADMIN" ? "Super-admin" : "Admin"} · {item.isActive ? "активен" : "отключён"}
                     </span>
                   </td>
                   <td>
                     <div className={cls.metaList}>
-                      {item.permissions.length > 0 ? (
-                        item.permissions.map((permission) => (
-                          <span key={permission} className={cls.metaBadge}>
-                            {permission}
-                          </span>
-                        ))
-                      ) : (
-                        <span className={cls.metaBadge}>Без прав</span>
-                      )}
+                      {item.role === "SUPER_ADMIN" ? <span className={cls.metaBadge}>Полный административный доступ</span> : null}
+                      {item.canManageSiteSettings ? <span className={cls.metaBadge}>Настройки сайта</span> : null}
+                      {item.canManageNews ? <span className={cls.metaBadge}>Новости</span> : null}
+                      {item.documentsAccessMode === "ALL" ? <span className={cls.metaBadge}>Все документы</span> : null}
+                      {item.documentsAccessMode === "SELECTED_GROUPS" && item.documentGroups.length > 0 ? <span className={cls.metaBadge}>Документы: {item.documentGroups.length} групп</span> : null}
+                      {item.role === "ADMIN" && !item.canManageSiteSettings && !item.canManageNews && (item.documentsAccessMode === "NONE" || item.documentGroups.length === 0) ? <span className={cls.metaBadge}>Без доступа к контенту</span> : null}
                     </div>
                   </td>
                   <td>

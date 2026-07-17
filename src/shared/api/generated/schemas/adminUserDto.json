@@ -1,12 +1,35 @@
 {
   "type": "object",
   "properties": {
+    "role": { "type": "string", "enum": ["SUPER_ADMIN", "ADMIN"] },
+    "isActive": { "type": "boolean" },
+    "canManageSiteSettings": { "type": "boolean" },
+    "canManageNews": { "type": "boolean" },
+    "documentsAccessMode": {
+      "type": "string",
+      "enum": ["NONE", "ALL", "SELECTED_GROUPS"]
+    },
+    "documentGroups": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["GIA_9", "GIA_11", "GIA", "QUALITY", "REGIONAL", "ABOUT"]
+      }
+    },
     "id": { "type": "number" },
     "name": { "type": "string" },
-    "email": { "type": "string" },
-    "isSuperAdmin": { "type": "boolean" },
-    "permissions": { "type": "array", "items": { "type": "string" } }
+    "email": { "type": "string" }
   },
-  "required": ["id", "name", "email", "isSuperAdmin", "permissions"],
+  "required": [
+    "role",
+    "isActive",
+    "canManageSiteSettings",
+    "canManageNews",
+    "documentsAccessMode",
+    "documentGroups",
+    "id",
+    "name",
+    "email"
+  ],
   "x-readme-ref-name": "AdminUserDto"
 }

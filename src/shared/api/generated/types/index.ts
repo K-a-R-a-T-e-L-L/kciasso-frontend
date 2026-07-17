@@ -100,7 +100,18 @@ export type {
   AdminNewsControllerUpdateNewsPathParams,
 } from "./AdminNewsControllerUpdateNews";
 export type { AdminNewsDto } from "./AdminNewsDto";
-export type { AdminSectionDto } from "./AdminSectionDto";
+export type {
+  AdminNewsMediaControllerRemoveUnreferenced204,
+  AdminNewsMediaControllerRemoveUnreferencedMutation,
+  AdminNewsMediaControllerRemoveUnreferencedMutationResponse,
+  AdminNewsMediaControllerRemoveUnreferencedPathParams,
+} from "./AdminNewsMediaControllerRemoveUnreferenced";
+export type {
+  AdminNewsMediaControllerUpload201,
+  AdminNewsMediaControllerUploadMutation,
+  AdminNewsMediaControllerUploadMutationRequest,
+  AdminNewsMediaControllerUploadMutationResponse,
+} from "./AdminNewsMediaControllerUpload";
 export type {
   AdminSiteSettingsControllerGetSettings200,
   AdminSiteSettingsControllerGetSettings403,
@@ -119,15 +130,34 @@ export type {
   AdminSiteSettingsResponseDto,
   AdminSiteSettingsResponseDtoHomeSectionsOrderEnumKey,
 } from "./AdminSiteSettingsResponseDto";
-export type { AdminUserDto } from "./AdminUserDto";
-export type { AdminUserUpdateDto } from "./AdminUserUpdateDto";
-export type { CreateAdminUserDto } from "./CreateAdminUserDto";
+export type {
+  AdminUserDto,
+  AdminUserDtoDocumentGroupsEnumKey,
+  AdminUserDtoDocumentsAccessModeEnumKey,
+  AdminUserDtoRoleEnumKey,
+} from "./AdminUserDto";
+export type {
+  AdminUserUpdateDto,
+  AdminUserUpdateDtoDocumentGroupsEnumKey,
+  AdminUserUpdateDtoDocumentsAccessModeEnumKey,
+  AdminUserUpdateDtoRoleEnumKey,
+} from "./AdminUserUpdateDto";
+export type {
+  CreateAdminUserDto,
+  CreateAdminUserDtoDocumentGroupsEnumKey,
+  CreateAdminUserDtoDocumentsAccessModeEnumKey,
+  CreateAdminUserDtoRoleEnumKey,
+} from "./CreateAdminUserDto";
 export type { CreateDocumentShareLinkDto } from "./CreateDocumentShareLinkDto";
 export type { CreateNewsCategoryDto } from "./CreateNewsCategoryDto";
 export type { CreateNewsDto } from "./CreateNewsDto";
-export type { CreateUserDto } from "./CreateUserDto";
 export type { CreatedDocumentShareLinkDto } from "./CreatedDocumentShareLinkDto";
-export type { CurrentUserDto } from "./CurrentUserDto";
+export type {
+  CurrentUserDto,
+  CurrentUserDtoDocumentGroupsEnumKey,
+  CurrentUserDtoDocumentsAccessModeEnumKey,
+  CurrentUserDtoRoleEnumKey,
+} from "./CurrentUserDto";
 export type { Document, DocumentStatusEnumKey } from "./Document";
 export type { DocumentDto, DocumentDtoStatusEnumKey } from "./DocumentDto";
 export type { DocumentPaginationMetaDto } from "./DocumentPaginationMetaDto";
@@ -237,6 +267,7 @@ export type { NewsArticleDto } from "./NewsArticleDto";
 export type { NewsCategory } from "./NewsCategory";
 export type { NewsCategoryDto } from "./NewsCategoryDto";
 export type { NewsListItemDto } from "./NewsListItemDto";
+export type { NewsMediaUploadDto } from "./NewsMediaUploadDto";
 export type { NewsPaginationMetaDto } from "./NewsPaginationMetaDto";
 export type { NewsStatus, NewsStatusEnumKey } from "./NewsStatus";
 export type { PaginatedAdminNewsDto } from "./PaginatedAdminNewsDto";
@@ -286,6 +317,12 @@ export type {
   PublicNewsControllerGetNewsBySlugQueryResponse,
 } from "./PublicNewsControllerGetNewsBySlug";
 export type {
+  PublicNewsMediaControllerGet200,
+  PublicNewsMediaControllerGetPathParams,
+  PublicNewsMediaControllerGetQuery,
+  PublicNewsMediaControllerGetQueryResponse,
+} from "./PublicNewsMediaControllerGet";
+export type {
   PublicSiteSettingsControllerGetSettings200,
   PublicSiteSettingsControllerGetSettingsQuery,
   PublicSiteSettingsControllerGetSettingsQueryResponse,
@@ -311,8 +348,11 @@ export type {
   UpdateSiteSettingsDtoHomeSectionsOrderEnumKey,
 } from "./UpdateSiteSettingsDto";
 export type { UpdateUserDto } from "./UpdateUserDto";
-export type { UpdateUserPermissionsDto } from "./UpdateUserPermissionsDto";
-export type { User } from "./User";
+export type {
+  User,
+  UserDocumentGroupsEnumKey,
+  UserDocumentsAccessModeEnumKey,
+} from "./User";
 export type { UserAuthDto } from "./UserAuthDto";
 export type {
   UserControllerAuthenticate200,
@@ -346,12 +386,6 @@ export type {
   UserControllerGetQueryResponse,
 } from "./UserControllerGet";
 export type {
-  UserControllerGetAdminSections200,
-  UserControllerGetAdminSections403,
-  UserControllerGetAdminSectionsQuery,
-  UserControllerGetAdminSectionsQueryResponse,
-} from "./UserControllerGetAdminSections";
-export type {
   UserControllerGetAdminUserById200,
   UserControllerGetAdminUserById403,
   UserControllerGetAdminUserById404,
@@ -366,26 +400,11 @@ export type {
   UserControllerGetAdminUsersQueryResponse,
 } from "./UserControllerGetAdminUsers";
 export type {
-  UserControllerGetUserPermissions200,
-  UserControllerGetUserPermissions403,
-  UserControllerGetUserPermissions404,
-  UserControllerGetUserPermissionsPathParams,
-  UserControllerGetUserPermissionsQuery,
-  UserControllerGetUserPermissionsQueryResponse,
-} from "./UserControllerGetUserPermissions";
-export type {
   UserControllerMe200,
   UserControllerMe400,
   UserControllerMeQuery,
   UserControllerMeQueryResponse,
 } from "./UserControllerMe";
-export type {
-  UserControllerRegister200,
-  UserControllerRegister400,
-  UserControllerRegisterMutation,
-  UserControllerRegisterMutationRequest,
-  UserControllerRegisterMutationResponse,
-} from "./UserControllerRegister";
 export type {
   UserControllerUpdate200,
   UserControllerUpdate400,
@@ -402,18 +421,20 @@ export type {
   UserControllerUpdateAdminUserMutationResponse,
   UserControllerUpdateAdminUserPathParams,
 } from "./UserControllerUpdateAdminUser";
-export type {
-  UserControllerUpdateUserPermissions200,
-  UserControllerUpdateUserPermissions403,
-  UserControllerUpdateUserPermissions404,
-  UserControllerUpdateUserPermissionsMutation,
-  UserControllerUpdateUserPermissionsMutationRequest,
-  UserControllerUpdateUserPermissionsMutationResponse,
-  UserControllerUpdateUserPermissionsPathParams,
-} from "./UserControllerUpdateUserPermissions";
-export type { UserPermissionsDto } from "./UserPermissionsDto";
 export type { UserSectionPermission } from "./UserSectionPermission";
 export { adminSiteSettingsResponseDtoHomeSectionsOrderEnum } from "./AdminSiteSettingsResponseDto";
+export { adminUserDtoDocumentGroupsEnum } from "./AdminUserDto";
+export { adminUserDtoDocumentsAccessModeEnum } from "./AdminUserDto";
+export { adminUserDtoRoleEnum } from "./AdminUserDto";
+export { adminUserUpdateDtoDocumentGroupsEnum } from "./AdminUserUpdateDto";
+export { adminUserUpdateDtoDocumentsAccessModeEnum } from "./AdminUserUpdateDto";
+export { adminUserUpdateDtoRoleEnum } from "./AdminUserUpdateDto";
+export { createAdminUserDtoDocumentGroupsEnum } from "./CreateAdminUserDto";
+export { createAdminUserDtoDocumentsAccessModeEnum } from "./CreateAdminUserDto";
+export { createAdminUserDtoRoleEnum } from "./CreateAdminUserDto";
+export { currentUserDtoDocumentGroupsEnum } from "./CurrentUserDto";
+export { currentUserDtoDocumentsAccessModeEnum } from "./CurrentUserDto";
+export { currentUserDtoRoleEnum } from "./CurrentUserDto";
 export { documentStatusEnum } from "./Document";
 export { documentDtoStatusEnum } from "./DocumentDto";
 export { documentsControllerListQueryParamsStatusEnum } from "./DocumentsControllerList";
@@ -422,3 +443,5 @@ export { newsStatusEnum } from "./NewsStatus";
 export { publicSiteSettingsResponseDtoHomeSectionsOrderEnum } from "./PublicSiteSettingsResponseDto";
 export { updateDocumentStatusDtoStatusEnum } from "./UpdateDocumentStatusDto";
 export { updateSiteSettingsDtoHomeSectionsOrderEnum } from "./UpdateSiteSettingsDto";
+export { userDocumentGroupsEnum } from "./User";
+export { userDocumentsAccessModeEnum } from "./User";

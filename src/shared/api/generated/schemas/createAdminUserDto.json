@@ -4,9 +4,22 @@
     "name": { "type": "string" },
     "email": { "type": "string" },
     "password": { "type": "string" },
-    "isSuperAdmin": { "type": "boolean" },
-    "sectionIds": { "type": "array", "items": { "type": "string" } }
+    "role": { "type": "string", "enum": ["SUPER_ADMIN", "ADMIN"] },
+    "isActive": { "type": "boolean", "default": true },
+    "canManageSiteSettings": { "type": "boolean", "default": false },
+    "canManageNews": { "type": "boolean", "default": false },
+    "documentsAccessMode": {
+      "type": "string",
+      "enum": ["NONE", "ALL", "SELECTED_GROUPS"]
+    },
+    "documentGroups": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["GIA_9", "GIA_11", "GIA", "QUALITY", "REGIONAL", "ABOUT"]
+      }
+    }
   },
-  "required": ["name", "email", "password"],
+  "required": ["name", "email", "password", "role", "documentsAccessMode"],
   "x-readme-ref-name": "CreateAdminUserDto"
 }

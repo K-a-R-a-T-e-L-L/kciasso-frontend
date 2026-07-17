@@ -3,17 +3,13 @@
  * Do not edit manually.
  */
 
-export type CreateUserDto = {
+export type NewsMediaUploadDto = {
   /**
    * @type string
    */
-  name: string;
+  key: string;
   /**
    * @type string
    */
-  email: string;
-  /**
-   * @type string
-   */
-  password: string;
+  url: string;
 };

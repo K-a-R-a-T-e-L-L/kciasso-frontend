@@ -8,6 +8,8 @@ import {
   adminNewsControllerGetNewsById,
   adminNewsControllerUpdateCategory,
   adminNewsControllerUpdateNews,
+  adminNewsMediaControllerUpload,
+  adminNewsMediaControllerRemoveUnreferenced,
 } from "@/shared/api/generated/clients";
 import type {
   AdminNewsCategoryDto,
@@ -28,6 +30,22 @@ function buildAdminConfig(token: string) {
     },
     skipAuthRedirect: true,
   } as const;
+}
+
+export async function uploadAdminNewsImage(token: string, file: File): Promise<{ key: string; url: string }> {
+  try {
+    return await adminNewsMediaControllerUpload({ file }, buildAdminConfig(token)) as { key: string; url: string };
+  } catch (error) {
+    throw toAdminApiError(error);
+  }
+}
+
+export async function removeUnreferencedAdminNewsImage(token: string, key: string) {
+  try {
+    await adminNewsMediaControllerRemoveUnreferenced(key, buildAdminConfig(token));
+  } catch (error) {
+    throw toAdminApiError(error);
+  }
 }
 
 export async function getAdminNewsList(

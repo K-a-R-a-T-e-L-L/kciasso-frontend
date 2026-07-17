@@ -24,14 +24,15 @@ export default async function Layout({ children }: { children: ReactNode }) {
     throw error;
   }
 
-  const canManageNews = admin.isSuperAdmin || admin.permissions.includes("news");
-  const canManageSiteSettings = admin.isSuperAdmin || admin.permissions.includes("site-settings");
-  const canManageDocuments = admin.isSuperAdmin || admin.permissions.includes("documents");
+  const isSuperAdmin = admin.role === "SUPER_ADMIN";
+  const canManageNews = isSuperAdmin || admin.canManageNews;
+  const canManageSiteSettings = isSuperAdmin || admin.canManageSiteSettings;
+  const canManageDocuments = isSuperAdmin || admin.documentsAccessMode === "ALL" || admin.documentGroups.length > 0;
   const navigation = [
     canManageNews ? { href: "/admin/news", title: "Новости" } : null,
     canManageDocuments ? { href: "/admin/documents", title: "Материалы и документы" } : null,
     canManageSiteSettings ? { href: "/admin/settings", title: "Настройки сайта" } : null,
-    admin.isSuperAdmin ? { href: "/admin/users", title: "Пользователи" } : null,
+    isSuperAdmin ? { href: "/admin/users", title: "Пользователи" } : null,
   ].filter(Boolean) as { href: string; title: string }[];
 
   return (
@@ -54,7 +55,7 @@ export default async function Layout({ children }: { children: ReactNode }) {
 
           <div className={cls.meta}>
             <span>{admin.email}</span>
-            <small>{admin.isSuperAdmin ? "super-admin" : "admin"}</small>
+            <small>{isSuperAdmin ? "super-admin" : "admin"}</small>
           </div>
 
           <LogoutButton />

@@ -8,10 +8,6 @@ export const operations = {
     path: "/api/user/authenticate",
     method: "post",
   },
-  UserController_register: {
-    path: "/api/user/register",
-    method: "post",
-  },
   UserController_get: {
     path: "/api/user",
     method: "get",
@@ -43,18 +39,6 @@ export const operations = {
   UserController_deleteAdminUser: {
     path: "/api/user/admin/users/:id",
     method: "delete",
-  },
-  UserController_getUserPermissions: {
-    path: "/api/user/admin/users/:id/permissions",
-    method: "get",
-  },
-  UserController_updateUserPermissions: {
-    path: "/api/user/admin/users/:id/permissions",
-    method: "patch",
-  },
-  UserController_getAdminSections: {
-    path: "/api/user/admin/sections",
-    method: "get",
   },
   PublicNewsController_getNews: {
     path: "/api/public/news",
@@ -103,6 +87,18 @@ export const operations = {
   AdminNewsController_deleteCategory: {
     path: "/api/admin/news-categories/:id",
     method: "delete",
+  },
+  AdminNewsMediaController_upload: {
+    path: "/api/admin/news/media",
+    method: "post",
+  },
+  AdminNewsMediaController_removeUnreferenced: {
+    path: "/api/admin/news/media/:key",
+    method: "delete",
+  },
+  PublicNewsMediaController_get: {
+    path: "/api/public/news/media/:key",
+    method: "get",
   },
   PublicSiteSettingsController_getSettings: {
     path: "/api/public/site-settings",

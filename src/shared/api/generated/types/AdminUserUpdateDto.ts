@@ -3,6 +3,35 @@
  * Do not edit manually.
  */
 
+export const adminUserUpdateDtoRoleEnum = {
+  SUPER_ADMIN: "SUPER_ADMIN",
+  ADMIN: "ADMIN",
+} as const;
+
+export type AdminUserUpdateDtoRoleEnumKey =
+  (typeof adminUserUpdateDtoRoleEnum)[keyof typeof adminUserUpdateDtoRoleEnum];
+
+export const adminUserUpdateDtoDocumentsAccessModeEnum = {
+  NONE: "NONE",
+  ALL: "ALL",
+  SELECTED_GROUPS: "SELECTED_GROUPS",
+} as const;
+
+export type AdminUserUpdateDtoDocumentsAccessModeEnumKey =
+  (typeof adminUserUpdateDtoDocumentsAccessModeEnum)[keyof typeof adminUserUpdateDtoDocumentsAccessModeEnum];
+
+export const adminUserUpdateDtoDocumentGroupsEnum = {
+  GIA_9: "GIA_9",
+  GIA_11: "GIA_11",
+  GIA: "GIA",
+  QUALITY: "QUALITY",
+  REGIONAL: "REGIONAL",
+  ABOUT: "ABOUT",
+} as const;
+
+export type AdminUserUpdateDtoDocumentGroupsEnumKey =
+  (typeof adminUserUpdateDtoDocumentGroupsEnum)[keyof typeof adminUserUpdateDtoDocumentGroupsEnum];
+
 export type AdminUserUpdateDto = {
   /**
    * @type string | undefined
@@ -13,7 +42,31 @@ export type AdminUserUpdateDto = {
    */
   email?: string;
   /**
+   * @type string | undefined
+   */
+  role?: AdminUserUpdateDtoRoleEnumKey;
+  /**
    * @type boolean | undefined
    */
-  isSuperAdmin?: boolean;
+  isActive?: boolean;
+  /**
+   * @type boolean | undefined
+   */
+  canManageSiteSettings?: boolean;
+  /**
+   * @type boolean | undefined
+   */
+  canManageNews?: boolean;
+  /**
+   * @type string | undefined
+   */
+  documentsAccessMode?: AdminUserUpdateDtoDocumentsAccessModeEnumKey;
+  /**
+   * @type array | undefined
+   */
+  documentGroups?: AdminUserUpdateDtoDocumentGroupsEnumKey[];
+  /**
+   * @type string | undefined
+   */
+  password?: string;
 };

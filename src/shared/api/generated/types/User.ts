@@ -10,6 +10,27 @@ import type { News } from "./News";
 import type { Session } from "./Session";
 import type { UserSectionPermission } from "./UserSectionPermission";
 
+export const userDocumentsAccessModeEnum = {
+  NONE: "NONE",
+  ALL: "ALL",
+  SELECTED_GROUPS: "SELECTED_GROUPS",
+} as const;
+
+export type UserDocumentsAccessModeEnumKey =
+  (typeof userDocumentsAccessModeEnum)[keyof typeof userDocumentsAccessModeEnum];
+
+export const userDocumentGroupsEnum = {
+  GIA_9: "GIA_9",
+  GIA_11: "GIA_11",
+  GIA: "GIA",
+  QUALITY: "QUALITY",
+  REGIONAL: "REGIONAL",
+  ABOUT: "ABOUT",
+} as const;
+
+export type UserDocumentGroupsEnumKey =
+  (typeof userDocumentGroupsEnum)[keyof typeof userDocumentGroupsEnum];
+
 export type User = {
   /**
    * @type integer, int32
@@ -31,6 +52,26 @@ export type User = {
    * @type boolean
    */
   is_super_admin: boolean;
+  /**
+   * @type boolean
+   */
+  is_active: boolean;
+  /**
+   * @type boolean
+   */
+  can_manage_site_settings: boolean;
+  /**
+   * @type boolean
+   */
+  can_manage_news: boolean;
+  /**
+   * @type string
+   */
+  documents_access_mode: UserDocumentsAccessModeEnumKey;
+  /**
+   * @type array
+   */
+  document_groups: UserDocumentGroupsEnumKey[];
   /**
    * @type array | undefined
    */

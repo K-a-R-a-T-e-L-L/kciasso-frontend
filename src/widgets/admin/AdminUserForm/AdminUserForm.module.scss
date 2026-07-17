@@ -24,7 +24,8 @@
     color: var(--color-text);
   }
 
-  input {
+  input,
+  select {
     width: 100%;
     min-height: 50px;
     padding: 0.9rem 1rem;
@@ -35,6 +36,14 @@
     font: inherit;
   }
 }
+
+.preset { justify-self: start; padding: 0.7rem 1rem; border: 0; border-radius: 999px; background: var(--color-primary); color: #fff; font: inherit; font-weight: 800; cursor: pointer; }
+.documentsAccess { display: grid; gap: 0.8rem; margin: 0; padding: 1rem; border: 1px solid var(--color-border); border-radius: 16px; background: #fff; }
+.documentsAccess legend { padding: 0 0.35rem; color: var(--color-text); font-weight: 800; }
+.documentsAccess > label { display: flex; align-items: center; gap: 0.55rem; color: var(--color-text); }
+.documentsAccess input { accent-color: var(--color-primary); }
+.warning { margin: 0; color: #9d6622; }
+.summary { margin: 0; color: var(--color-muted); }
 
 .spanFull {
   grid-column: 1 / -1;

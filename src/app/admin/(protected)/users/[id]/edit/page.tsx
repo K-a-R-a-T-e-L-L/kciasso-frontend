@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { clearAdminTokenCookie, requireSuperAdminToken } from "@/shared/admin/auth";
 import { isAdminApiErrorStatus } from "@/shared/admin/api-error";
-import { getAdminSections, getAdminUserById } from "@/shared/api/adapters/admin-users.adapter";
+import { getAdminUserById } from "@/shared/api/adapters/admin-users.adapter";
 import AdminUserForm from "@/widgets/admin/AdminUserForm/AdminUserForm.client";
 import cls from "@/widgets/admin/AdminShell/AdminShell.module.scss";
 import { updateUserAction } from "../../actions";
@@ -22,10 +22,9 @@ export default async function Page({ params }: Props) {
 
   const { token } = await requireSuperAdminToken();
   let user;
-  let sections;
 
   try {
-    [user, sections] = await Promise.all([getAdminUserById(token, userId), getAdminSections(token)]);
+    user = await getAdminUserById(token, userId);
   } catch (error) {
     if (isAdminApiErrorStatus(error, 401)) {
       await clearAdminTokenCookie();
@@ -54,7 +53,6 @@ export default async function Page({ params }: Props) {
       </div>
 
       <AdminUserForm
-        sections={sections}
         initialData={user}
         action={updateUserAction.bind(null, userId)}
         submitLabel="Сохранить пользователя"

@@ -6,6 +6,20 @@
     "email": { "type": "string" },
     "password": { "type": "string" },
     "is_super_admin": { "type": "boolean" },
+    "is_active": { "type": "boolean" },
+    "can_manage_site_settings": { "type": "boolean" },
+    "can_manage_news": { "type": "boolean" },
+    "documents_access_mode": {
+      "type": "string",
+      "enum": ["NONE", "ALL", "SELECTED_GROUPS"]
+    },
+    "document_groups": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["GIA_9", "GIA_11", "GIA", "QUALITY", "REGIONAL", "ABOUT"]
+      }
+    },
     "sessions": {
       "type": "array",
       "items": { "$ref": "#/components/schemas/Session" }
@@ -44,6 +58,11 @@
     "email",
     "password",
     "is_super_admin",
+    "is_active",
+    "can_manage_site_settings",
+    "can_manage_news",
+    "documents_access_mode",
+    "document_groups",
     "created_at",
     "updated_at",
     "deleted_at"

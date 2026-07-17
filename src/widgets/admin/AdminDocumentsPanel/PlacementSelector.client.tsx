@@ -9,20 +9,21 @@ export type PlacementSelectorProps = {
   value: string[];
   onApply: (keys: string[]) => void;
   onCancel: () => void;
+  allowedGroupIds?: string[];
 };
 
-export default function PlacementSelector({ value, onApply, onCancel }: PlacementSelectorProps) {
+export default function PlacementSelector({ value, onApply, onCancel, allowedGroupIds }: PlacementSelectorProps) {
   const [draft, setDraft] = useState(value);
   const [query, setQuery] = useState("");
-  const [openGroups, setOpenGroups] = useState<string[]>([]);
+  const [openGroupId, setOpenGroupId] = useState<string | null>(null);
   const normalizedQuery = query.trim().toLocaleLowerCase("ru-RU");
   const groups = useMemo(
-    () => DOCUMENT_PLACEMENT_GROUPS.map((group) => ({
+    () => DOCUMENT_PLACEMENT_GROUPS.filter((group) => !allowedGroupIds || allowedGroupIds.includes(group.id)).map((group) => ({
       ...group,
       allItems: group.items,
       items: group.items.filter((item) => !normalizedQuery || `${group.title} ${item.title}`.toLocaleLowerCase("ru-RU").includes(normalizedQuery)),
     })).filter((group) => group.items.length > 0),
-    [normalizedQuery],
+    [allowedGroupIds, normalizedQuery],
   );
 
   useEffect(() => {
@@ -35,9 +36,9 @@ export default function PlacementSelector({ value, onApply, onCancel }: Placemen
   const handleSearchChange = (nextQuery: string) => {
     setQuery(nextQuery);
     const normalized = nextQuery.trim().toLocaleLowerCase("ru-RU");
-    setOpenGroups(normalized ? DOCUMENT_PLACEMENT_GROUPS.filter((group) => group.items.some((item) => `${group.title} ${item.title}`.toLocaleLowerCase("ru-RU").includes(normalized))).map((group) => group.id) : []);
+    setOpenGroupId(normalized ? DOCUMENT_PLACEMENT_GROUPS.filter((group) => !allowedGroupIds || allowedGroupIds.includes(group.id)).find((group) => group.items.some((item) => `${group.title} ${item.title}`.toLocaleLowerCase("ru-RU").includes(normalized)))?.id ?? null : null);
   };
-  const toggleGroup = (id: string) => setOpenGroups((current) => current.includes(id) ? [] : [id]);
+  const toggleGroup = (id: string) => setOpenGroupId((current) => current === id ? null : id);
 
   return (
     <div className={cls.overlay} role="dialog" aria-modal="true" aria-labelledby="placement-selector-title">
@@ -56,7 +57,7 @@ export default function PlacementSelector({ value, onApply, onCancel }: Placemen
         <div className={cls.placementGroups}>
           {groups.map((group) => {
             const selected = group.allItems.filter((item) => draft.includes(item.key)).length;
-            const expanded = openGroups.includes(group.id);
+            const expanded = openGroupId === group.id;
             return (
               <section className={cls.placementGroup} key={group.id}>
                 <button type="button" className={cls.groupHeader} onClick={() => toggleGroup(group.id)} aria-expanded={expanded}>

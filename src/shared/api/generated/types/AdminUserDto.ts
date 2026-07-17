@@ -3,7 +3,60 @@
  * Do not edit manually.
  */
 
+export const adminUserDtoRoleEnum = {
+  SUPER_ADMIN: "SUPER_ADMIN",
+  ADMIN: "ADMIN",
+} as const;
+
+export type AdminUserDtoRoleEnumKey =
+  (typeof adminUserDtoRoleEnum)[keyof typeof adminUserDtoRoleEnum];
+
+export const adminUserDtoDocumentsAccessModeEnum = {
+  NONE: "NONE",
+  ALL: "ALL",
+  SELECTED_GROUPS: "SELECTED_GROUPS",
+} as const;
+
+export type AdminUserDtoDocumentsAccessModeEnumKey =
+  (typeof adminUserDtoDocumentsAccessModeEnum)[keyof typeof adminUserDtoDocumentsAccessModeEnum];
+
+export const adminUserDtoDocumentGroupsEnum = {
+  GIA_9: "GIA_9",
+  GIA_11: "GIA_11",
+  GIA: "GIA",
+  QUALITY: "QUALITY",
+  REGIONAL: "REGIONAL",
+  ABOUT: "ABOUT",
+} as const;
+
+export type AdminUserDtoDocumentGroupsEnumKey =
+  (typeof adminUserDtoDocumentGroupsEnum)[keyof typeof adminUserDtoDocumentGroupsEnum];
+
 export type AdminUserDto = {
+  /**
+   * @type string
+   */
+  role: AdminUserDtoRoleEnumKey;
+  /**
+   * @type boolean
+   */
+  isActive: boolean;
+  /**
+   * @type boolean
+   */
+  canManageSiteSettings: boolean;
+  /**
+   * @type boolean
+   */
+  canManageNews: boolean;
+  /**
+   * @type string
+   */
+  documentsAccessMode: AdminUserDtoDocumentsAccessModeEnumKey;
+  /**
+   * @type array
+   */
+  documentGroups: AdminUserDtoDocumentGroupsEnumKey[];
   /**
    * @type number
    */
@@ -16,12 +69,4 @@ export type AdminUserDto = {
    * @type string
    */
   email: string;
-  /**
-   * @type boolean
-   */
-  isSuperAdmin: boolean;
-  /**
-   * @type array
-   */
-  permissions: string[];
 };

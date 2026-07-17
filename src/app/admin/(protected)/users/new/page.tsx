@@ -1,29 +1,10 @@
-import { redirect } from "next/navigation";
-import { clearAdminTokenCookie, requireSuperAdminToken } from "@/shared/admin/auth";
-import { isAdminApiErrorStatus } from "@/shared/admin/api-error";
-import { getAdminSections } from "@/shared/api/adapters/admin-users.adapter";
+import { requireSuperAdmin } from "@/shared/admin/auth";
 import AdminUserForm from "@/widgets/admin/AdminUserForm/AdminUserForm.client";
 import cls from "@/widgets/admin/AdminShell/AdminShell.module.scss";
 import { createUserAction } from "../actions";
 
 export default async function Page() {
-  const { token } = await requireSuperAdminToken();
-  let sections;
-
-  try {
-    sections = await getAdminSections(token);
-  } catch (error) {
-    if (isAdminApiErrorStatus(error, 401)) {
-      await clearAdminTokenCookie();
-      redirect("/admin/login");
-    }
-
-    if (isAdminApiErrorStatus(error, 403)) {
-      redirect("/admin/forbidden");
-    }
-
-    throw error;
-  }
+  await requireSuperAdmin();
 
   return (
     <section className={cls.section}>
@@ -35,7 +16,7 @@ export default async function Page() {
         </div>
       </div>
 
-      <AdminUserForm sections={sections} includePassword action={createUserAction} submitLabel="Создать пользователя" />
+      <AdminUserForm includePassword action={createUserAction} submitLabel="Создать пользователя" />
     </section>
   );
 }

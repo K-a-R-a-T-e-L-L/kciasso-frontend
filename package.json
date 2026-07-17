@@ -8,6 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
+    "test:browser": "playwright test",
     "test:unit": "vitest run"
   },
   "dependencies": {
@@ -21,6 +22,7 @@
     "@kubb/plugin-client": "^4.39.2",
     "@kubb/plugin-oas": "^4.39.2",
     "@kubb/plugin-ts": "^4.39.2",
+    "@playwright/test": "^1.61.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",

@@ -3,7 +3,22 @@
   "properties": {
     "name": { "type": "string" },
     "email": { "type": "string" },
-    "isSuperAdmin": { "type": "boolean" }
+    "role": { "type": "string", "enum": ["SUPER_ADMIN", "ADMIN"] },
+    "isActive": { "type": "boolean" },
+    "canManageSiteSettings": { "type": "boolean" },
+    "canManageNews": { "type": "boolean" },
+    "documentsAccessMode": {
+      "type": "string",
+      "enum": ["NONE", "ALL", "SELECTED_GROUPS"]
+    },
+    "documentGroups": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["GIA_9", "GIA_11", "GIA", "QUALITY", "REGIONAL", "ABOUT"]
+      }
+    },
+    "password": { "type": "string" }
   },
   "x-readme-ref-name": "AdminUserUpdateDto"
 }

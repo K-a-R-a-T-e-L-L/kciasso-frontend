@@ -224,3 +224,12 @@ export function placementPageTitle(key: string) {
 export function placementItem(key: string) {
   return allItems().find((item) => item.key === key);
 }
+
+export const DOCUMENT_GROUP_IDS = {
+  GIA_9: "gia-9",
+  GIA_11: "gia-11",
+  GIA: "gia",
+  QUALITY: "quality",
+  REGIONAL: "regional",
+  ABOUT: "about",
+} as const;

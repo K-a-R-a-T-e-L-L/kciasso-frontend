@@ -3,7 +3,6 @@
 .eyebrow { color: var(--color-muted); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; }
 .header h1 { margin: 0.3rem 0; color: var(--color-text); font-size: clamp(1.8rem, 3vw, 2.6rem); }
 .header p { color: var(--color-muted); max-width: 760px; }
-.sectionBadge { border-radius: var(--radius-pill); background: var(--color-primary-soft); color: var(--color-primary); padding: 0.45rem 0.7rem; font-size: 0.78rem; }
 .primary { border: 0; border-radius: var(--radius-control); background: var(--color-primary); color: #fff; cursor: pointer; padding: 0.68rem 0.9rem; font: inherit; }
 .list { display: grid; gap: var(--space-4); min-width: 0; }
 button:disabled { cursor: not-allowed; opacity: 0.5; }
@@ -16,4 +15,4 @@ button:disabled { cursor: not-allowed; opacity: 0.5; }
 .success { background: #eaf8f0; color: #167447; }
 .error { background: #fff0f0; color: #a52d36; }
 .empty { padding: 2rem; color: var(--color-muted); text-align: center; }
-@media (max-width: 800px) { .header { flex-direction: column; } .sectionBadge { align-self: flex-start; } .primary { width: 100%; } }
+@media (max-width: 800px) { .header { flex-direction: column; } .primary { width: 100%; } }

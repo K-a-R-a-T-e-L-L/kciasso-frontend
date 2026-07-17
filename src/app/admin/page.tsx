@@ -26,11 +26,15 @@ export default async function Page() {
     redirect("/admin/login");
   }
 
-  if (admin.isSuperAdmin || admin.permissions.includes("news")) {
+  if (admin.role === "SUPER_ADMIN" || admin.canManageNews) {
     redirect("/admin/news");
   }
 
-  if (admin.permissions.includes("site-settings")) {
+  if (admin.documentsAccessMode === "ALL" || admin.documentGroups.length > 0) {
+    redirect("/admin/documents");
+  }
+
+  if (admin.canManageSiteSettings) {
     redirect("/admin/settings");
   }
 

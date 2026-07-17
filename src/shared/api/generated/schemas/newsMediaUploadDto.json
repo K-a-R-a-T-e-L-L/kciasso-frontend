@@ -1,0 +1,6 @@
+{
+  "type": "object",
+  "properties": { "key": { "type": "string" }, "url": { "type": "string" } },
+  "required": ["key", "url"],
+  "x-readme-ref-name": "NewsMediaUploadDto"
+}

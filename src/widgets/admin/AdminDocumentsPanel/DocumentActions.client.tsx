@@ -23,12 +23,14 @@ export default function DocumentActions({ document, version, index, orderedLengt
     <div className={cls.actions}>
       <button type="button" onClick={() => onMove(document.id, -1)} disabled={index === 0 || busy}>Вверх</button>
       <button type="button" onClick={() => onMove(document.id, 1)} disabled={index === orderedLength - 1 || busy}>Вниз</button>
-      {version ? <button type="button" onClick={() => onOpenFile(document, version)}>Открыть файл</button> : null}
-      <button type="button" onClick={() => onEdit(document)}>Редактировать</button>
-      <button type="button" onClick={() => onToggleVersion(document.id)}>Заменить файл</button>
-      <button type="button" onClick={() => onHistory(document.id)}>Версии</button>
-      {version ? <button type="button" onClick={() => onShare(document.id)}>Секретная ссылка</button> : null}
-      <button type="button" onClick={() => onDelete(document.id)} disabled={busy}>Удалить полностью</button>
+      {document.canManage !== false ? <>
+        {version ? <button type="button" onClick={() => onOpenFile(document, version)}>Открыть файл</button> : null}
+        <button type="button" onClick={() => onEdit(document)}>Редактировать</button>
+        <button type="button" onClick={() => onToggleVersion(document.id)}>Заменить файл</button>
+        <button type="button" onClick={() => onHistory(document.id)}>Версии</button>
+        {version ? <button type="button" onClick={() => onShare(document.id)}>Секретная ссылка</button> : null}
+        <button type="button" onClick={() => onDelete(document.id)} disabled={busy}>Удалить полностью</button>
+      </> : null}
     </div>
   );
 }

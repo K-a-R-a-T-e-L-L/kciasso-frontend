@@ -54,6 +54,10 @@ export type DocumentDto = {
    */
   versionsCount: number;
   /**
+   * @type boolean
+   */
+  canManage: boolean;
+  /**
    * @type string, date-time
    */
   createdAt: string;

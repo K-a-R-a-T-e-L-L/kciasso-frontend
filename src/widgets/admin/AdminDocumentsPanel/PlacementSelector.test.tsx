@@ -30,6 +30,33 @@ describe("PlacementSelector", () => {
     expect(screen.getAllByRole("button", { name: /ГИА|Качество|Региональный|О центре/ }).every((button) => button.getAttribute("aria-expanded") === "false")).toBe(true);
   });
 
+  it("keeps only one matching group expanded during a broad search", async () => {
+    renderSelector();
+    await userEvent.type(screen.getByRole("textbox", { name: "Поиск по названию раздела" }), "нормативные");
+    expect(
+      screen
+        .getAllByRole("button", { name: /ГИА|Качество|Региональный|О центре/ })
+        .filter((button) => button.getAttribute("aria-expanded") === "true"),
+    ).toHaveLength(1);
+  });
+
+  it("locks body scrolling and restores the previous value on close", () => {
+    document.body.style.overflow = "clip";
+    const view = render(<PlacementSelector value={[]} onApply={vi.fn()} onCancel={vi.fn()} />);
+    expect(document.body.style.overflow).toBe("hidden");
+    view.unmount();
+    expect(document.body.style.overflow).toBe("clip");
+    document.body.style.overflow = "";
+  });
+
+  it("renders every item from the largest placement group", async () => {
+    renderSelector();
+    const qualityGroup = DOCUMENT_PLACEMENT_GROUPS.find((group) => group.id === "quality");
+    await userEvent.click(screen.getByRole("button", { name: /Качество образования/ }));
+    expect(screen.getAllByRole("checkbox")).toHaveLength(qualityGroup?.items.length ?? 0);
+    expect(screen.getByText(qualityGroup?.items.at(-1)?.title ?? "missing")).toBeInTheDocument();
+  });
+
   it("selects and clears a group and reports the count", async () => {
     renderSelector(); await userEvent.click(screen.getByRole("button", { name: /ГИА-9/ })); await userEvent.click(screen.getByRole("button", { name: "Выбрать все" }));
     const group = DOCUMENT_PLACEMENT_GROUPS.find((item) => item.title === "ГИА-9");

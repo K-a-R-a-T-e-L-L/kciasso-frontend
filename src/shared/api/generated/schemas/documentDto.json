@@ -52,6 +52,7 @@
       "x-readme-ref-name": "DocumentVersionDto"
     },
     "versionsCount": { "type": "number" },
+    "canManage": { "type": "boolean" },
     "createdAt": { "format": "date-time", "type": "string" },
     "updatedAt": { "format": "date-time", "type": "string" }
   },
@@ -61,6 +62,7 @@
     "status",
     "placements",
     "versionsCount",
+    "canManage",
     "createdAt",
     "updatedAt"
   ],

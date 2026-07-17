@@ -10,6 +10,17 @@ function adminDocument(id: number, title: string, sortOrder: number) {
 }
 
 describe("AdminDocumentsPanel orchestration", () => {
+  it("never renders the raw placement key in the page header", () => {
+    render(
+      <AdminDocumentsPanel
+        initialDocuments={[]}
+        sectionKey="gia-9.normative-documents"
+      />,
+    );
+    expect(screen.getByRole("heading", { name: "Документы ГИА-9" })).toBeInTheDocument();
+    expect(screen.queryByText("gia-9.normative-documents")).not.toBeInTheDocument();
+  });
+
   it("sends complete reorder payload and rolls back on failure", async () => {
     const docs = [adminDocument(1, "Первый", 0), adminDocument(2, "Второй", 1)];
     const fetchMock = vi.fn().mockResolvedValueOnce(new Response(JSON.stringify({ errorMessage: "DOCUMENT_REORDER_INVALID" }), { status: 400 }));
@@ -23,5 +34,15 @@ describe("AdminDocumentsPanel orchestration", () => {
     const docs = [adminDocument(1, "Удаляемый", 0)]; vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(null, { status: 204 }))); vi.spyOn(window, "confirm").mockReturnValue(true);
     render(<AdminDocumentsPanel initialDocuments={docs} sectionKey="gia9-results" />); await userEvent.click(screen.getByRole("button", { name: "Удалить полностью" }));
     await waitFor(() => expect(screen.queryByTestId("document-card-1")).not.toBeInTheDocument()); expect(screen.getByRole("status")).toHaveTextContent("полностью удалён");
+  });
+
+  it("keeps mixed-scope documents reorderable but hides management actions", () => {
+    const document = { ...adminDocument(1, "Смешанный", 0), canManage: false };
+    render(<AdminDocumentsPanel initialDocuments={[document]} sectionKey="gia9-results" />);
+    expect(screen.getByText("Только просмотр")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Вверх" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Вниз" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Редактировать" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Удалить полностью" })).not.toBeInTheDocument();
   });
 });

@@ -7,6 +7,8 @@ import {
   createAdminNews,
   deleteAdminNews,
   updateAdminNews,
+  uploadAdminNewsImage,
+  removeUnreferencedAdminNewsImage,
 } from "@/shared/api/adapters/admin-news.adapter";
 import type { NewsFormState } from "@/widgets/admin/AdminNewsForm/AdminNewsForm.types";
 
@@ -64,6 +66,8 @@ function parseNewsFormData(formData: FormData) {
     content,
     publishMode,
     coverImageUrl: toOptionalString(formData.get("coverImageUrl")),
+    coverImageFile: formData.get("coverImageFile"),
+    removeCoverImage: formData.get("removeCoverImage") === "true",
     categoryId: toOptionalNumber(formData.get("categoryId")),
     isPublished,
     publishedAt,
@@ -107,9 +111,15 @@ export async function createNewsAction(_: NewsFormState, formData: FormData): Pr
     };
   }
 
+  let uploaded: { key: string; url: string } | null = null;
   try {
-    await createAdminNews(token, payload);
+    if (payload.coverImageFile instanceof File && payload.coverImageFile.size > 0) {
+      uploaded = await uploadAdminNewsImage(token, payload.coverImageFile);
+    }
+    const { coverImageFile: _file, removeCoverImage: _remove, ...newsPayload } = payload;
+    await createAdminNews(token, { ...newsPayload, coverImageUrl: uploaded?.url ?? newsPayload.coverImageUrl });
   } catch (error) {
+    if (uploaded) await removeUnreferencedAdminNewsImage(token, uploaded.key).catch(() => undefined);
     return handleProtectedError(error, "Не удалось создать новость.");
   }
 
@@ -136,9 +146,18 @@ export async function updateNewsAction(
     };
   }
 
+  let uploaded: { key: string; url: string } | null = null;
   try {
-    await updateAdminNews(token, id, payload);
+    if (payload.coverImageFile instanceof File && payload.coverImageFile.size > 0) {
+      uploaded = await uploadAdminNewsImage(token, payload.coverImageFile);
+    }
+    const { coverImageFile: _file, removeCoverImage, ...newsPayload } = payload;
+    await updateAdminNews(token, id, {
+      ...newsPayload,
+      ...(uploaded ? { coverImageUrl: uploaded.url } : removeCoverImage ? { coverImageUrl: "" } : {}),
+    });
   } catch (error) {
+    if (uploaded) await removeUnreferencedAdminNewsImage(token, uploaded.key).catch(() => undefined);
     return handleProtectedError(error, "Не удалось сохранить изменения.");
   }
 
