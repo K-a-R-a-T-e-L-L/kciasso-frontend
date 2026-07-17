@@ -4,12 +4,13 @@ FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-RUN npm install -g npm@11.6.2
+RUN npm install -g npm@10.9.8
 
 COPY package*.json ./
 RUN npm ci --no-audit --progress=false
 
 COPY . .
+RUN npm run lint
 RUN npm run build
 
 FROM node:22-alpine AS runner
