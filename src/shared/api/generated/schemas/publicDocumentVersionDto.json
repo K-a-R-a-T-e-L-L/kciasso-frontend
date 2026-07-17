@@ -1,0 +1,11 @@
+{
+  "type": "object",
+  "properties": {
+    "originalFilename": { "type": "string" },
+    "extension": { "type": "string" },
+    "mimeType": { "type": "string" },
+    "sizeBytes": { "type": "string" }
+  },
+  "required": ["originalFilename", "extension", "mimeType", "sizeBytes"],
+  "x-readme-ref-name": "PublicDocumentVersionDto"
+}

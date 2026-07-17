@@ -1,0 +1,24 @@
+{
+  "type": "object",
+  "properties": {
+    "id": { "type": "number" },
+    "title": { "type": "string" },
+    "description": { "type": "string" },
+    "documentNumber": { "type": "string" },
+    "documentDate": { "format": "date-time", "type": "string" },
+    "updatedAt": { "format": "date-time", "type": "string" },
+    "currentVersion": {
+      "type": "object",
+      "properties": {
+        "originalFilename": { "type": "string" },
+        "extension": { "type": "string" },
+        "mimeType": { "type": "string" },
+        "sizeBytes": { "type": "string" }
+      },
+      "required": ["originalFilename", "extension", "mimeType", "sizeBytes"],
+      "x-readme-ref-name": "PublicDocumentVersionDto"
+    }
+  },
+  "required": ["id", "title", "updatedAt", "currentVersion"],
+  "x-readme-ref-name": "PublicDocumentDto"
+}

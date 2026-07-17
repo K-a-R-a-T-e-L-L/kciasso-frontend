@@ -1,0 +1,14 @@
+{
+  "type": "object",
+  "properties": {
+    "title": { "type": "string", "example": "Обновлённое название" },
+    "description": { "type": "string", "nullable": true },
+    "documentNumber": { "type": "string", "nullable": true },
+    "documentDate": {
+      "type": "string",
+      "nullable": true,
+      "example": "2026-07-12"
+    }
+  },
+  "x-readme-ref-name": "UpdateDocumentDto"
+}

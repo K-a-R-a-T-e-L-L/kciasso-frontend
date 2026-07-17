@@ -26,8 +26,10 @@ export default async function Layout({ children }: { children: ReactNode }) {
 
   const canManageNews = admin.isSuperAdmin || admin.permissions.includes("news");
   const canManageSiteSettings = admin.isSuperAdmin || admin.permissions.includes("site-settings");
+  const canManageDocuments = admin.isSuperAdmin || admin.permissions.includes("documents");
   const navigation = [
     canManageNews ? { href: "/admin/news", title: "Новости" } : null,
+    canManageDocuments ? { href: "/admin/documents", title: "Материалы и документы" } : null,
     canManageSiteSettings ? { href: "/admin/settings", title: "Настройки сайта" } : null,
     admin.isSuperAdmin ? { href: "/admin/users", title: "Пользователи" } : null,
   ].filter(Boolean) as { href: string; title: string }[];

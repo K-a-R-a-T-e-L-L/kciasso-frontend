@@ -14,11 +14,10 @@
 
   p {
     margin: 0;
-    color: var(--primary);
-    font-size: 0.82rem;
+    color: var(--text);
+    font-size: clamp(1.35rem, 2.2vw, 1.75rem);
     font-weight: 800;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
+    letter-spacing: -0.02em;
   }
 
   span {
@@ -50,5 +49,23 @@
   span {
     color: var(--muted);
     line-height: 1.7;
+  }
+}
+
+.compactEmpty {
+  display: block;
+  padding: 0.75rem 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+
+  p {
+    color: var(--muted);
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  span {
+    display: none;
   }
 }

@@ -116,4 +116,76 @@ export const operations = {
     path: "/api/admin/site-settings",
     method: "patch",
   },
+  DocumentsController_create: {
+    path: "/api/admin/documents",
+    method: "post",
+  },
+  DocumentsController_list: {
+    path: "/api/admin/documents",
+    method: "get",
+  },
+  DocumentsController_get: {
+    path: "/api/admin/documents/:id",
+    method: "get",
+  },
+  DocumentsController_delete: {
+    path: "/api/admin/documents/:id",
+    method: "delete",
+  },
+  DocumentsController_update: {
+    path: "/api/admin/documents/:id",
+    method: "patch",
+  },
+  DocumentsController_placements: {
+    path: "/api/admin/documents/:id/placements",
+    method: "put",
+  },
+  DocumentsController_status: {
+    path: "/api/admin/documents/:id/status",
+    method: "patch",
+  },
+  DocumentsController_versions: {
+    path: "/api/admin/documents/:id/versions",
+    method: "get",
+  },
+  DocumentsController_createVersion: {
+    path: "/api/admin/documents/:id/versions",
+    method: "post",
+  },
+  DocumentsController_makeCurrent: {
+    path: "/api/admin/documents/:id/versions/:versionId/current",
+    method: "post",
+  },
+  DocumentsController_file: {
+    path: "/api/admin/documents/:id/versions/:versionId/file",
+    method: "get",
+  },
+  DocumentPlacementsController_reorder: {
+    path: "/api/admin/document-placements/reorder",
+    method: "patch",
+  },
+  AdminDocumentShareLinksController_create: {
+    path: "/api/admin/document-versions/:versionId/share-links",
+    method: "post",
+  },
+  AdminDocumentShareLinksController_list: {
+    path: "/api/admin/document-versions/:versionId/share-links",
+    method: "get",
+  },
+  AdminDocumentShareLinkRevokeController_revoke: {
+    path: "/api/admin/document-share-links/:id/revoke",
+    method: "post",
+  },
+  PublicDocumentShareLinksController_resolve: {
+    path: "/api/public/document-share-links/resolve",
+    method: "post",
+  },
+  PublicDocumentsController_list: {
+    path: "/api/public/documents",
+    method: "get",
+  },
+  PublicDocumentsController_file: {
+    path: "/api/public/documents/:id/file",
+    method: "get",
+  },
 };

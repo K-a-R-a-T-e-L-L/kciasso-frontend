@@ -1,0 +1,67 @@
+{
+  "type": "object",
+  "properties": {
+    "id": { "type": "integer", "format": "int32" },
+    "section_key": { "type": "string" },
+    "title": { "type": "string" },
+    "description": { "type": "string", "nullable": true },
+    "document_number": { "type": "string", "nullable": true },
+    "document_date": {
+      "type": "string",
+      "format": "date-time",
+      "nullable": true
+    },
+    "status": {
+      "type": "string",
+      "enum": ["DRAFT", "UNLISTED", "PUBLISHED", "ARCHIVED"]
+    },
+    "sort_order": { "type": "integer", "format": "int32" },
+    "current_version_id": {
+      "type": "integer",
+      "format": "int32",
+      "nullable": true
+    },
+    "created_by_id": { "type": "integer", "format": "int32", "nullable": true },
+    "updated_by_id": { "type": "integer", "format": "int32", "nullable": true },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "deleted_at": { "type": "string", "format": "date-time", "nullable": true },
+    "versions": {
+      "type": "array",
+      "items": { "$ref": "#/components/schemas/DocumentVersion" }
+    },
+    "current_version": {
+      "nullable": true,
+      "allOf": [{ "$ref": "#/components/schemas/DocumentVersion" }]
+    },
+    "created_by": {
+      "nullable": true,
+      "allOf": [{ "$ref": "#/components/schemas/User" }]
+    },
+    "updated_by": {
+      "nullable": true,
+      "allOf": [{ "$ref": "#/components/schemas/User" }]
+    },
+    "placements": {
+      "type": "array",
+      "items": { "$ref": "#/components/schemas/DocumentPlacement" }
+    }
+  },
+  "required": [
+    "id",
+    "section_key",
+    "title",
+    "description",
+    "document_number",
+    "document_date",
+    "status",
+    "sort_order",
+    "current_version_id",
+    "created_by_id",
+    "updated_by_id",
+    "created_at",
+    "updated_at",
+    "deleted_at"
+  ],
+  "x-readme-ref-name": "Document"
+}

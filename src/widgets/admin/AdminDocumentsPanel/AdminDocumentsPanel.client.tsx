@@ -1,0 +1,34 @@
+"use client";
+import { useMemo, useState } from "react";
+import { IconX } from "@tabler/icons-react";
+import type { DocumentDto, DocumentVersionDto } from "@/shared/api/generated/types";
+import { openDocumentFile } from "@/shared/documents/document-file.client";
+import { placementPageTitle } from "@/shared/documents/document-placement-registry";
+import DocumentCard from "./DocumentCard.client";
+import DocumentMetadataForm from "./DocumentMetadataForm.client";
+import PlacementSelector from "./PlacementSelector.client";
+import useAdminDocumentMutations from "./useAdminDocumentMutations";
+import { parseResponse } from "./admin-document-response";
+import { emptyForm, type FormState, type PanelMessage } from "./types";
+import cls from "./AdminDocumentsPanel.module.scss";
+export { parseResponse } from "./admin-document-response";
+export { default as PlacementSelector } from "./PlacementSelector.client";
+type Props = { initialDocuments: DocumentDto[]; sectionKey: string };
+export default function AdminDocumentsPanel({ initialDocuments, sectionKey }: Props) {
+  const [documents, setDocuments] = useState(initialDocuments); const [form, setForm] = useState<FormState>(emptyForm); const [file, setFile] = useState<File | null>(null); const [placements, setPlacements] = useState([sectionKey]); const [createOpen, setCreateOpen] = useState(false); const [editingId, setEditingId] = useState<number | null>(null); const [editingForm, setEditingForm] = useState<FormState>(emptyForm); const [editingPlacements, setEditingPlacements] = useState<string[]>([]); const [versionDocumentId, setVersionDocumentId] = useState<number | null>(null); const [shareDocumentId, setShareDocumentId] = useState<number | null>(null); const [historyDocumentId, setHistoryDocumentId] = useState<number | null>(null); const [placementPicker, setPlacementPicker] = useState<"create" | "edit" | null>(null); const [expandedPlacements, setExpandedPlacements] = useState<Record<number, boolean>>({}); const [versionFile, setVersionFile] = useState<File | null>(null); const [history, setHistory] = useState<Record<number, DocumentVersionDto[]>>({}); const [busy, setBusy] = useState<string | null>(null); const [message, setMessage] = useState<PanelMessage>(null);
+  const orderedDocuments = useMemo(() => [...documents].sort((a, b) => (a.placements.find((p) => p.sectionKey === sectionKey)?.sortOrder ?? 0) - (b.placements.find((p) => p.sectionKey === sectionKey)?.sortOrder ?? 0)), [documents, sectionKey]);
+  const setField = (setter: React.Dispatch<React.SetStateAction<FormState>>, key: keyof FormState, value: string) => setter((current) => ({ ...current, [key]: value }));
+  const refresh = async () => { const response = await fetch(`/api/admin/documents?placementKey=${encodeURIComponent(sectionKey)}`, { cache: "no-store" }); const data = await parseResponse(response); setDocuments(data.items); };
+  const mutations = useAdminDocumentMutations({ sectionKey, documents, orderedDocuments, form, file, placements, editingPlacements, editingForm, versionFile, history, setDocuments, setForm, setFile, setPlacements, setEditingId, setVersionFile, setVersionDocumentId, setHistory, setBusy, setMessage, setCreateOpen, refresh });
+  const startEdit = (document: DocumentDto) => { setEditingId(document.id); setEditingPlacements(document.placements.map((item) => item.sectionKey)); setEditingForm({ title: document.title, description: document.description ?? "", documentNumber: document.documentNumber ?? "", documentDate: document.documentDate?.slice(0, 10) ?? "" }); };
+  const openFile = (document: DocumentDto, version: DocumentVersionDto) => void openDocumentFile(document.id, version.id, version.originalFilename).catch((error) => setMessage({ type: "error", text: error.message }));
+  return <section className={cls.page}>
+    <div className={cls.header}><div><span className={cls.eyebrow}>Материалы и документы</span><h1>Документы {placementPageTitle(sectionKey)}</h1><p>Управляйте размещением одного документа сразу в нескольких фиксированных разделах.</p></div><span className={cls.sectionBadge}>{sectionKey}</span></div>
+    {message ? <p className={message.type === "error" ? cls.error : cls.success} role={message.type === "error" ? "alert" : "status"}>{message.text}</p> : null}
+    <button type="button" className={cls.primary} onClick={() => setCreateOpen(true)}>Добавить документ</button>
+    {createOpen ? <div className={cls.overlay} role="dialog" aria-modal="true" aria-labelledby="create-document-title"><div className={cls.modal}><div className={cls.modalHeader}><h2 id="create-document-title">Новый документ</h2><button type="button" className={cls.close} onClick={() => setCreateOpen(false)} aria-label="Закрыть"><IconX size={22} stroke={1.8} aria-hidden="true" /></button></div><DocumentMetadataForm mode="create" form={form} onFieldChange={(key, value) => setField(setForm, key, value)} placements={placements} onOpenPlacement={() => setPlacementPicker("create")} onSubmit={mutations.submitCreate} busy={busy === "create"} file={file} onFileChange={setFile} /></div></div> : null}
+    {placementPicker ? <PlacementSelector value={placementPicker === "create" ? placements : editingPlacements} onApply={(keys) => { if (placementPicker === "create") setPlacements(keys); else setEditingPlacements(keys); setPlacementPicker(null); }} onCancel={() => setPlacementPicker(null)} /> : null}
+    <div className={cls.list}>{orderedDocuments.map((document, index) => <DocumentCard key={document.id} document={document} index={index} orderedLength={orderedDocuments.length} expanded={Boolean(expandedPlacements[document.id])} editing={editingId === document.id} versionDocumentId={versionDocumentId} shareDocumentId={shareDocumentId} historyDocumentId={historyDocumentId} versionFile={versionFile} history={history} editingForm={editingForm} editingPlacements={editingPlacements} busy={busy} onToggleExpanded={(id) => setExpandedPlacements((current) => ({ ...current, [id]: !current[id] }))} onMove={mutations.move} onOpenFile={openFile} onEdit={startEdit} onStatusChange={mutations.changeStatus} onToggleVersion={(id) => setVersionDocumentId(versionDocumentId === id ? null : id)} onHistory={mutations.loadHistory} onShare={(id) => setShareDocumentId(shareDocumentId === id ? null : id)} onDelete={mutations.deleteDocument} onEditFieldChange={(key, value) => setField(setEditingForm, key, value)} onOpenPlacement={() => setPlacementPicker("edit")} onSaveMetadata={mutations.saveMetadata} onCancelEdit={() => setEditingId(null)} onVersionFileChange={setVersionFile} onUploadVersion={mutations.uploadVersion} onCloseHistory={() => setHistoryDocumentId(null)} onMakeCurrent={mutations.makeCurrent} />)}</div>
+    {orderedDocuments.length === 0 ? <p className={cls.empty}>Документы пока не добавлены.</p> : null}
+  </section>;
+}

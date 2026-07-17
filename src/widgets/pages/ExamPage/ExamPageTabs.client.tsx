@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import Container from "@/shared/ui/Container/Container";
 import Section from "@/shared/ui/Section/Section";
-import DocumentPlaceholder from "@/shared/ui/DocumentPlaceholder/DocumentPlaceholder";
 import ButtonTabsNav from "@/shared/ui/TabsNav/ButtonTabsNav.client";
 import type { ExamPageData } from "@/shared/content/content.types";
+import type { PublicDocumentsResult } from "@/shared/api/adapters/public-documents.adapter";
+import PublicDocumentsBlock from "@/shared/ui/PublicDocumentsBlock/PublicDocumentsBlock";
 import cls from "./ExamPage.module.scss";
 
 function getDefaultSectionId(page: ExamPageData) {
@@ -54,20 +55,37 @@ function getSectionSlug(id: string) {
 export default function ExamPageTabs({
   page,
   initialSectionId,
+  pageKey,
+  publicDocumentsBySection,
 }: {
   page: ExamPageData;
   initialSectionId?: string;
+  pageKey: "gia-9" | "gia-11";
+  publicDocumentsBySection: Record<string, PublicDocumentsResult>;
 }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const normalizedInitialSectionId = getSectionIdFromQuery(page, initialSectionId ?? null);
-  const [activeId, setActiveId] = useState(() => normalizedInitialSectionId || getDefaultSectionId(page));
+  const normalizedInitialSectionId = getSectionIdFromQuery(
+    page,
+    initialSectionId ?? null,
+  );
+  const [activeId, setActiveId] = useState(
+    () => normalizedInitialSectionId || getDefaultSectionId(page),
+  );
 
   useEffect(() => {
     const syncWithHash = () => {
-      const fromQuery = getSectionIdFromQuery(page, searchParams.get("section"));
+      const fromQuery = getSectionIdFromQuery(
+        page,
+        searchParams.get("section"),
+      );
       const fromHash = getSectionIdFromHash(page);
-      setActiveId(fromQuery || fromHash || normalizedInitialSectionId || getDefaultSectionId(page));
+      setActiveId(
+        fromQuery ||
+          fromHash ||
+          normalizedInitialSectionId ||
+          getDefaultSectionId(page),
+      );
     };
 
     syncWithHash();
@@ -75,14 +93,25 @@ export default function ExamPageTabs({
     return () => window.removeEventListener("hashchange", syncWithHash);
   }, [normalizedInitialSectionId, page, searchParams]);
 
-  const activeSection = page.sections.find((section) => section.id === activeId) ?? page.sections[0];
-  const activeIndex = page.sections.findIndex((section) => section.id === activeSection.id);
+  const activeSection =
+    page.sections.find((section) => section.id === activeId) ??
+    page.sections[0];
+  const activeIndex = page.sections.findIndex(
+    (section) => section.id === activeSection.id,
+  );
+  const publicDocuments = publicDocumentsBySection[
+    getSectionSlug(activeSection.id)
+  ] ?? { documents: [], error: false };
 
   const handleTabClick = (id: string) => {
     setActiveId(id);
     const next = new URLSearchParams(searchParams.toString());
     next.set("section", getSectionSlug(id));
-    window.history.replaceState(null, "", `${pathname}?${next.toString()}#${id}`);
+    window.history.replaceState(
+      null,
+      "",
+      `${pathname}?${next.toString()}#${id}`,
+    );
   };
 
   return (
@@ -108,11 +137,18 @@ export default function ExamPageTabs({
             aria-labelledby={`tab-${activeSection.id}`}
           >
             <div>
-              <p className={cls.kicker}>Раздел {String(activeIndex + 1).padStart(2, "0")}</p>
+              <p className={cls.kicker}>
+                Раздел {String(activeIndex + 1).padStart(2, "0")}
+              </p>
               <h2>{activeSection.title}</h2>
               <p>{activeSection.description}</p>
             </div>
-            <DocumentPlaceholder oldUrl={activeSection.oldUrl} />
+            <PublicDocumentsBlock
+              result={publicDocuments}
+              title={activeSection.title}
+              hideWhenEmpty={false}
+              variant="examTab"
+            />
           </div>
         </Container>
       </Section>

@@ -1,0 +1,16 @@
+.card { min-width: 0; border: 1px solid var(--color-border); border-radius: var(--radius-xl); background: var(--color-surface); box-shadow: var(--shadow-card); padding: var(--space-5); }
+.cardHeader { display: flex; justify-content: space-between; gap: var(--space-4); align-items: flex-start; }
+.cardHeader h2 { display: inline; margin-left: 0.45rem; color: var(--color-text); font-size: 1.25rem; }
+.cardHeader p { margin: 0.45rem 0 0; color: var(--color-muted); }
+.cardHeader select { min-width: 170px; border: 1px solid var(--color-border); border-radius: var(--radius-control); padding: 0.65rem 0.75rem; color: var(--color-text); font: inherit; }
+.order, .placements span { border-radius: var(--radius-pill); background: var(--color-primary-soft); color: var(--color-primary); padding: 0.45rem 0.7rem; font-size: 0.78rem; }
+.placements { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 0.4rem; max-height: 6.5rem; overflow: auto; margin: var(--space-4) 0 0.7rem; }
+.morePlacements { border: 1px solid var(--color-border); border-radius: var(--radius-pill); background: var(--color-surface); color: var(--color-primary); cursor: pointer; padding: 0.42rem 0.7rem; font: inherit; font-size: 0.78rem; }
+.note { color: var(--color-muted); font-size: 0.86rem; }
+.fileMeta { display: flex; flex-wrap: wrap; gap: 0.7rem; align-items: center; color: var(--color-muted); font-size: 0.9rem; }
+.fileMeta strong { color: var(--color-primary); }
+.sharePanel { margin-top: var(--space-4); }
+.technical { margin-top: var(--space-4); color: var(--color-muted); font-size: 0.82rem; }
+.technical summary { cursor: pointer; color: var(--color-primary); font-weight: 600; }
+.technical code { overflow-wrap: anywhere; }
+@media (max-width: 800px) { .cardHeader { flex-direction: column; } .cardHeader select { width: 100%; } }

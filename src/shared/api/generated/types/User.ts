@@ -3,6 +3,9 @@
  * Do not edit manually.
  */
 
+import type { Document } from "./Document";
+import type { DocumentShareLink } from "./DocumentShareLink";
+import type { DocumentVersion } from "./DocumentVersion";
 import type { News } from "./News";
 import type { Session } from "./Session";
 import type { UserSectionPermission } from "./UserSectionPermission";
@@ -40,6 +43,22 @@ export type User = {
    * @type array | undefined
    */
   authored_news?: News[];
+  /**
+   * @type array | undefined
+   */
+  created_documents?: Document[];
+  /**
+   * @type array | undefined
+   */
+  updated_documents?: Document[];
+  /**
+   * @type array | undefined
+   */
+  created_document_versions?: DocumentVersion[];
+  /**
+   * @type array | undefined
+   */
+  created_document_share_links?: DocumentShareLink[];
   /**
    * @type string, date-time
    */

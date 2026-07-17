@@ -1,0 +1,8 @@
+{
+  "type": "object",
+  "properties": {
+    "status": { "type": "string", "enum": ["DRAFT", "PUBLISHED"] }
+  },
+  "required": ["status"],
+  "x-readme-ref-name": "UpdateDocumentStatusDto"
+}

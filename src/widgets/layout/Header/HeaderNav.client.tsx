@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { IconChevronDown } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
 import type { ContactEntry } from "@/shared/content/content.types";
 import { navigation, type NavItem } from "@/shared/config/navigation";
@@ -48,7 +49,11 @@ export default function HeaderNav({ hotline }: Props) {
   useEffect(() => () => clearCloseTimer(), []);
 
   return (
-    <div className={cls.desktopNav} onMouseLeave={scheduleClose} onMouseEnter={clearCloseTimer}>
+    <div
+      className={cls.desktopNav}
+      onMouseLeave={scheduleClose}
+      onMouseEnter={clearCloseTimer}
+    >
       <nav className={cls.nav} aria-label="Основная навигация">
         {navigation.map((item) => (
           <div key={item.title} className={cls.navItem}>
@@ -58,13 +63,22 @@ export default function HeaderNav({ hotline }: Props) {
               </Link>
             ) : (
               <button
-                className={cls.navLink}
-                onMouseEnter={(event) => openItem(item.title, event.currentTarget)}
+                className={`${cls.navLink} ${active?.title === item.title ? cls.navLinkActive : ""}`.trim()}
+                onMouseEnter={(event) =>
+                  openItem(item.title, event.currentTarget)
+                }
                 onFocus={(event) => openItem(item.title, event.currentTarget)}
+                aria-expanded={active?.title === item.title}
+                aria-haspopup="true"
                 type="button"
               >
                 <span>{item.title}</span>
-                <span className={cls.chevron} aria-hidden="true" />
+                <IconChevronDown
+                  className={cls.chevron}
+                  aria-hidden="true"
+                  size={14}
+                  stroke={1.8}
+                />
               </button>
             )}
           </div>
@@ -106,7 +120,11 @@ function NavigationPanel({
 }) {
   if (item.kind === "mega" && item.groups) {
     return (
-      <div className={cls.megaPanel} onMouseEnter={onPointerEnter} onMouseLeave={onPointerLeave}>
+      <div
+        className={cls.megaPanel}
+        onMouseEnter={onPointerEnter}
+        onMouseLeave={onPointerLeave}
+      >
         <div className={cls.panelIntro}>
           <p>Раздел сайта</p>
           <h3>{item.title}</h3>

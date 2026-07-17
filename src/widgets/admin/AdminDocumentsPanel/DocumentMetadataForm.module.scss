@@ -1,0 +1,11 @@
+.inlineForm { display: grid; gap: var(--space-3); margin-top: var(--space-4); padding: var(--space-4); border-radius: var(--radius-lg); background: var(--color-primary-soft); }
+.inlineForm h2, .inlineForm h3 { margin: 0; color: var(--color-text); }
+.inlineForm label { display: grid; gap: 0.35rem; color: var(--color-text); font-weight: 600; }
+.inlineForm input, .inlineForm textarea { border: 1px solid var(--color-border); border-radius: var(--radius-control); padding: 0.65rem 0.75rem; color: var(--color-text); font: inherit; max-width: 100%; }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.9rem; }
+.placementSummaryButton { width: fit-content; border: 1px solid var(--color-border); border-radius: var(--radius-control); background: var(--color-surface); color: var(--color-primary); cursor: pointer; padding: 0.68rem 0.85rem; font: inherit; font-weight: 600; }
+.actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.actions button { border: 0; border-radius: var(--radius-control); background: var(--color-primary-soft); color: var(--color-primary); cursor: pointer; padding: 0.68rem 0.9rem; font: inherit; }
+.actions .primary { background: var(--color-primary); color: #fff; }
+.inlineForm small { color: var(--color-muted); }
+@media (max-width: 800px) { .grid { grid-template-columns: 1fr; } .actions button { width: 100%; } }

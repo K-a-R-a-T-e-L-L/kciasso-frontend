@@ -1,22 +1,27 @@
 .tabList {
   display: flex;
   flex-wrap: wrap;
-  gap: 5px;
-  margin: 4px 0 26px;
+  gap: var(--space-2);
+  margin: var(--space-1) 0 var(--space-6);
 }
 
 .tabLink,
 .tabButton {
   border: 1px solid var(--color-border);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--color-surface);
   color: var(--color-primary);
   font-size: 0.75rem;
   font-weight: 850;
   line-height: 1.2;
-  padding: 8px 12px;
-  transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease;
+  padding: var(--space-2) var(--space-3);
+  transition: border-color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard);
   user-select: none;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
 }
 
 .tabButton {
@@ -27,8 +32,13 @@
 .tabLink:focus-visible,
 .tabButton:hover,
 .tabButton:focus-visible {
-  border-color: rgba(7, 84, 155, 0.28);
+  border-color: var(--color-primary);
   outline: none;
+}
+
+.tabLink:focus-visible,
+.tabButton:focus-visible {
+  box-shadow: 0 0 0 3px var(--color-primary-ring-soft);
 }
 
 .active {
@@ -37,15 +47,40 @@
   color: var(--color-text) !important;
 }
 
+.disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.count {
+  min-width: 1.2rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-primary-soft);
+  padding: 0.1rem 0.35rem;
+  font-size: 0.68rem;
+  text-align: center;
+}
+
+.compact {
+  margin-bottom: var(--space-4);
+
+  .tabLink,
+  .tabButton {
+    padding: 0.35rem 0.6rem;
+    font-size: 0.7rem;
+  }
+}
+
 @media (max-width: 640px) {
   .tabList {
     flex-wrap: nowrap;
     width: 100%;
-    margin: 0 0 22px;
+    margin: 0 0 var(--space-5);
     overflow-x: auto;
     overflow-y: hidden;
     overscroll-behavior-x: contain;
-    padding: 0 0 6px;
+    padding: 0 0 var(--space-2);
     scroll-snap-type: x proximity;
     scrollbar-width: none;
     max-width: 100%;
@@ -62,6 +97,6 @@
     scroll-snap-align: start;
     white-space: nowrap;
     font-size: 0.7rem;
-    padding: 6px 10px;
+    padding: var(--space-2) var(--space-3);
   }
 }

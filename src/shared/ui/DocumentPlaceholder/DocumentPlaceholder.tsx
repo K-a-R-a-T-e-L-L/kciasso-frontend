@@ -6,15 +6,19 @@ type Props = {
   oldUrl?: string;
   title?: string;
   groups?: DocumentGroup[];
+  emptyTitle?: string;
+  emptyDescription?: string;
 };
 
 export default function DocumentPlaceholder({
   oldUrl = "https://www.ocmko.ru/",
   title = "Документы и материалы раздела",
   groups,
+  emptyTitle,
+  emptyDescription,
 }: Props) {
   const fallbackGroups: DocumentGroup[] =
-    groups && groups.length > 0
+    groups !== undefined
       ? groups
       : [
           {
@@ -53,7 +57,7 @@ export default function DocumentPlaceholder({
           В этом разделе отображаются документы, внешние ссылки и архивные материалы. Компонент уже подготовлен к
           работе с backend и локальным файловым хранилищем.
         </p>
-        <DocumentList groups={fallbackGroups} />
+        <DocumentList groups={fallbackGroups} emptyTitle={emptyTitle} emptyDescription={emptyDescription} />
       </div>
     </div>
   );

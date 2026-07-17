@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { IconChevronDown } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { ContactEntry } from "@/shared/content/content.types";
@@ -27,7 +28,9 @@ function isHashLink(href: string) {
 export default function HeaderMobileMenu({ hotline }: Props) {
   const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
-  const [expanded, setExpanded] = useState<string | null>(DEFAULT_EXPANDED_SECTION);
+  const [expanded, setExpanded] = useState<string | null>(
+    DEFAULT_EXPANDED_SECTION,
+  );
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const portalTarget = typeof document === "undefined" ? null : document.body;
 
@@ -88,7 +91,11 @@ export default function HeaderMobileMenu({ hotline }: Props) {
 
       {portalTarget && mounted
         ? createPortal(
-            <div className={cls.mobileOverlay} data-state={visible ? "open" : "closed"} onClick={closeMenu}>
+            <div
+              className={cls.mobileOverlay}
+              data-state={visible ? "open" : "closed"}
+              onClick={closeMenu}
+            >
               <div
                 id="mobile-site-menu"
                 className={cls.mobilePanel}
@@ -100,8 +107,12 @@ export default function HeaderMobileMenu({ hotline }: Props) {
                 </div>
 
                 <a className={cls.mobileHotline} href={hotline.href}>
-                  <span className={cls.mobileHotlineLabel}>{hotline.label}</span>
-                  <span className={cls.mobileHotlineValue}>{hotline.value}</span>
+                  <span className={cls.mobileHotlineLabel}>
+                    {hotline.label}
+                  </span>
+                  <span className={cls.mobileHotlineValue}>
+                    {hotline.value}
+                  </span>
                 </a>
 
                 <div className={cls.mobileLinks}>
@@ -126,23 +137,45 @@ export default function HeaderMobileMenu({ hotline }: Props) {
                             <button
                               type="button"
                               aria-expanded={isExpanded}
-                              aria-label={isExpanded ? `Свернуть раздел ${item.title}` : `Развернуть раздел ${item.title}`}
-                              onClick={() => setExpanded(isExpanded ? null : item.title)}
+                              aria-label={
+                                isExpanded
+                                  ? `Свернуть раздел ${item.title}`
+                                  : `Развернуть раздел ${item.title}`
+                              }
+                              onClick={() =>
+                                setExpanded(isExpanded ? null : item.title)
+                              }
                             >
-                              <span className={cls.mobileChevron} aria-hidden="true" />
+                              <IconChevronDown
+                                className={cls.mobileChevron}
+                                aria-hidden="true"
+                                size={16}
+                                stroke={1.8}
+                              />
                             </button>
                           ) : null}
                         </div>
                         {hasChildren ? (
-                          <div className={cls.mobileSubLinksWrap} data-open={isExpanded ? "true" : "false"}>
+                          <div
+                            className={cls.mobileSubLinksWrap}
+                            data-open={isExpanded ? "true" : "false"}
+                          >
                             <div className={cls.mobileSubLinks}>
                               {children.map((link) =>
                                 isHashLink(link.href) ? (
-                                  <a key={link.href} href={link.href} onClick={closeMenu}>
+                                  <a
+                                    key={link.href}
+                                    href={link.href}
+                                    onClick={closeMenu}
+                                  >
                                     {link.title}
                                   </a>
                                 ) : (
-                                  <Link key={link.href} href={link.href} onClick={closeMenu}>
+                                  <Link
+                                    key={link.href}
+                                    href={link.href}
+                                    onClick={closeMenu}
+                                  >
                                     {link.title}
                                   </Link>
                                 ),

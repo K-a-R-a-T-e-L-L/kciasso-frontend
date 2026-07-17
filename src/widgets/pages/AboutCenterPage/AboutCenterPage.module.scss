@@ -1,8 +1,17 @@
 .layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.82fr);
-  gap: clamp(24px, 5vw, 58px);
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(18px, 3vw, 30px);
   align-items: start;
+}
+
+.section {
+  padding-top: clamp(34px, 5vw, 58px);
+  padding-bottom: clamp(44px, 6vw, 72px);
+}
+
+.layout > [data-document-variant] {
+  grid-column: 1 / -1;
 }
 
 .content {
@@ -10,9 +19,52 @@
   gap: 28px;
 }
 
+.content > article {
+  border: 1px solid rgba(7, 84, 155, 0.1);
+  border-radius: var(--radius-xl);
+  background: #fff;
+  padding: clamp(22px, 4vw, 34px);
+}
+
+.content > article :global(p) {
+  max-width: 760px;
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+.aboutCard {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.cardIcon {
+  display: inline-grid;
+  width: 52px;
+  height: 52px;
+  place-items: center;
+  border-radius: 50%;
+  background: #eaf4ff;
+  color: var(--color-primary);
+  font-size: 1.55rem;
+  font-weight: 800;
+}
+
+.aboutCard h2,
+.group h2 {
+  margin: 0;
+  color: var(--color-text);
+  font-size: clamp(1.35rem, 2.4vw, 1.9rem);
+  line-height: 1.2;
+}
+
 .group {
   display: grid;
   gap: 14px;
+  border: 1px solid rgba(7, 84, 155, 0.1);
+  border-radius: var(--radius-xl);
+  background: #fff;
+  padding: clamp(22px, 4vw, 32px);
+  box-shadow: 0 14px 36px rgba(5, 45, 100, 0.04);
 
   h2 {
     margin: 0;
@@ -26,46 +78,5 @@
     padding-left: 1.2rem;
     color: var(--color-muted);
     line-height: 1.75;
-  }
-}
-
-.linksCard {
-  display: grid;
-  gap: 12px;
-  border: 1px solid rgba(7, 84, 155, 0.14);
-  border-radius: var(--radius-xl);
-  background: linear-gradient(145deg, #ffffff, #eff6ff);
-  padding: clamp(22px, 4vw, 30px);
-  box-shadow: 0 18px 46px rgba(5, 45, 100, 0.07);
-
-  p {
-    margin: 0;
-    color: var(--color-primary);
-    font-size: 0.76rem;
-    font-weight: 900;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-  }
-
-  h2 {
-    margin: 0 0 4px;
-    color: var(--color-text);
-    font-size: clamp(1.4rem, 2.8vw, 1.95rem);
-    line-height: 1.12;
-  }
-
-  a {
-    display: inline-flex;
-    width: fit-content;
-    color: var(--color-primary);
-    font-weight: 800;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-}
-
-@media (max-width: 940px) {
-  .layout {
-    grid-template-columns: 1fr;
   }
 }

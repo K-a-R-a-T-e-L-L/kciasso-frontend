@@ -1,0 +1,8 @@
+{
+  "type": "object",
+  "properties": {
+    "placementKeys": { "type": "array", "items": { "type": "string" } }
+  },
+  "required": ["placementKeys"],
+  "x-readme-ref-name": "UpdateDocumentPlacementsDto"
+}

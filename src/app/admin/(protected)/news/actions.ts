@@ -103,7 +103,7 @@ export async function createNewsAction(_: NewsFormState, formData: FormData): Pr
 
   if (payload.publishMode === "schedule" && !payload.publishedAt) {
     return {
-      error: "Р”Р»СЏ РѕС‚Р»РѕР¶РµРЅРЅРѕР№ РїСѓР±Р»РёРєР°С†РёРё СѓРєР°Р¶РёС‚Рµ РґР°С‚Сѓ Рё РІСЂРµРјСЏ.",
+      error: "Для отложенной публикации укажите дату и время.",
     };
   }
 
@@ -132,7 +132,7 @@ export async function updateNewsAction(
 
   if (payload.publishMode === "schedule" && !payload.publishedAt) {
     return {
-      error: "Р”Р»СЏ РѕС‚Р»РѕР¶РµРЅРЅРѕР№ РїСѓР±Р»РёРєР°С†РёРё СѓРєР°Р¶РёС‚Рµ РґР°С‚Сѓ Рё РІСЂРµРјСЏ.",
+      error: "Для отложенной публикации укажите дату и время.",
     };
   }
 

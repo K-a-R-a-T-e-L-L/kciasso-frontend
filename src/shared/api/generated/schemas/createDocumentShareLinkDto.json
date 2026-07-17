@@ -1,0 +1,11 @@
+{
+  "type": "object",
+  "properties": {
+    "expiresAt": {
+      "type": "string",
+      "nullable": true,
+      "example": "2026-08-01T12:00:00.000Z"
+    }
+  },
+  "x-readme-ref-name": "CreateDocumentShareLinkDto"
+}

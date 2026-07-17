@@ -22,7 +22,7 @@ function formatSize(sizeBytes?: number) {
 
 export default function DocumentCard({ item }: Props) {
   const meta = [item.extension.toUpperCase(), item.publishedAt, formatSize(item.sizeBytes)].filter(Boolean);
-  const actionLabel = item.isExternal ? "Открыть" : "Скачать";
+  const actionLabel = item.actionLabel ?? (item.isExternal ? "Открыть" : "Скачать");
 
   return (
     <article className={cls.card}>
@@ -40,6 +40,10 @@ export default function DocumentCard({ item }: Props) {
           <Link href={item.url} target="_blank" rel="noreferrer">
             {actionLabel}
           </Link>
+        ) : item.openInNewTab ? (
+          <a href={item.url} target="_blank" rel="noreferrer">
+            {actionLabel}
+          </a>
         ) : (
           <a href={item.url} download={!item.isExternal}>
             {actionLabel}

@@ -1,50 +1,68 @@
 import PageHero from "@/shared/ui/PageHero/PageHero";
 import Container from "@/shared/ui/Container/Container";
 import Section from "@/shared/ui/Section/Section";
-import DirectionCard from "@/shared/ui/DirectionCard/DirectionCard";
-import DocumentPlaceholder from "@/shared/ui/DocumentPlaceholder/DocumentPlaceholder";
 import LinkTabsNav from "@/shared/ui/TabsNav/LinkTabsNav";
 import {
   buildQualitySectionHref,
-  getQualitySiblingTabs,
   getQualityTopTabs,
   type QualitySectionNode,
   type QualitySectionRoot,
 } from "@/shared/content/qualitySections";
 import cls from "./QualitySectionPage.module.scss";
+import type { PublicDocumentsResult } from "@/shared/api/adapters/public-documents.adapter";
+import PublicDocumentsBlock from "@/shared/ui/PublicDocumentsBlock/PublicDocumentsBlock";
 
 type Props = {
   root: QualitySectionRoot;
   current: QualitySectionNode;
   parents: QualitySectionNode[];
+  publicDocuments: PublicDocumentsResult;
 };
 
-export default function QualitySectionPage({ root, current, parents }: Props) {
+export default function QualitySectionPage({
+  root,
+  current,
+  parents,
+  publicDocuments,
+}: Props) {
   const topTabs = getQualityTopTabs();
-  const siblingTabs = getQualitySiblingTabs({
-    root,
-    current,
-    parents,
-    href: buildQualitySectionHref([root.slug]),
-  });
-
+  const navigationParent =
+    current.slug === root.slug ? root : (parents[parents.length - 1] ?? root);
+  const navigationPrefix = [
+    root.slug,
+    ...parents.slice(1).map((item) => item.slug),
+  ];
+  const secondLevelTabs = (navigationParent.children ?? []).map((item) => ({
+    key: buildQualitySectionHref([...navigationPrefix, item.slug]),
+    title: item.title,
+    href: buildQualitySectionHref([...navigationPrefix, item.slug]),
+  }));
   const breadcrumbs = [
     { title: "Главная", href: "/" },
-    { title: "Качество образования", href: "/kachestvo-obrazovaniya" },
+    {
+      title: "Качество образования",
+      href: "/kachestvo-obrazovaniya",
+    },
     ...parents
       .filter((item) => item.slug !== root.slug)
       .map((item, index) => ({
         title: item.title,
-        href: buildQualitySectionHref([root.slug, ...parents.slice(1, index + 2).map((entry) => entry.slug)]),
+        href: buildQualitySectionHref([
+          root.slug,
+          ...parents.slice(1, index + 2).map((entry) => entry.slug),
+        ]),
       })),
     { title: current.title },
   ];
-
   const activeTopHref = buildQualitySectionHref([root.slug]);
-  const activeSiblingHref =
+  const activeSecondLevelHref =
     current.slug === root.slug
       ? ""
-      : buildQualitySectionHref([root.slug, ...parents.slice(1).map((item) => item.slug), current.slug]);
+      : buildQualitySectionHref([
+          root.slug,
+          ...parents.slice(1).map((item) => item.slug),
+          current.slug,
+        ]);
 
   return (
     <>
@@ -55,74 +73,48 @@ export default function QualitySectionPage({ root, current, parents }: Props) {
         breadcrumbs={breadcrumbs}
       />
       <Container>
-        <LinkTabsNav
-          ariaLabel="Основные направления качества образования"
-          activeKey={activeTopHref}
-          items={topTabs.map((item) => ({
-            key: item.href,
-            title: item.title,
-            href: item.href,
-          }))}
-        />
-      </Container>
-
-      {current.slug !== root.slug && siblingTabs.length > 1 ? (
-        <Container>
-          <div className={cls.subnav}>
+        <section className={cls.navigationBlock}>
+          <h2>Направления оценки качества</h2>
+          <LinkTabsNav
+            ariaLabel="Направления оценки качества"
+            activeKey={activeTopHref}
+            items={topTabs.map((item) => ({
+              key: item.href,
+              title: item.title,
+              href: item.href,
+            }))}
+          />
+        </section>
+        {secondLevelTabs.length > 0 ? (
+          <section className={`${cls.navigationBlock} ${cls.secondLevel}`}>
+            <h2>Разделы направления «{root.title}»</h2>
             <LinkTabsNav
-              ariaLabel="Подразделы направления"
-              activeKey={activeSiblingHref}
-              items={siblingTabs.map((item) => ({
-                key: item.href,
-                title: item.title,
-                href: item.href,
-              }))}
+              ariaLabel={`Разделы направления «${root.title}»`}
+              activeKey={activeSecondLevelHref}
+              items={secondLevelTabs}
             />
-          </div>
-        </Container>
-      ) : null}
-
-      {current.children?.length ? (
-        <Section>
-          <Container>
-            <div className={cls.subsectionIntro}>
-              <h2>Подразделы</h2>
-              <p>Внутри направления сохранены отдельные страницы, которые пользователи привыкли находить на прежнем сайте.</p>
-            </div>
-            <div className={cls.subsectionGrid}>
-              {current.children.map((item, index) => (
-                <DirectionCard
-                  key={item.slug}
-                  index={index}
-                  title={item.title}
-                  href={buildQualitySectionHref([
-                    root.slug,
-                    ...parents.slice(1).map((entry) => entry.slug),
-                    ...(current.slug === root.slug ? [] : [current.slug]),
-                    item.slug,
-                  ])}
-                  description={item.description}
-                  badge="Подраздел"
-                />
-              ))}
-            </div>
-          </Container>
-        </Section>
-      ) : null}
-
-      <Section muted={Boolean(current.children?.length)}>
+          </section>
+        ) : null}
+      </Container>
+      <Section
+        className={cls.contentSection}
+        muted={Boolean(current.children?.length)}
+      >
         <Container>
-          <div className={cls.layout}>
+          <section className={cls.aboutSection}>
+            <h2 style={{fontWeight: 700}}>О разделе</h2>
             <article className="prose-content">
               {current.paragraphs.map((text) => (
                 <p key={text}>{text}</p>
               ))}
             </article>
-            <DocumentPlaceholder
-              oldUrl={current.oldUrl}
-              title={current.title}
-            />
-          </div>
+          </section>
+          <PublicDocumentsBlock
+            result={publicDocuments}
+            title="Документы и материалы"
+            variant="fullWidth"
+            searchable
+          />
         </Container>
       </Section>
     </>

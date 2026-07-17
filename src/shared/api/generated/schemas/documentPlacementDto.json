@@ -1,0 +1,12 @@
+{
+  "type": "object",
+  "properties": {
+    "id": { "type": "number" },
+    "sectionKey": { "type": "string" },
+    "sortOrder": { "type": "number" },
+    "createdAt": { "format": "date-time", "type": "string" },
+    "updatedAt": { "format": "date-time", "type": "string" }
+  },
+  "required": ["id", "sectionKey", "sortOrder", "createdAt", "updatedAt"],
+  "x-readme-ref-name": "DocumentPlacementDto"
+}

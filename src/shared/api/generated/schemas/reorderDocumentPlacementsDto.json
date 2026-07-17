@@ -1,0 +1,9 @@
+{
+  "type": "object",
+  "properties": {
+    "sectionKey": { "type": "string", "example": "gia-11.normative-documents" },
+    "orderedDocumentIds": { "type": "array", "items": { "type": "number" } }
+  },
+  "required": ["sectionKey", "orderedDocumentIds"],
+  "x-readme-ref-name": "ReorderDocumentPlacementsDto"
+}

@@ -1,0 +1,35 @@
+{
+  "type": "object",
+  "properties": {
+    "id": { "type": "number" },
+    "tokenPrefix": { "type": "string" },
+    "expiresAt": { "format": "date-time", "type": "string", "nullable": true },
+    "revokedAt": { "format": "date-time", "type": "string", "nullable": true },
+    "createdAt": { "format": "date-time", "type": "string" },
+    "lastAccessAt": {
+      "format": "date-time",
+      "type": "string",
+      "nullable": true
+    },
+    "accessCount": { "type": "number" },
+    "isActive": { "type": "boolean" },
+    "isExpired": { "type": "boolean" },
+    "versionId": { "type": "number" },
+    "versionNumber": { "type": "number" },
+    "documentId": { "type": "number" },
+    "documentTitle": { "type": "string" }
+  },
+  "required": [
+    "id",
+    "tokenPrefix",
+    "createdAt",
+    "accessCount",
+    "isActive",
+    "isExpired",
+    "versionId",
+    "versionNumber",
+    "documentId",
+    "documentTitle"
+  ],
+  "x-readme-ref-name": "DocumentShareLinkDto"
+}

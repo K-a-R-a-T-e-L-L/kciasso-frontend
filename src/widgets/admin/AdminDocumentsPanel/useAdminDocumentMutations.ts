@@ -1,0 +1,36 @@
+import type { Dispatch, FormEvent, SetStateAction } from "react";
+import type { DocumentDto, DocumentVersionDto } from "@/shared/api/generated/types";
+import { parseResponse } from "./admin-document-response";
+import { emptyForm, type EditableStatus, type FormState, type PanelMessage } from "./types";
+
+type SetState<T> = Dispatch<SetStateAction<T>>;
+type Props = {
+  sectionKey: string; documents: DocumentDto[]; orderedDocuments: DocumentDto[]; form: FormState; file: File | null; placements: string[];
+  editingPlacements: string[]; editingForm: FormState; versionFile: File | null; history: Record<number, DocumentVersionDto[]>;
+  setDocuments: SetState<DocumentDto[]>; setForm: SetState<FormState>; setFile: SetState<File | null>; setPlacements: SetState<string[]>;
+  setEditingId: SetState<number | null>; setVersionFile: SetState<File | null>; setVersionDocumentId: SetState<number | null>;
+  setHistory: SetState<Record<number, DocumentVersionDto[]>>; setBusy: SetState<string | null>; setMessage: SetState<PanelMessage>;
+  setCreateOpen: SetState<boolean>; refresh: () => Promise<void>;
+};
+
+export default function useAdminDocumentMutations({ sectionKey, documents, orderedDocuments, form, file, placements, editingPlacements, editingForm, versionFile, history, setDocuments, setForm, setFile, setPlacements, setEditingId, setVersionFile, setVersionDocumentId, setHistory, setBusy, setMessage, setCreateOpen, refresh }: Props) {
+  async function submitCreate(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!file || placements.length === 0) return setMessage({ type: "error", text: !file ? "Выберите первый файл документа." : "Выберите минимум один раздел." });
+    setBusy("create"); setMessage(null);
+    try { const data = new FormData(); placements.forEach((key) => data.append("placementKeys", key)); data.set("title", form.title); data.set("description", form.description); data.set("documentNumber", form.documentNumber); if (form.documentDate) data.set("documentDate", form.documentDate); data.set("file", file); await parseResponse(await fetch("/api/admin/documents", { method: "POST", body: data })); setForm(emptyForm); setFile(null); setPlacements([sectionKey]); setCreateOpen(false); await refresh(); setMessage({ type: "success", text: "Документ создан." }); }
+    catch (error) { setMessage({ type: "error", text: error instanceof Error ? error.message : "Не удалось создать документ." }); } finally { setBusy(null); }
+  }
+  async function saveMetadata(event: FormEvent<HTMLFormElement>, id: number) {
+    event.preventDefault(); if (!editingPlacements.length) return setMessage({ type: "error", text: "Нужно выбрать минимум один раздел." }); setBusy(`edit-${id}`); setMessage(null);
+    try { await parseResponse(await fetch(`/api/admin/documents/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...editingForm, documentDate: editingForm.documentDate || undefined }) })); await parseResponse(await fetch(`/api/admin/documents/${id}/placements`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ placementKeys: editingPlacements }) })); await refresh(); setEditingId(null); setMessage({ type: "success", text: "Документ и его размещение сохранены." }); }
+    catch (error) { setMessage({ type: "error", text: error instanceof Error ? error.message : "Не удалось сохранить изменения." }); } finally { setBusy(null); }
+  }
+  async function changeStatus(id: number, status: EditableStatus) { setBusy(`status-${id}`); setMessage(null); try { await parseResponse(await fetch(`/api/admin/documents/${id}/status`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status }) })); await refresh(); setMessage({ type: "success", text: "Статус изменён." }); } catch (error) { setMessage({ type: "error", text: error instanceof Error ? error.message : "Не удалось изменить статус." }); } finally { setBusy(null); } }
+  async function uploadVersion(event: FormEvent<HTMLFormElement>, id: number) { event.preventDefault(); if (!versionFile) return setMessage({ type: "error", text: "Выберите файл новой версии." }); setBusy(`version-${id}`); setMessage(null); try { const data = new FormData(); data.set("file", versionFile); await parseResponse(await fetch(`/api/admin/documents/${id}/versions`, { method: "POST", body: data })); setVersionFile(null); setVersionDocumentId(null); await refresh(); setMessage({ type: "success", text: "Новая версия загружена." }); } catch (error) { setMessage({ type: "error", text: error instanceof Error ? error.message : "Не удалось загрузить версию." }); } finally { setBusy(null); } }
+  async function loadHistory(id: number) { if (history[id]) return; try { const data = await parseResponse(await fetch(`/api/admin/documents/${id}/versions`, { cache: "no-store" })); setHistory((current) => ({ ...current, [id]: data })); } catch (error) { setMessage({ type: "error", text: error instanceof Error ? error.message : "Не удалось загрузить историю." }); } }
+  async function makeCurrent(id: number, version: DocumentVersionDto) { if (!window.confirm(`Сделать версию ${version.versionNumber} текущей?`)) return; setBusy(`current-${id}`); try { await parseResponse(await fetch(`/api/admin/documents/${id}/versions/${version.id}/current`, { method: "POST" })); setHistory((current) => ({ ...current, [id]: (current[id] ?? []).map((item) => ({ ...item, isCurrent: item.id === version.id })) })); await refresh(); setMessage({ type: "success", text: "Текущая версия изменена." }); } catch (error) { setMessage({ type: "error", text: error instanceof Error ? error.message : "Не удалось выбрать версию." }); } finally { setBusy(null); } }
+  async function deleteDocument(id: number) { if (!window.confirm("Удалить документ полностью? Будут удалены сам документ, все версии и физические файлы. Удаление нельзя отменить.")) return; setBusy(`delete-${id}`); setMessage(null); try { await parseResponse(await fetch(`/api/admin/documents/${id}`, { method: "DELETE" })); setDocuments((current) => current.filter((item) => item.id !== id)); setMessage({ type: "success", text: "Документ полностью удалён." }); } catch (error) { setMessage({ type: "error", text: error instanceof Error ? error.message : "Не удалось удалить документ." }); } finally { setBusy(null); } }
+  async function move(id: number, offset: -1 | 1) { const index = orderedDocuments.findIndex((item) => item.id === id); const target = index + offset; if (target < 0 || target >= orderedDocuments.length) return; const previous = documents; const next = [...orderedDocuments]; [next[index], next[target]] = [next[target], next[index]]; setDocuments(next); setBusy(`move-${id}`); try { await parseResponse(await fetch("/api/admin/document-placements/reorder", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ sectionKey, orderedDocumentIds: next.map((item) => item.id) }) })); await refresh(); } catch (error) { setDocuments(previous); setMessage({ type: "error", text: error instanceof Error ? error.message : "Не удалось изменить порядок. Порядок восстановлен." }); } finally { setBusy(null); } }
+  return { submitCreate, saveMetadata, changeStatus, uploadVersion, loadHistory, makeCurrent, deleteDocument, move };
+}

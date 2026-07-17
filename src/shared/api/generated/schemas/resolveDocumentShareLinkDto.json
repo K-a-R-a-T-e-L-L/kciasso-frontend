@@ -1,0 +1,8 @@
+{
+  "type": "object",
+  "properties": {
+    "token": { "type": "string", "minLength": 32, "maxLength": 128 }
+  },
+  "required": ["token"],
+  "x-readme-ref-name": "ResolveDocumentShareLinkDto"
+}

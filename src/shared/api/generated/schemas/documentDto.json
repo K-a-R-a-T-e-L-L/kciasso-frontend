@@ -1,0 +1,68 @@
+{
+  "type": "object",
+  "properties": {
+    "id": { "type": "number" },
+    "title": { "type": "string" },
+    "description": { "type": "string" },
+    "documentNumber": { "type": "string" },
+    "documentDate": { "format": "date-time", "type": "string" },
+    "status": {
+      "type": "string",
+      "enum": ["DRAFT", "UNLISTED", "PUBLISHED", "ARCHIVED"]
+    },
+    "placements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "number" },
+          "sectionKey": { "type": "string" },
+          "sortOrder": { "type": "number" },
+          "createdAt": { "format": "date-time", "type": "string" },
+          "updatedAt": { "format": "date-time", "type": "string" }
+        },
+        "required": ["id", "sectionKey", "sortOrder", "createdAt", "updatedAt"],
+        "x-readme-ref-name": "DocumentPlacementDto"
+      }
+    },
+    "currentVersion": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "number" },
+        "versionNumber": { "type": "number" },
+        "originalFilename": { "type": "string" },
+        "extension": { "type": "string" },
+        "mimeType": { "type": "string" },
+        "sizeBytes": { "type": "string", "format": "int64" },
+        "sha256": { "type": "string", "minLength": 64, "maxLength": 64 },
+        "createdAt": { "format": "date-time", "type": "string" },
+        "isCurrent": { "type": "boolean" }
+      },
+      "required": [
+        "id",
+        "versionNumber",
+        "originalFilename",
+        "extension",
+        "mimeType",
+        "sizeBytes",
+        "sha256",
+        "createdAt",
+        "isCurrent"
+      ],
+      "x-readme-ref-name": "DocumentVersionDto"
+    },
+    "versionsCount": { "type": "number" },
+    "createdAt": { "format": "date-time", "type": "string" },
+    "updatedAt": { "format": "date-time", "type": "string" }
+  },
+  "required": [
+    "id",
+    "title",
+    "status",
+    "placements",
+    "versionsCount",
+    "createdAt",
+    "updatedAt"
+  ],
+  "x-readme-ref-name": "DocumentDto"
+}

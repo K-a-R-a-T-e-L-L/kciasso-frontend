@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getQualitySectionByPath } from "@/shared/api/adapters/quality.adapter";
 import QualitySectionPage from "@/widgets/pages/QualitySectionPage/QualitySectionPage";
+import { getPublicDocuments } from "@/shared/api/adapters/public-documents.adapter";
 
 type Props = {
   params: Promise<{
@@ -14,5 +15,12 @@ export default async function Page({ params }: Props) {
 
   if (!resolved) notFound();
 
-  return <QualitySectionPage root={resolved.root} current={resolved.current} parents={resolved.parents} />;
+  return (
+    <QualitySectionPage
+      root={resolved.root}
+      current={resolved.current}
+      parents={resolved.parents}
+      publicDocuments={await getPublicDocuments(`quality.${slug.join(".")}`)}
+    />
+  );
 }

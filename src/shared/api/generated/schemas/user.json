@@ -18,6 +18,22 @@
       "type": "array",
       "items": { "$ref": "#/components/schemas/News" }
     },
+    "created_documents": {
+      "type": "array",
+      "items": { "$ref": "#/components/schemas/Document" }
+    },
+    "updated_documents": {
+      "type": "array",
+      "items": { "$ref": "#/components/schemas/Document" }
+    },
+    "created_document_versions": {
+      "type": "array",
+      "items": { "$ref": "#/components/schemas/DocumentVersion" }
+    },
+    "created_document_share_links": {
+      "type": "array",
+      "items": { "$ref": "#/components/schemas/DocumentShareLink" }
+    },
     "created_at": { "type": "string", "format": "date-time" },
     "updated_at": { "type": "string", "format": "date-time" },
     "deleted_at": { "type": "string", "format": "date-time", "nullable": true }

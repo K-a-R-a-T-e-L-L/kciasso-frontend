@@ -9,11 +9,14 @@ export type DocumentFile = {
   publishedAt?: string;
   category?: string;
   isExternal?: boolean;
+  openInNewTab?: boolean;
+  actionLabel?: string;
 };
 
 export type DocumentGroup = {
   id: string;
   title: string;
   description?: string;
+  showHeading?: boolean;
   items: DocumentFile[];
 };

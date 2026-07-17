@@ -1,0 +1,26 @@
+{
+  "type": "object",
+  "properties": {
+    "id": { "type": "number" },
+    "versionNumber": { "type": "number" },
+    "originalFilename": { "type": "string" },
+    "extension": { "type": "string" },
+    "mimeType": { "type": "string" },
+    "sizeBytes": { "type": "string", "format": "int64" },
+    "sha256": { "type": "string", "minLength": 64, "maxLength": 64 },
+    "createdAt": { "format": "date-time", "type": "string" },
+    "isCurrent": { "type": "boolean" }
+  },
+  "required": [
+    "id",
+    "versionNumber",
+    "originalFilename",
+    "extension",
+    "mimeType",
+    "sizeBytes",
+    "sha256",
+    "createdAt",
+    "isCurrent"
+  ],
+  "x-readme-ref-name": "DocumentVersionDto"
+}
