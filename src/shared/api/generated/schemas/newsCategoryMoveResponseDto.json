@@ -1,0 +1,35 @@
+{
+  "type": "object",
+  "properties": {
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "number" },
+          "slug": { "type": "string" },
+          "title": { "type": "string" },
+          "description": { "type": "string", "nullable": true },
+          "order": { "type": "number" },
+          "isActive": { "type": "boolean" },
+          "newsCount": { "type": "number" },
+          "createdAt": { "format": "date-time", "type": "string" },
+          "updatedAt": { "format": "date-time", "type": "string" }
+        },
+        "required": [
+          "id",
+          "slug",
+          "title",
+          "order",
+          "isActive",
+          "newsCount",
+          "createdAt",
+          "updatedAt"
+        ],
+        "x-readme-ref-name": "AdminNewsCategoryDto"
+      }
+    }
+  },
+  "required": ["items"],
+  "x-readme-ref-name": "NewsCategoryMoveResponseDto"
+}

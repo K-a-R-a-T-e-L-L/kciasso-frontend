@@ -17,16 +17,10 @@ export default function NewsCard({ title, date, href, text, category, coverImage
 
   const content = (
     <>
-      {showImage ? (
-        <span className={cls.media} aria-hidden={coverImageUrl ? undefined : true}>
-          {coverImageUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img className={cls.image} src={coverImageUrl} alt={title} />
-          ) : (
-            <span className={cls.placeholder}>
-              <span>Новости</span>
-            </span>
-          )}
+      {showImage && coverImageUrl ? (
+        <span className={cls.media}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className={cls.image} src={coverImageUrl} alt={title} />
         </span>
       ) : null}
       <span className={cls.body}>

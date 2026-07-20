@@ -3,7 +3,6 @@ import { clearAdminTokenCookie, requireAdminSectionToken } from "@/shared/admin/
 import { isAdminApiErrorStatus } from "@/shared/admin/api-error";
 import { getAdminNewsById, getAdminNewsCategories } from "@/shared/api/adapters/admin-news.adapter";
 import AdminNewsForm from "@/widgets/admin/AdminNewsForm/AdminNewsForm.client";
-import { updateNewsAction } from "../../actions";
 import cls from "@/widgets/admin/AdminShell/AdminShell.module.scss";
 
 type Props = {
@@ -59,7 +58,7 @@ export default async function Page({ params }: Props) {
       <AdminNewsForm
         categories={categories}
         initialData={news}
-        action={updateNewsAction.bind(null, newsId)}
+        mutation={{ method: "update", id: String(newsId) }}
         submitLabel="Сохранить изменения"
       />
     </section>

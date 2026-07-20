@@ -25,7 +25,7 @@ function getDocumentsControllerListUrl() {
  * {@link /api/admin/documents}
  */
 export async function documentsControllerList(
-  params: DocumentsControllerListQueryParams,
+  params?: DocumentsControllerListQueryParams,
   config: Partial<RequestConfig> & { client?: Client } = {},
 ) {
   const { client: request = fetch, ...requestConfig } = config;

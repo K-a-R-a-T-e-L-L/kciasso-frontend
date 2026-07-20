@@ -1,12 +1,15 @@
 {
   "type": "object",
   "properties": {
-    "slug": { "type": "string" },
+    "slug": {
+      "type": "string",
+      "description": "Оставьте пустым для автоматической генерации из названия"
+    },
     "title": { "type": "string" },
     "description": { "type": "string" },
     "order": { "type": "number", "default": 0 },
     "isActive": { "type": "boolean", "default": true }
   },
-  "required": ["slug", "title"],
+  "required": ["title"],
   "x-readme-ref-name": "CreateNewsCategoryDto"
 }

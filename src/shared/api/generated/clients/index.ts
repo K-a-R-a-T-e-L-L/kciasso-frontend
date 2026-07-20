@@ -20,6 +20,7 @@ export { adminNewsControllerDeleteNews } from "./adminNewsController/adminNewsCo
 export { adminNewsControllerGetCategories } from "./adminNewsController/adminNewsControllerGetCategories";
 export { adminNewsControllerGetNews } from "./adminNewsController/adminNewsControllerGetNews";
 export { adminNewsControllerGetNewsById } from "./adminNewsController/adminNewsControllerGetNewsById";
+export { adminNewsControllerMoveCategory } from "./adminNewsController/adminNewsControllerMoveCategory";
 export { adminNewsControllerUpdateCategory } from "./adminNewsController/adminNewsControllerUpdateCategory";
 export { adminNewsControllerUpdateNews } from "./adminNewsController/adminNewsControllerUpdateNews";
 export { adminNewsMediaControllerRemoveUnreferenced } from "./adminNewsMediaController/adminNewsMediaControllerRemoveUnreferenced";

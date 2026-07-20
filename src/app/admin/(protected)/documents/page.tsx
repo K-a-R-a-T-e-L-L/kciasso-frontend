@@ -6,11 +6,25 @@ import { getAdminDocuments } from '@/shared/api/adapters/admin-documents.adapter
 import AdminBackendUnavailable from '@/widgets/admin/AdminBackendUnavailable/AdminBackendUnavailable'
 import AdminDocumentsPanel from '@/widgets/admin/AdminDocumentsPanel/AdminDocumentsPanel.client'
 import cls from '@/widgets/admin/AdminShell/AdminShell.module.scss'
-import { DOCUMENT_GROUP_IDS, DOCUMENT_PLACEMENT_GROUPS } from '@/shared/documents/document-placement-registry'
+import { DOCUMENT_GROUP_IDS, DOCUMENT_PLACEMENT_GROUPS, resolveDocumentPageContext } from '@/shared/documents/document-placement-registry'
+import { parseAdminDocumentQuery } from '@/shared/documents/document-query-state'
 
-const SECTION_KEY = 'gia-9.normative-documents'
+type Props = {
+  searchParams: Promise<{
+    scope?: string
+    group?: string
+    placement?: string
+    sectionKey?: string
+    search?: string
+    status?: string
+    sortBy?: string
+    sortDirection?: string
+    page?: string
+    pageSize?: string
+  }>
+}
 
-export default async function Page() {
+export default async function Page({ searchParams }: Props) {
   let token: string
   let admin
   try {
@@ -27,10 +41,28 @@ export default async function Page() {
   const allowedGroupIds = admin.role === 'SUPER_ADMIN' || admin.documentsAccessMode === 'ALL'
     ? DOCUMENT_PLACEMENT_GROUPS.map((group) => group.id)
     : admin.documentGroups.map((group) => DOCUMENT_GROUP_IDS[group])
-  const sectionKey = DOCUMENT_PLACEMENT_GROUPS.find((group) => allowedGroupIds.includes(group.id))?.items[0]?.key ?? SECTION_KEY
+  const params = await searchParams
+  const pageContext = resolveDocumentPageContext({
+    scope: params.scope,
+    group: params.group,
+    placement: params.placement ?? params.sectionKey,
+    allowedGroupIds,
+    canSeeAll: admin.role === 'SUPER_ADMIN' || admin.documentsAccessMode === 'ALL',
+  })
+  const queryState = parseAdminDocumentQuery(params, pageContext)
+  const groupEnum = params.group ? ({ 'gia-9': 'GIA_9', 'gia-11': 'GIA_11', gia: 'GIA', quality: 'QUALITY', regional: 'REGIONAL', about: 'ABOUT' } as Record<string, string>)[params.group] : undefined
   let documents
   try {
-    documents = await getAdminDocuments(token, { placementKey: sectionKey })
+    documents = await getAdminDocuments(token, {
+      ...(queryState.placement ? { placementKey: queryState.placement } : {}),
+      ...(groupEnum ? { group: groupEnum } : {}),
+      ...(queryState.search ? { search: queryState.search } : {}),
+      ...(queryState.status ? { status: queryState.status } : {}),
+      sortBy: queryState.sortBy,
+      sortDirection: queryState.sortDirection,
+      page: queryState.page,
+      pageSize: queryState.pageSize,
+    } as never)
   } catch (error) {
     if (isAdminApiErrorStatus(error, 401)) {
       await clearAdminTokenCookie()
@@ -43,5 +75,5 @@ export default async function Page() {
     throw error
   }
 
-  return <AdminDocumentsPanel initialDocuments={documents.items} sectionKey={sectionKey} allowedGroupIds={allowedGroupIds} />
+  return <AdminDocumentsPanel initialDocuments={documents.items} sectionKey={pageContext.queryPlacementKey} allowedGroupIds={allowedGroupIds} canSeeAll={admin.role === 'SUPER_ADMIN' || admin.documentsAccessMode === 'ALL'} pageContext={pageContext} query={queryState} pagination={documents.meta} />
 }

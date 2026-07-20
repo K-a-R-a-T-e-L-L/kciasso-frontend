@@ -1,0 +1,6 @@
+{
+  "type": "object",
+  "properties": { "direction": { "type": "string", "enum": ["up", "down"] } },
+  "required": ["direction"],
+  "x-readme-ref-name": "MoveNewsCategoryDto"
+}

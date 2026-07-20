@@ -68,6 +68,11 @@
   legend { padding: 0 0.35rem; font-weight: 700; color: var(--color-text); }
 }
 
+.coverCard { display:grid; gap:1rem; padding:1.15rem; border:1px solid var(--color-border); border-radius:18px; background:rgba(237,244,251,.45); }
+.coverCard h2 { margin:0; font-size:1.05rem; }.coverCard > div > p { margin:.25rem 0 0; color:var(--color-muted); }
+.uploadArea { display:grid; justify-items:start; gap:.45rem; padding:1rem; border:1px dashed rgba(7,84,155,.4); border-radius:14px; background:#fff; }.uploadArea p { margin:0; color:var(--color-muted); }.uploadArea button,.coverPreview button { padding:.6rem .8rem; border:1px solid var(--color-border); border-radius:10px; background:#fff; color:var(--color-primary); font:inherit; font-weight:700; cursor:pointer; }.fileInput { position:absolute; width:1px; height:1px; opacity:0; }
+.coverPreview { display:grid; grid-template-columns:minmax(180px, 40%) 1fr; gap:1rem; align-items:center; padding:1rem; border:1px solid var(--color-border); border-radius:14px; background:#fff; }.coverPreview img { display:block; width:100%; aspect-ratio:16/9; border-radius:10px; object-fit:cover; }.coverPreview div { display:flex; flex-wrap:wrap; gap:.5rem; align-items:center; }.coverPreview strong,.coverPreview p { width:100%; margin:0; }.coverPreview p { color:var(--color-muted); overflow-wrap:anywhere; }
+
 .imageModeSwitch {
   display: flex;
   flex-wrap: wrap;
@@ -185,4 +190,5 @@
   .spanFull {
     grid-column: auto;
   }
+  .coverPreview { grid-template-columns:1fr; }
 }

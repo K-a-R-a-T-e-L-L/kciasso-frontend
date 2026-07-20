@@ -11,7 +11,7 @@ export type DocumentPaginationMetaDto = {
   /**
    * @type number
    */
-  limit: number;
+  pageSize: number;
   /**
    * @type number
    */

@@ -7,6 +7,7 @@ import {
   adminNewsControllerGetNews,
   adminNewsControllerGetNewsById,
   adminNewsControllerUpdateCategory,
+  adminNewsControllerMoveCategory,
   adminNewsControllerUpdateNews,
   adminNewsMediaControllerUpload,
   adminNewsMediaControllerRemoveUnreferenced,
@@ -132,6 +133,14 @@ export async function updateAdminNewsCategory(
 export async function deleteAdminNewsCategory(token: string, id: number): Promise<AdminNewsCategoryDto> {
   try {
     return await adminNewsControllerDeleteCategory(id, buildAdminConfig(token));
+  } catch (error) {
+    throw toAdminApiError(error);
+  }
+}
+
+export async function moveAdminNewsCategory(token: string, id: number, direction: "up" | "down"): Promise<{ items: AdminNewsCategoryDto[] }> {
+  try {
+    return await adminNewsControllerMoveCategory(id, { direction }, buildAdminConfig(token));
   } catch (error) {
     throw toAdminApiError(error);
   }

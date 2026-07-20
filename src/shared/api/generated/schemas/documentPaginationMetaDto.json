@@ -2,10 +2,10 @@
   "type": "object",
   "properties": {
     "page": { "type": "number" },
-    "limit": { "type": "number" },
+    "pageSize": { "type": "number" },
     "total": { "type": "number" },
     "totalPages": { "type": "number" }
   },
-  "required": ["page", "limit", "total", "totalPages"],
+  "required": ["page", "pageSize", "total", "totalPages"],
   "x-readme-ref-name": "DocumentPaginationMetaDto"
 }

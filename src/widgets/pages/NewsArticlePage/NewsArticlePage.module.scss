@@ -41,6 +41,9 @@
   }
 }
 
+.cover { width:100%; max-height:520px; margin:0 0 28px; overflow:hidden; border:1px solid rgba(7,84,155,.12); border-radius:24px; aspect-ratio:16 / 9; background:rgba(7,84,155,.06); }
+.coverImage { display:block; width:100%; height:100%; object-fit:cover; }
+
 .backRow {
   margin-top: 32px;
 
@@ -93,3 +96,5 @@
     position: static;
   }
 }
+
+@media (max-width: 640px) { .cover { margin-bottom:22px; border-radius:18px; max-height:none; } }

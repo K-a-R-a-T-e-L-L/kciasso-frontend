@@ -9,9 +9,10 @@ export type CreateNewsDto = {
    */
   title: string;
   /**
-   * @type string
+   * @description Оставьте пустым для автоматической генерации из заголовка
+   * @type string | undefined
    */
-  slug: string;
+  slug?: string;
   /**
    * @type string
    */
@@ -21,9 +22,9 @@ export type CreateNewsDto = {
    */
   content: string;
   /**
-   * @type string | undefined
+   * @type string
    */
-  coverImageUrl?: string;
+  coverImageUrl?: string | null;
   /**
    * @type number | undefined
    */

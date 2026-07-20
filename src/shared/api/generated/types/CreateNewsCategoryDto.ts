@@ -5,9 +5,10 @@
 
 export type CreateNewsCategoryDto = {
   /**
-   * @type string
+   * @description Оставьте пустым для автоматической генерации из названия
+   * @type string | undefined
    */
-  slug: string;
+  slug?: string;
   /**
    * @type string
    */

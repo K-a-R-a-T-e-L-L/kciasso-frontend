@@ -24,18 +24,14 @@ export default function AdminCategoryForm({ initialData, action, submitLabel }: 
         </label>
 
         <label>
-          <span>Slug</span>
-          <input type="text" name="slug" defaultValue={initialData?.slug ?? ""} required />
+          <span>Slug (необязательно)</span>
+          <input type="text" name="slug" defaultValue={initialData?.slug ?? ""} />
+          <small>Оставьте поле пустым — адрес создастся автоматически из названия.</small>
         </label>
 
         <label className={cls.spanFull}>
           <span>Описание</span>
           <textarea name="description" rows={5} defaultValue={initialData?.description ?? ""} />
-        </label>
-
-        <label>
-          <span>Порядок</span>
-          <input type="number" name="order" defaultValue={initialData?.order ?? 0} min={0} />
         </label>
 
         <label className={cls.checkbox}>

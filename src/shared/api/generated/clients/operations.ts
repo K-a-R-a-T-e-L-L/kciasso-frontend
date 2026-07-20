@@ -88,6 +88,10 @@ export const operations = {
     path: "/api/admin/news-categories/:id",
     method: "delete",
   },
+  AdminNewsController_moveCategory: {
+    path: "/api/admin/news-categories/:id/move",
+    method: "post",
+  },
   AdminNewsMediaController_upload: {
     path: "/api/admin/news/media",
     method: "post",

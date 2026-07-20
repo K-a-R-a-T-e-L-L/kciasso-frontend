@@ -210,14 +210,14 @@ const allItems = () =>
   DOCUMENT_PLACEMENT_GROUPS.flatMap((group) => group.items);
 
 export function placementTitle(key: string) {
-  return allItems().find((item) => item.key === key)?.title ?? key;
+  return allItems().find((item) => item.key === key)?.title ?? "Материалы и документы";
 }
 
 export function placementPageTitle(key: string) {
   return (
     DOCUMENT_PLACEMENT_GROUPS.find((group) =>
       group.items.some((item) => item.key === key),
-    )?.title ?? key
+    )?.title ?? "Материалы и документы"
   );
 }
 
@@ -233,3 +233,112 @@ export const DOCUMENT_GROUP_IDS = {
   REGIONAL: "regional",
   ABOUT: "about",
 } as const;
+
+export type DocumentsPageContext = {
+  mode: "default" | "all" | "group" | "placement";
+  title: string;
+  eyebrow: string;
+  helperText: string;
+  emptyText: string;
+  breadcrumbs: string[];
+  queryPlacementKey: string;
+  groupId?: string;
+  placementKey?: string;
+};
+
+const DEFAULT_CONTEXT = {
+  mode: "default" as const,
+  title: "Материалы и документы",
+  eyebrow: "Материалы и документы",
+  helperText: "Выберите доступный раздел, чтобы открыть документы.",
+  emptyText: "В доступных разделах пока нет документов.",
+};
+
+const GROUP_ALIASES: Record<string, string> = {
+  GIA_9: "gia-9",
+  GIA_11: "gia-11",
+  GIA: "gia",
+  QUALITY: "quality",
+  REGIONAL: "regional",
+  ABOUT: "about",
+};
+
+function normalizeGroup(value?: string) {
+  if (!value) return undefined;
+  const trimmed = value.trim();
+  return GROUP_ALIASES[trimmed.toUpperCase()] ?? trimmed.toLowerCase();
+}
+
+function fallbackPlacement(allowedGroupIds: readonly string[], fallback?: string) {
+  if (fallback) {
+    const item = placementItem(fallback);
+    const group = item && DOCUMENT_PLACEMENT_GROUPS.find((candidate) => candidate.items.some((entry) => entry.key === item.key));
+    if (group && allowedGroupIds.includes(group.id)) return item.key;
+  }
+  return DOCUMENT_PLACEMENT_GROUPS.find((group) => allowedGroupIds.includes(group.id))?.items[0]?.key
+    ?? DOCUMENT_PLACEMENT_GROUPS[0].items[0].key;
+}
+
+export function resolveDocumentPageContext(options: {
+  scope?: string;
+  group?: string;
+  placement?: string;
+  allowedGroupIds: readonly string[];
+  canSeeAll: boolean;
+}): DocumentsPageContext {
+  const queryPlacementKey = fallbackPlacement(options.allowedGroupIds, options.placement);
+  const normalizedGroup = normalizeGroup(options.group);
+  const explicitAll = options.scope?.trim().toLowerCase() === "all" || normalizedGroup === "all";
+
+  if (explicitAll && options.canSeeAll) {
+    return {
+      ...DEFAULT_CONTEXT,
+      mode: "all",
+      title: "Все материалы и документы",
+      helperText: "Показаны документы из всех доступных разделов.",
+      emptyText: "Документы пока не добавлены.",
+      breadcrumbs: [DEFAULT_CONTEXT.eyebrow, "Все материалы и документы"],
+      queryPlacementKey,
+    };
+  }
+
+  if (normalizedGroup && DOCUMENT_PLACEMENT_GROUPS.some((group) => group.id === normalizedGroup)
+      && options.allowedGroupIds.includes(normalizedGroup)) {
+    const group = DOCUMENT_PLACEMENT_GROUPS.find((item) => item.id === normalizedGroup)!;
+    return {
+      ...DEFAULT_CONTEXT,
+      mode: "group",
+      title: `Документы ${group.title}`,
+      helperText: `Документы группы «${group.title}».`,
+      emptyText: `В группе «${group.title}» пока нет документов.`,
+      breadcrumbs: [DEFAULT_CONTEXT.eyebrow, group.title],
+      queryPlacementKey: group.items[0].key,
+      groupId: group.id,
+    };
+  }
+
+  const placement = options.placement ? placementItem(options.placement.trim()) : undefined;
+  const placementGroup = placement && DOCUMENT_PLACEMENT_GROUPS.find((group) => group.items.some((item) => item.key === placement.key));
+  if (placement && placementGroup && options.allowedGroupIds.includes(placementGroup.id)) {
+    const title = placement.key === "quality.rsoko.regionalnye-kontrolnye-raboty"
+      ? "Качество образования · Региональные исследования"
+      : `${placementGroup.title} · ${placement.title}`;
+    return {
+      ...DEFAULT_CONTEXT,
+      mode: "placement",
+      title,
+      helperText: `Документы раздела «${placement.title}».`,
+      emptyText: `В разделе «${placement.title}» пока нет документов.`,
+      breadcrumbs: [DEFAULT_CONTEXT.eyebrow, placementGroup.title, placement.title],
+      queryPlacementKey: placement.key,
+      groupId: placementGroup.id,
+      placementKey: placement.key,
+    };
+  }
+
+  return {
+    ...DEFAULT_CONTEXT,
+    breadcrumbs: [DEFAULT_CONTEXT.eyebrow],
+    queryPlacementKey,
+  };
+}

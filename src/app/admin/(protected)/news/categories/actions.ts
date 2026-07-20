@@ -7,20 +7,19 @@ import {
   createAdminNewsCategory,
   deleteAdminNewsCategory,
   updateAdminNewsCategory,
+  moveAdminNewsCategory,
 } from "@/shared/api/adapters/admin-news.adapter";
 import type { AdminCategoryFormState } from "@/widgets/admin/AdminCategoryForm/AdminCategoryForm.types";
 
 function parseCategoryFormData(formData: FormData) {
   const title = String(formData.get("title") ?? "").trim();
-  const slug = String(formData.get("slug") ?? "").trim();
+  const rawSlug = String(formData.get("slug") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim();
-  const order = Number(formData.get("order") ?? 0);
 
   return {
     title,
-    slug,
+    ...(rawSlug ? { slug: rawSlug } : {}),
     description: description || undefined,
-    order: Number.isFinite(order) ? order : 0,
     isActive: formData.get("isActive") === "on",
   };
 }
@@ -53,7 +52,7 @@ export async function createCategoryAction(
   const { token } = await requireAdminSectionToken("news");
   const payload = parseCategoryFormData(formData);
 
-  if (!payload.title || !payload.slug) {
+  if (!payload.title) {
     return {
       error: "Заполните название и slug рубрики.",
     };
@@ -76,7 +75,7 @@ export async function updateCategoryAction(
   const { token } = await requireAdminSectionToken("news");
   const payload = parseCategoryFormData(formData);
 
-  if (!payload.title || !payload.slug) {
+  if (!payload.title) {
     return {
       error: "Заполните название и slug рубрики.",
     };
@@ -110,4 +109,9 @@ export async function deleteCategoryAction(id: number) {
   }
 
   redirect("/admin/news/categories");
+}
+
+export async function moveCategoryAction(id: number, direction: "up" | "down") {
+  const { token } = await requireAdminSectionToken("news");
+  return moveAdminNewsCategory(token, id, direction);
 }

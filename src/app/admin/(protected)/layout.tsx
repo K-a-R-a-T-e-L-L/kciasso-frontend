@@ -36,7 +36,7 @@ export default async function Layout({ children }: { children: ReactNode }) {
   ].filter(Boolean) as { href: string; title: string }[];
 
   return (
-    <div className={cls.page}>
+    <div className={cls.page} data-testid="admin-shell">
       <div className={cls.shell}>
         <aside className={cls.sidebar}>
           <div className={cls.brand}>

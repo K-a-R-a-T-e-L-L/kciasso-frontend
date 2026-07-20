@@ -78,6 +78,7 @@ export default function DocumentShareLinks({ version }: Props) {
     type: "success" | "error";
     text: string;
   } | null>(null);
+  const currentLink = links.find((link) => link.isActive) ?? null;
 
   async function refresh(showBusy = true) {
     if (showBusy) setBusy("load");
@@ -124,6 +125,7 @@ export default function DocumentShareLinks({ version }: Props) {
   async function create(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setMessage(null);
+    setCreated(null);
     let expiry: string | null = null;
     if (expiresAt) {
       const date = new Date(expiresAt);
@@ -168,6 +170,7 @@ export default function DocumentShareLinks({ version }: Props) {
     setMessage(null);
     try {
       await adminDocumentShareLinkRevokeControllerRevoke(id, requestConfig());
+      setCreated(null);
       await refresh();
       setMessage({ type: "success", text: "Ссылка отозвана." });
     } catch (error) {
@@ -223,7 +226,7 @@ export default function DocumentShareLinks({ version }: Props) {
           data-testid={`share-create-${version.id}`}
           disabled={busy !== null}
         >
-          {busy === "create" ? "Создание…" : "Создать ссылку"}
+          {busy === "create" ? "Создание…" : currentLink ? "Создать новую" : "Создать секретную ссылку"}
         </button>
       </form>
       {created ? (
@@ -277,12 +280,12 @@ export default function DocumentShareLinks({ version }: Props) {
           {message.text}
         </p>
       ) : null}
-      {links.length === 0 && busy !== "load" ? (
-        <p className={cls.empty}>Ссылки для этой версии ещё не создавались.</p>
+      {!currentLink && busy !== "load" ? (
+        <p className={cls.empty}>Активной секретной ссылки нет.</p>
       ) : null}
-      {links.length > 0 ? (
+      {currentLink ? (
         <div className={cls.list}>
-          {links.map((link) => (
+          {[currentLink].map((link) => (
             <div
               className={cls.item}
               data-testid={`share-link-row-${link.id}`}
@@ -290,9 +293,7 @@ export default function DocumentShareLinks({ version }: Props) {
             >
               <div>
                 <strong>{statusLabel(link)}</strong>
-                <span>
-                  Токен начинается с <code>{link.tokenPrefix}</code>
-                </span>
+                <span>Ссылка действует только для текущей версии документа.</span>
               </div>
               <div>
                 <span>Создана: {formatDate(link.createdAt)}</span>

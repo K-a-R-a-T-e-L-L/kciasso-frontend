@@ -1,7 +1,10 @@
 {
   "type": "object",
   "properties": {
-    "slug": { "type": "string" },
+    "slug": {
+      "type": "string",
+      "description": "Оставьте пустым для автоматической генерации из названия"
+    },
     "title": { "type": "string" },
     "description": { "type": "string" },
     "order": { "type": "number", "default": 0 },

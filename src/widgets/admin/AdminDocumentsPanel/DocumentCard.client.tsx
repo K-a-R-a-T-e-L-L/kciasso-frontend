@@ -1,69 +1,43 @@
 "use client";
 
-import type { FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import type { DocumentDto, DocumentVersionDto } from "@/shared/api/generated/types";
-import { placementPageTitle, placementTitle } from "@/shared/documents/document-placement-registry";
-import DocumentShareLinks from "@/widgets/admin/DocumentShareLinks/DocumentShareLinks.client";
+import FloatingPopover from "@/shared/ui/FloatingPopover/FloatingPopover.client";
 import DocumentActions from "./DocumentActions.client";
 import DocumentMetadataForm from "./DocumentMetadataForm.client";
+import DocumentShareLinks from "@/widgets/admin/DocumentShareLinks/DocumentShareLinks.client";
 import DocumentVersionPanel from "./DocumentVersionPanel.client";
+import { placementTitle } from "@/shared/documents/document-placement-registry";
 import { formatDate, formatSize } from "./admin-document-response";
 import type { FormState } from "./types";
 import cls from "./DocumentCard.module.scss";
 
-type Props = {
-  document: DocumentDto;
-  index: number;
-  orderedLength: number;
-  expanded: boolean;
-  editing: boolean;
-  versionDocumentId: number | null;
-  shareDocumentId: number | null;
-  historyDocumentId: number | null;
-  versionFile: File | null;
-  history: Record<number, DocumentVersionDto[]>;
-  editingForm: FormState;
-  editingPlacements: string[];
-  busy: string | null;
-  onToggleExpanded: (id: number) => void;
-  onMove: (id: number, offset: -1 | 1) => void;
-  onOpenFile: (document: DocumentDto, version: DocumentVersionDto) => void;
-  onEdit: (document: DocumentDto) => void;
-  onToggleVersion: (id: number) => void;
-  onHistory: (id: number) => void;
-  onShare: (id: number) => void;
-  onDelete: (id: number) => void;
-  onStatusChange: (id: number, status: "DRAFT" | "PUBLISHED") => void;
-  onEditFieldChange: (key: keyof FormState, value: string) => void;
-  onOpenPlacement: () => void;
-  onSaveMetadata: (event: FormEvent<HTMLFormElement>, id: number) => void;
-  onCancelEdit: () => void;
-  onVersionFileChange: (file: File | null) => void;
-  onUploadVersion: (event: FormEvent<HTMLFormElement>, id: number) => void;
-  onCloseHistory: () => void;
-  onMakeCurrent: (id: number, version: DocumentVersionDto) => void;
-};
+export type DrawerSection = "technical" | "edit" | "replace" | "versions" | "share";
+const ru = (s: string) => decodeURIComponent(s);
+const statusLabels = { DRAFT: ru("%D0%A7%D0%B5%D1%80%D0%BD%D0%BE%D0%B2%D0%B8%D0%BA"), PUBLISHED: ru("%D0%9E%D0%BF%D1%83%D0%B1%D0%BB%D0%B8%D0%BA%D0%BE%D0%B2%D0%B0%D0%BD") } as const;
 
-export default function DocumentCard({ document, index, orderedLength, expanded, editing, versionDocumentId, shareDocumentId, historyDocumentId, versionFile, history, editingForm, editingPlacements, busy, onToggleExpanded, onMove, onOpenFile, onEdit, onToggleVersion, onHistory, onShare, onDelete, onStatusChange, onEditFieldChange, onOpenPlacement, onSaveMetadata, onCancelEdit, onVersionFileChange, onUploadVersion, onCloseHistory, onMakeCurrent }: Props) {
-  const version = document.currentVersion;
-  const extension = version?.extension?.toUpperCase() ?? "—";
-  return <article className={cls.card} data-testid={`document-card-${document.id}`}>
+type Props = { document: DocumentDto; index: number; orderedLength: number; canReorder: boolean; expanded: boolean; editing: boolean; versionDocumentId: number | null; shareDocumentId: number | null; historyDocumentId: number | null; versionFile: File | null; history: Record<number, DocumentVersionDto[]>; editingForm: FormState; editingPlacements: string[]; busy: string | null; drawer: DrawerSection | null; onCloseDrawer: () => void; onToggleExpanded: (id: number) => void; onMove?: (id: number, offset: -1 | 1) => void; onOpenFile: (d: DocumentDto, v: DocumentVersionDto) => void; onEdit: (d: DocumentDto) => void; onToggleVersion: (id: number) => void; onHistory: (id: number) => void; onShare: (id: number) => void; onTechnical: (id: number) => void; onDelete: (id: number) => void; onStatusChange: (id: number, status: "DRAFT" | "PUBLISHED") => void; onEditFieldChange: (key: keyof FormState, value: string) => void; onOpenPlacement: () => void; onSaveMetadata: (e: FormEvent<HTMLFormElement>, id: number) => void; onCancelEdit: () => void; onVersionFileChange: (f: File | null) => void; onUploadVersion: (e: FormEvent<HTMLFormElement>, id: number) => void; onCloseHistory: () => void; onMakeCurrent: (id: number, v: DocumentVersionDto) => void };
+
+export default function DocumentCard(p: Props) {
+  const version = p.document.currentVersion;
+  const shown = p.document.placements.slice(0, 2);
+  const extra = Math.max(0, p.document.placements.length - shown.length);
+  const placementRef = useRef<HTMLButtonElement>(null);
+  const [placementQuery, setPlacementQuery] = useState("");
+  const filteredPlacements = p.document.placements.filter((item) => placementTitle(item.sectionKey).toLocaleLowerCase("ru-RU").includes(placementQuery.trim().toLocaleLowerCase("ru-RU")));
+
+  return <article className={cls.card} data-testid={`document-card-${p.document.id}`}>
     <div className={cls.cardHeader}>
-      <div><span className={cls.order}>{index + 1}</span><h2>{document.title}</h2><p>{document.documentNumber || "Без номера"} · {formatDate(document.documentDate)}</p></div>
-      {document.canManage !== false ? <select value={document.status === "PUBLISHED" ? "PUBLISHED" : "DRAFT"} disabled={Boolean(busy)} onChange={(event) => onStatusChange(document.id, event.target.value as "DRAFT" | "PUBLISHED")} aria-label={`Статус ${document.title}`}>
-        <option value="DRAFT">Черновик</option><option value="PUBLISHED">Опубликован</option>
-      </select> : <strong>Только просмотр</strong>}
+      <div className={cls.titleRow}><span className={cls.order}>{p.index + 1}</span><div><h2>{p.document.title}</h2><p>{p.document.documentNumber || ru("%D0%91%D0%B5%D0%B7%20%D0%BD%D0%BE%D0%BC%D0%B5%D1%80%D0%B0")} · {formatDate(p.document.documentDate)}</p></div></div>
+      {p.document.canManage !== false ? <label className={cls.statusControl}><span className={cls.srOnly}>Статус {p.document.title}</span><select value={p.document.status} onChange={(e) => p.onStatusChange(p.document.id, e.target.value as "DRAFT" | "PUBLISHED")} aria-label={`Status ${p.document.title}`}><option value="DRAFT">{statusLabels.DRAFT}</option><option value="PUBLISHED">{statusLabels.PUBLISHED}</option></select></label> : <strong className={cls.viewOnly}>Только просмотр</strong>}
     </div>
     <div className={cls.placements}>
-      {(expanded ? document.placements : document.placements.slice(0, 3)).map((placement) => <span key={placement.sectionKey}>{placementPageTitle(placement.sectionKey)} · {placementTitle(placement.sectionKey)}</span>)}
-      {document.placements.length > 3 ? <button type="button" className={cls.morePlacements} onClick={() => onToggleExpanded(document.id)}>{expanded ? "Свернуть" : `+ ещё ${document.placements.length - 3}`}</button> : null}
+      {shown.map((item) => <span key={item.sectionKey}>{placementTitle(item.sectionKey)}</span>)}
+      {extra ? <><button ref={placementRef} className={cls.morePlacements} type="button" aria-haspopup="dialog" aria-expanded={p.expanded} onClick={() => p.onToggleExpanded(p.document.id)}>+ ещё {extra}</button><FloatingPopover anchorRef={placementRef} open={p.expanded} onClose={() => p.onToggleExpanded(p.document.id)} role="dialog" placement="bottom-start"><div className={cls.placementPopup}><header><div><strong>Все размещения</strong><span>{p.document.placements.length} разделов</span></div><button type="button" className={cls.popupClose} aria-label="Закрыть" onClick={() => p.onToggleExpanded(p.document.id)}>×</button></header>{p.document.placements.length > 12 ? <label className={cls.placementSearch}><span className={cls.srOnly}>Найти размещение</span><input value={placementQuery} onChange={(e) => setPlacementQuery(e.target.value)} placeholder="Найти размещение" /></label> : null}<div className={cls.placementRows}>{filteredPlacements.map((item) => <span key={item.sectionKey}>{placementTitle(item.sectionKey)}</span>)}{filteredPlacements.length === 0 ? <em>Ничего не найдено</em> : null}</div></div></FloatingPopover></> : null}
     </div>
-    <p className={cls.note}>{document.status === "DRAFT" ? "Черновик не отображается публично; секретная ссылка может работать." : "Опубликованный документ отображается во всех выбранных разделах."}</p>
-    <div className={cls.fileMeta}><strong>{extension}</strong><span>{version?.originalFilename ?? "Файл отсутствует"}</span><span>{formatSize(version?.sizeBytes)}</span></div>
-    <DocumentActions document={document} version={version} index={index} orderedLength={orderedLength} busy={Boolean(busy)} onMove={onMove} onOpenFile={onOpenFile} onEdit={onEdit} onToggleVersion={onToggleVersion} onHistory={onHistory} onShare={onShare} onDelete={onDelete} />
-    {document.canManage !== false && shareDocumentId === document.id && version ? <div className={cls.sharePanel}><DocumentShareLinks version={version} /></div> : null}
-    {document.canManage !== false ? <details className={cls.technical}><summary>Техническая информация</summary><p>ID документа: {document.id} · версий: {document.versionsCount}</p><p>{version ? <>Версия {version.versionNumber} · {version.mimeType} · SHA-256: <code>{version.sha256}</code></> : "Текущая версия не определена."}</p></details> : null}
-    {document.canManage !== false && editing ? <DocumentMetadataForm mode="edit" form={editingForm} onFieldChange={onEditFieldChange} placements={editingPlacements} onOpenPlacement={onOpenPlacement} onSubmit={(event) => onSaveMetadata(event, document.id)} busy={Boolean(busy)} onCancel={onCancelEdit} /> : null}
-    {document.canManage !== false ? <DocumentVersionPanel documentId={document.id} versionDocumentId={versionDocumentId} versionFile={versionFile} historyDocumentId={historyDocumentId} history={history} busy={Boolean(busy)} onFileChange={onVersionFileChange} onUpload={onUploadVersion} onCloseHistory={onCloseHistory} onMakeCurrent={onMakeCurrent} /> : null}
+    <div className={cls.meta}><strong>{version?.extension?.toUpperCase() ?? "—"}</strong><span title={version?.originalFilename ?? ""}>{version?.originalFilename ?? "Файл недоступен"}</span><span>{formatSize(version?.sizeBytes)}</span></div>
+    {p.canReorder && p.onMove ? <div className={cls.reorder}><button type="button" aria-label="Вверх" title="Переместить вверх" disabled={p.index === 0} onClick={() => p.onMove?.(p.document.id, -1)}>↑</button><span>{p.index + 1}</span><button type="button" aria-label="Вниз" title="Переместить вниз" disabled={p.index === p.orderedLength - 1} onClick={() => p.onMove?.(p.document.id, 1)}>↓</button></div> : null}
+    <DocumentActions document={p.document} version={version} index={p.index} orderedLength={p.orderedLength} busy={Boolean(p.busy)} canReorder={p.canReorder} onMove={p.onMove} onOpenFile={p.onOpenFile} onEdit={p.onEdit} onToggleVersion={p.onToggleVersion} onHistory={p.onHistory} onShare={p.onShare} onTechnical={p.onTechnical} onDelete={p.onDelete} />
+    {p.drawer ? <div className={cls.drawerBackdrop} onMouseDown={p.onCloseDrawer}><aside className={cls.drawer} role="dialog" aria-modal="true" aria-labelledby={`document-drawer-title-${p.document.id}`} tabIndex={-1} onMouseDown={(e) => e.stopPropagation()}><header><h3 id={`document-drawer-title-${p.document.id}`}>{p.document.title}</h3><button type="button" onClick={p.onCloseDrawer} aria-label="Close">×</button></header><div className={cls.drawerBody}>{p.drawer === "technical" ? <p>ID: {p.document.id}<br />Версий: {p.document.versionsCount}</p> : null}{p.drawer === "edit" ? <DocumentMetadataForm mode="edit" form={p.editingForm} onFieldChange={p.onEditFieldChange} placements={p.editingPlacements} onOpenPlacement={p.onOpenPlacement} onSubmit={(e) => p.onSaveMetadata(e, p.document.id)} busy={Boolean(p.busy)} onCancel={p.onCancelEdit} /> : null}{p.drawer === "share" && version ? <DocumentShareLinks version={version} /> : null}{p.drawer === "replace" || p.drawer === "versions" ? <DocumentVersionPanel documentId={p.document.id} versionDocumentId={p.versionDocumentId} versionFile={p.versionFile} historyDocumentId={p.historyDocumentId} history={p.history} busy={Boolean(p.busy)} onFileChange={p.onVersionFileChange} onUpload={(e) => p.onUploadVersion(e, p.document.id)} onCloseHistory={p.onCloseHistory} onMakeCurrent={p.onMakeCurrent} /> : null}</div></aside></div> : null}
   </article>;
 }

@@ -5,6 +5,7 @@
 
 export type UpdateNewsCategoryDto = {
   /**
+   * @description Оставьте пустым для автоматической генерации из названия
    * @type string | undefined
    */
   slug?: string;

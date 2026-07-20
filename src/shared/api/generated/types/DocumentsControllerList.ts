@@ -6,6 +6,18 @@
 import type { ErrorDto } from "./ErrorDto";
 import type { PaginatedDocumentsDto } from "./PaginatedDocumentsDto";
 
+export const documentsControllerListQueryParamsGroupEnum = {
+  GIA_9: "GIA_9",
+  GIA_11: "GIA_11",
+  GIA: "GIA",
+  QUALITY: "QUALITY",
+  REGIONAL: "REGIONAL",
+  ABOUT: "ABOUT",
+} as const;
+
+export type DocumentsControllerListQueryParamsGroupEnumKey =
+  (typeof documentsControllerListQueryParamsGroupEnum)[keyof typeof documentsControllerListQueryParamsGroupEnum];
+
 export const documentsControllerListQueryParamsStatusEnum = {
   DRAFT: "DRAFT",
   UNLISTED: "UNLISTED",
@@ -16,15 +28,72 @@ export const documentsControllerListQueryParamsStatusEnum = {
 export type DocumentsControllerListQueryParamsStatusEnumKey =
   (typeof documentsControllerListQueryParamsStatusEnum)[keyof typeof documentsControllerListQueryParamsStatusEnum];
 
+export const documentsControllerListQueryParamsSortByEnum = {
+  updatedAt: "updatedAt",
+  createdAt: "createdAt",
+  title: "title",
+  documentDate: "documentDate",
+  placementOrder: "placementOrder",
+} as const;
+
+export type DocumentsControllerListQueryParamsSortByEnumKey =
+  (typeof documentsControllerListQueryParamsSortByEnum)[keyof typeof documentsControllerListQueryParamsSortByEnum];
+
+export const documentsControllerListQueryParamsSortDirectionEnum = {
+  asc: "asc",
+  desc: "desc",
+} as const;
+
+export type DocumentsControllerListQueryParamsSortDirectionEnumKey =
+  (typeof documentsControllerListQueryParamsSortDirectionEnum)[keyof typeof documentsControllerListQueryParamsSortDirectionEnum];
+
+export const documentsControllerListQueryParamsPageSizeEnum = {
+  "20": 20,
+  "50": 50,
+  "100": 100,
+} as const;
+
+export type DocumentsControllerListQueryParamsPageSizeEnumKey =
+  (typeof documentsControllerListQueryParamsPageSizeEnum)[keyof typeof documentsControllerListQueryParamsPageSizeEnum];
+
 export type DocumentsControllerListQueryParams = {
   /**
-   * @type string
+   * @type string | undefined
    */
-  placementKey: string;
+  placementKey?: string;
+  /**
+   * @type string | undefined
+   */
+  group?: DocumentsControllerListQueryParamsGroupEnumKey;
+  /**
+   * @maxLength 200
+   * @type string | undefined
+   */
+  search?: string;
   /**
    * @type string | undefined
    */
   status?: DocumentsControllerListQueryParamsStatusEnumKey;
+  /**
+   * @default "updatedAt"
+   * @type string | undefined
+   */
+  sortBy?: DocumentsControllerListQueryParamsSortByEnumKey;
+  /**
+   * @default "desc"
+   * @type string | undefined
+   */
+  sortDirection?: DocumentsControllerListQueryParamsSortDirectionEnumKey;
+  /**
+   * @default 1
+   * @type number | undefined
+   */
+  page?: number;
+  /**
+   * @default 20
+   * @type number | undefined
+   */
+  pageSize?: DocumentsControllerListQueryParamsPageSizeEnumKey;
 };
 
 export type DocumentsControllerList200 = PaginatedDocumentsDto;

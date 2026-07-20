@@ -3,7 +3,6 @@ import { clearAdminTokenCookie, requireAdminSectionToken } from "@/shared/admin/
 import { isAdminApiErrorStatus } from "@/shared/admin/api-error";
 import { getAdminNewsCategories } from "@/shared/api/adapters/admin-news.adapter";
 import AdminNewsForm from "@/widgets/admin/AdminNewsForm/AdminNewsForm.client";
-import { createNewsAction } from "../actions";
 import cls from "@/widgets/admin/AdminShell/AdminShell.module.scss";
 
 export default async function Page() {
@@ -35,7 +34,7 @@ export default async function Page() {
         </div>
       </div>
 
-      <AdminNewsForm categories={categories} action={createNewsAction} submitLabel="Создать новость" />
+      <AdminNewsForm categories={categories} mutation={{ method: "create" }} submitLabel="Создать новость" />
     </section>
   );
 }

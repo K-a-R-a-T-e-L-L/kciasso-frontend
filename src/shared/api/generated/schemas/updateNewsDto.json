@@ -2,10 +2,13 @@
   "type": "object",
   "properties": {
     "title": { "type": "string" },
-    "slug": { "type": "string" },
+    "slug": {
+      "type": "string",
+      "description": "Оставьте пустым для автоматической генерации из заголовка"
+    },
     "excerpt": { "type": "string" },
     "content": { "type": "string" },
-    "coverImageUrl": { "type": "string" },
+    "coverImageUrl": { "type": "string", "nullable": true },
     "categoryId": { "type": "number" },
     "isPublished": { "type": "boolean" },
     "publishedAt": { "format": "date-time", "type": "string" }

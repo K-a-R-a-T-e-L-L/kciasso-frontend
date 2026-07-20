@@ -80,6 +80,16 @@ export type {
   AdminNewsControllerGetNewsByIdQueryResponse,
 } from "./types/AdminNewsControllerGetNewsById";
 export type {
+  AdminNewsControllerMoveCategory200,
+  AdminNewsControllerMoveCategory400,
+  AdminNewsControllerMoveCategory403,
+  AdminNewsControllerMoveCategory404,
+  AdminNewsControllerMoveCategoryMutation,
+  AdminNewsControllerMoveCategoryMutationRequest,
+  AdminNewsControllerMoveCategoryMutationResponse,
+  AdminNewsControllerMoveCategoryPathParams,
+} from "./types/AdminNewsControllerMoveCategory";
+export type {
   AdminNewsControllerUpdateCategory200,
   AdminNewsControllerUpdateCategory400,
   AdminNewsControllerUpdateCategory403,
@@ -222,6 +232,10 @@ export type {
   DocumentsControllerList403,
   DocumentsControllerListQuery,
   DocumentsControllerListQueryParams,
+  DocumentsControllerListQueryParamsGroupEnumKey,
+  DocumentsControllerListQueryParamsPageSizeEnumKey,
+  DocumentsControllerListQueryParamsSortByEnumKey,
+  DocumentsControllerListQueryParamsSortDirectionEnumKey,
   DocumentsControllerListQueryParamsStatusEnumKey,
   DocumentsControllerListQueryResponse,
 } from "./types/DocumentsControllerList";
@@ -265,10 +279,15 @@ export type {
   DocumentsControllerVersionsQueryResponse,
 } from "./types/DocumentsControllerVersions";
 export type { ErrorDto, ErrorDtoErrorMessageEnumKey } from "./types/ErrorDto";
+export type {
+  MoveNewsCategoryDto,
+  MoveNewsCategoryDtoDirectionEnumKey,
+} from "./types/MoveNewsCategoryDto";
 export type { News } from "./types/News";
 export type { NewsArticleDto } from "./types/NewsArticleDto";
 export type { NewsCategory } from "./types/NewsCategory";
 export type { NewsCategoryDto } from "./types/NewsCategoryDto";
+export type { NewsCategoryMoveResponseDto } from "./types/NewsCategoryMoveResponseDto";
 export type { NewsListItemDto } from "./types/NewsListItemDto";
 export type { NewsMediaUploadDto } from "./types/NewsMediaUploadDto";
 export type { NewsPaginationMetaDto } from "./types/NewsPaginationMetaDto";
@@ -447,6 +466,7 @@ export { adminNewsControllerDeleteNews } from "./clients/adminNewsController/adm
 export { adminNewsControllerGetCategories } from "./clients/adminNewsController/adminNewsControllerGetCategories";
 export { adminNewsControllerGetNews } from "./clients/adminNewsController/adminNewsControllerGetNews";
 export { adminNewsControllerGetNewsById } from "./clients/adminNewsController/adminNewsControllerGetNewsById";
+export { adminNewsControllerMoveCategory } from "./clients/adminNewsController/adminNewsControllerMoveCategory";
 export { adminNewsControllerUpdateCategory } from "./clients/adminNewsController/adminNewsControllerUpdateCategory";
 export { adminNewsControllerUpdateNews } from "./clients/adminNewsController/adminNewsControllerUpdateNews";
 export { adminNewsMediaControllerRemoveUnreferenced } from "./clients/adminNewsMediaController/adminNewsMediaControllerRemoveUnreferenced";
@@ -486,8 +506,13 @@ export { currentUserDtoDocumentsAccessModeEnum } from "./types/CurrentUserDto";
 export { currentUserDtoRoleEnum } from "./types/CurrentUserDto";
 export { documentStatusEnum } from "./types/Document";
 export { documentDtoStatusEnum } from "./types/DocumentDto";
+export { documentsControllerListQueryParamsGroupEnum } from "./types/DocumentsControllerList";
+export { documentsControllerListQueryParamsPageSizeEnum } from "./types/DocumentsControllerList";
+export { documentsControllerListQueryParamsSortByEnum } from "./types/DocumentsControllerList";
+export { documentsControllerListQueryParamsSortDirectionEnum } from "./types/DocumentsControllerList";
 export { documentsControllerListQueryParamsStatusEnum } from "./types/DocumentsControllerList";
 export { errorDtoErrorMessageEnum } from "./types/ErrorDto";
+export { moveNewsCategoryDtoDirectionEnum } from "./types/MoveNewsCategoryDto";
 export { newsStatusEnum } from "./types/NewsStatus";
 export { publicSiteSettingsResponseDtoHomeSectionsOrderEnum } from "./types/PublicSiteSettingsResponseDto";
 export { updateDocumentStatusDtoStatusEnum } from "./types/UpdateDocumentStatusDto";

@@ -21,7 +21,7 @@ const version = {
   createdAt: "2026-01-01T00:00:00.000Z", isCurrent: true,
 };
 
-describe("DocumentShareLinks characterization", () => {
+describe("DocumentShareLinks", () => {
   it("shows raw URL only after create and removes it after close", async () => {
     vi.mocked(adminDocumentShareLinksControllerList).mockResolvedValue([{
       id: 9, tokenPrefix: "abc123", versionNumber: 1, createdAt: "2026-01-01T00:00:00.000Z",
@@ -35,13 +35,27 @@ describe("DocumentShareLinks characterization", () => {
       documentTitle: "Test document", sharePath: "/share/document",
     });
     render(<DocumentShareLinks version={version} />);
-    await waitFor(() => expect(screen.getByText("abc123")).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText("Активна")).toBeInTheDocument());
     expect(document.body.textContent).not.toContain("raw-secret-token");
-    await userEvent.click(screen.getByRole("button", { name: "Создать ссылку" }));
+    await userEvent.click(screen.getByRole("button", { name: "Создать новую" }));
     await waitFor(() => expect(screen.getByText(/raw-secret-token/)).toBeInTheDocument());
     expect(screen.getByRole("button", { name: "Скопировать ссылку" })).toBeInTheDocument();
     await userEvent.click(screen.getByRole("button", { name: "Закрыть" }));
     expect(document.body.textContent).not.toContain("raw-secret-token");
-    expect(document.body.textContent).toContain("abc123");
+    expect(document.body.textContent).toContain("Активна");
+    expect(document.body.textContent).not.toContain("abc123");
+  });
+
+  it("shows only the current link and clears the old raw URL when creating a replacement", async () => {
+    vi.mocked(adminDocumentShareLinksControllerList).mockResolvedValue([]);
+    vi.mocked(adminDocumentShareLinksControllerCreate)
+      .mockResolvedValueOnce({ id: 11, token: "first-token", tokenPrefix: "first", versionNumber: 1, expiresAt: null, revokedAt: null, createdAt: "2026-01-01T00:00:00.000Z", lastAccessAt: null, accessCount: 0, isActive: true, isExpired: false, versionId: 7, documentId: 3, documentTitle: "Test document", sharePath: "/share/document" })
+      .mockResolvedValueOnce({ id: 12, token: "second-token", tokenPrefix: "second", versionNumber: 1, expiresAt: null, revokedAt: null, createdAt: "2026-01-01T00:00:00.000Z", lastAccessAt: null, accessCount: 0, isActive: true, isExpired: false, versionId: 7, documentId: 3, documentTitle: "Test document", sharePath: "/share/document" });
+    render(<DocumentShareLinks version={version} />);
+    await userEvent.click(screen.getByRole("button", { name: "Создать секретную ссылку" }));
+    await waitFor(() => expect(screen.getByText(/first-token/)).toBeInTheDocument());
+    await userEvent.click(screen.getByRole("button", { name: "Создать секретную ссылку" }));
+    await waitFor(() => expect(screen.getByText(/second-token/)).toBeInTheDocument());
+    expect(document.body.textContent).not.toContain("first-token");
   });
 });

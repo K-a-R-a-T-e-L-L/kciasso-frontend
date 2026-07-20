@@ -7,180 +7,79 @@ import {
   createAdminNews,
   deleteAdminNews,
   updateAdminNews,
-  uploadAdminNewsImage,
   removeUnreferencedAdminNewsImage,
 } from "@/shared/api/adapters/admin-news.adapter";
 import type { NewsFormState } from "@/widgets/admin/AdminNewsForm/AdminNewsForm.types";
+import { formValuesFromFormData, parseNewsFormData } from "./news-form.serialization";
 
-function toOptionalString(value: FormDataEntryValue | null) {
-  const normalized = String(value ?? "").trim();
-  return normalized ? normalized : undefined;
-}
-
-function toOptionalNumber(value: FormDataEntryValue | null) {
-  const normalized = String(value ?? "").trim();
-
-  if (!normalized) {
-    return undefined;
-  }
-
-  const parsed = Number(normalized);
-  return Number.isFinite(parsed) ? parsed : undefined;
-}
-
-function toOptionalDateTime(value: FormDataEntryValue | null) {
-  const normalized = String(value ?? "").trim();
-
-  if (!normalized) {
-    return undefined;
-  }
-
-  const date = new Date(normalized);
-  return Number.isNaN(date.getTime()) ? undefined : date.toISOString();
-}
-
-function parseNewsFormData(formData: FormData) {
-  const title = String(formData.get("title") ?? "").trim();
-  const slug = String(formData.get("slug") ?? "").trim();
-  const excerpt = String(formData.get("excerpt") ?? "").trim();
-  const content = String(formData.get("content") ?? "").trim();
-  const publishMode = String(formData.get("publishMode") ?? "draft");
-
-  let isPublished = false;
-  let publishedAt: string | undefined;
-
-  if (publishMode === "publish-now") {
-    isPublished = true;
-    publishedAt = new Date().toISOString();
-  }
-
-  if (publishMode === "schedule") {
-    isPublished = true;
-    publishedAt = toOptionalDateTime(formData.get("publishedAt"));
-  }
-
-  return {
-    title,
-    slug,
-    excerpt,
-    content,
-    publishMode,
-    coverImageUrl: toOptionalString(formData.get("coverImageUrl")),
-    coverImageFile: formData.get("coverImageFile"),
-    removeCoverImage: formData.get("removeCoverImage") === "true",
-    categoryId: toOptionalNumber(formData.get("categoryId")),
-    isPublished,
-    publishedAt,
-  };
-}
-
-async function handleProtectedError(error: unknown, fallback: string): Promise<NewsFormState> {
+async function handleProtectedError(error: unknown, fallback: string, formData: FormData): Promise<NewsFormState> {
   if (isAdminApiErrorStatus(error, 401)) {
     await clearAdminTokenCookie();
     redirect("/admin/login");
   }
-
-  if (isAdminApiErrorStatus(error, 403)) {
-    redirect("/admin/forbidden");
-  }
-
-  if (isAdminApiErrorStatus(error, 404)) {
-    return {
-      error: "Запись не найдена.",
-    };
-  }
-
+  if (isAdminApiErrorStatus(error, 403)) redirect("/admin/forbidden");
   return {
-    error: getAdminApiErrorMessage(error, fallback),
+    error: isAdminApiErrorStatus(error, 404) ? "\u0417\u0430\u043f\u0438\u0441\u044c \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u0430." : getAdminApiErrorMessage(error, fallback),
+    values: formValuesFromFormData(formData),
   };
+}
+
+function publishFields(payload: ReturnType<typeof parseNewsFormData>) {
+  if (payload.publishMode === "publish-now") return { isPublished: true, publishedAt: new Date().toISOString() };
+  if (payload.publishMode === "schedule") return { isPublished: true, publishedAt: payload.publishedAt };
+  return { isPublished: false, publishedAt: undefined };
+}
+
+function coverFields(payload: ReturnType<typeof parseNewsFormData>) {
+  if (payload.coverMutation.kind === "set") return { coverImageUrl: payload.coverMutation.url };
+  if (payload.coverMutation.kind === "remove") return { coverImageUrl: null };
+  return {};
 }
 
 export async function createNewsAction(_: NewsFormState, formData: FormData): Promise<NewsFormState> {
   const { token } = await requireAdminSectionToken("news");
   const payload = parseNewsFormData(formData);
+  const values = formValuesFromFormData(formData);
+  if (!payload.title || !payload.excerpt || !payload.content) return { error: "\u0417\u0430\u043f\u043e\u043b\u043d\u0438\u0442\u0435 \u0444\u043e\u0440\u043c\u0443.", values };
+  if (payload.publishMode === "schedule" && !payload.publishedAt) return { error: "\u0423\u043a\u0430\u0436\u0438\u0442\u0435 \u0434\u0430\u0442\u0443 \u043f\u0443\u0431\u043b\u0438\u043a\u0430\u0446\u0438\u0438.", values };
 
-  if (!payload.title || !payload.slug || !payload.excerpt || !payload.content) {
-    return {
-      error: "Заполните заголовок, slug, краткое описание и содержание.",
-    };
-  }
-
-  if (payload.publishMode === "schedule" && !payload.publishedAt) {
-    return {
-      error: "Для отложенной публикации укажите дату и время.",
-    };
-  }
-
-  let uploaded: { key: string; url: string } | null = null;
   try {
-    if (payload.coverImageFile instanceof File && payload.coverImageFile.size > 0) {
-      uploaded = await uploadAdminNewsImage(token, payload.coverImageFile);
-    }
-    const { coverImageFile: _file, removeCoverImage: _remove, ...newsPayload } = payload;
-    await createAdminNews(token, { ...newsPayload, coverImageUrl: uploaded?.url ?? newsPayload.coverImageUrl });
+    if (payload.coverError) return { error: payload.coverError, values };
+    const { coverMutation: _cover, coverError: _coverError, publishMode: _mode, ...newsFields } = payload;
+    await createAdminNews(token, { ...newsFields, ...publishFields(payload), ...coverFields(payload) });
   } catch (error) {
-    if (uploaded) await removeUnreferencedAdminNewsImage(token, uploaded.key).catch(() => undefined);
-    return handleProtectedError(error, "Не удалось создать новость.");
+    if (payload.coverMutation.kind === "set" && payload.coverMutation.source === "owned" && payload.coverMutation.pendingKey) await removeUnreferencedAdminNewsImage(token, payload.coverMutation.pendingKey).catch(() => undefined);
+    return handleProtectedError(error, "\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u0441\u043e\u0437\u0434\u0430\u0442\u044c \u043d\u043e\u0432\u043e\u0441\u0442\u044c.", formData);
   }
-
   redirect("/admin/news");
 }
 
-export async function updateNewsAction(
-  id: number,
-  _: NewsFormState,
-  formData: FormData,
-): Promise<NewsFormState> {
+export async function updateNewsAction(id: number, _: NewsFormState, formData: FormData): Promise<NewsFormState> {
   const { token } = await requireAdminSectionToken("news");
   const payload = parseNewsFormData(formData);
+  const values = formValuesFromFormData(formData);
+  if (!payload.title || !payload.excerpt || !payload.content) return { error: "\u0417\u0430\u043f\u043e\u043b\u043d\u0438\u0442\u0435 \u0444\u043e\u0440\u043c\u0443.", values };
+  if (payload.publishMode === "schedule" && !payload.publishedAt) return { error: "\u0423\u043a\u0430\u0436\u0438\u0442\u0435 \u0434\u0430\u0442\u0443 \u043f\u0443\u0431\u043b\u0438\u043a\u0430\u0446\u0438\u0438.", values };
 
-  if (!payload.title || !payload.slug || !payload.excerpt || !payload.content) {
-    return {
-      error: "Заполните заголовок, slug, краткое описание и содержание.",
-    };
-  }
-
-  if (payload.publishMode === "schedule" && !payload.publishedAt) {
-    return {
-      error: "Для отложенной публикации укажите дату и время.",
-    };
-  }
-
-  let uploaded: { key: string; url: string } | null = null;
   try {
-    if (payload.coverImageFile instanceof File && payload.coverImageFile.size > 0) {
-      uploaded = await uploadAdminNewsImage(token, payload.coverImageFile);
-    }
-    const { coverImageFile: _file, removeCoverImage, ...newsPayload } = payload;
-    await updateAdminNews(token, id, {
-      ...newsPayload,
-      ...(uploaded ? { coverImageUrl: uploaded.url } : removeCoverImage ? { coverImageUrl: "" } : {}),
-    });
+    if (payload.coverError) return { error: payload.coverError, values };
+    const { coverMutation: _cover, coverError: _coverError, publishMode: _mode, ...newsFields } = payload;
+    await updateAdminNews(token, id, { ...newsFields, ...publishFields(payload), ...coverFields(payload) });
   } catch (error) {
-    if (uploaded) await removeUnreferencedAdminNewsImage(token, uploaded.key).catch(() => undefined);
-    return handleProtectedError(error, "Не удалось сохранить изменения.");
+    if (payload.coverMutation.kind === "set" && payload.coverMutation.source === "owned" && payload.coverMutation.pendingKey) await removeUnreferencedAdminNewsImage(token, payload.coverMutation.pendingKey).catch(() => undefined);
+    return handleProtectedError(error, "\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u0441\u043e\u0445\u0440\u0430\u043d\u0438\u0442\u044c \u0438\u0437\u043c\u0435\u043d\u0435\u043d\u0438\u044f.", formData);
   }
-
   redirect("/admin/news");
 }
 
 export async function deleteNewsAction(id: number) {
   const { token } = await requireAdminSectionToken("news");
-
   try {
     await deleteAdminNews(token, id);
   } catch (error) {
-    if (isAdminApiErrorStatus(error, 401)) {
-      await clearAdminTokenCookie();
-      redirect("/admin/login");
-    }
-
-    if (isAdminApiErrorStatus(error, 403)) {
-      redirect("/admin/forbidden");
-    }
-
+    if (isAdminApiErrorStatus(error, 401)) { await clearAdminTokenCookie(); redirect("/admin/login"); }
+    if (isAdminApiErrorStatus(error, 403)) redirect("/admin/forbidden");
     throw error;
   }
-
   redirect("/admin/news");
 }

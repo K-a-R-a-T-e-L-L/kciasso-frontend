@@ -5,6 +5,7 @@ import Section from "@/shared/ui/Section/Section";
 import NewsCard from "@/shared/ui/NewsCard/NewsCard";
 import { getNewsCategory, getRelatedNews } from "@/shared/api/adapters/news.adapter";
 import type { NewsItem } from "@/shared/content/content.types";
+import NewsCoverImage from "./NewsCoverImage.client";
 import cls from "./NewsArticlePage.module.scss";
 
 type Props = {
@@ -35,6 +36,8 @@ export default async function NewsArticlePage({ item }: Props) {
                 <span>{category.title}</span>
                 <time dateTime={item.publishedAt}>{item.dateLabel}</time>
               </div>
+
+              {item.coverImageUrl ? <NewsCoverImage src={item.coverImageUrl} alt={item.title} /> : null}
 
               <div className="prose-content">
                 {item.content.map((paragraph, index) => (
