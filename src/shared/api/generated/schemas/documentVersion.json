@@ -10,6 +10,11 @@
     "mime_type": { "type": "string" },
     "size_bytes": { "type": "integer", "format": "int64" },
     "sha256": { "type": "string" },
+    "stored_file_id": {
+      "type": "integer",
+      "format": "int32",
+      "nullable": true
+    },
     "created_by_id": { "type": "integer", "format": "int32", "nullable": true },
     "created_at": { "type": "string", "format": "date-time" },
     "document": { "$ref": "#/components/schemas/Document" },
@@ -24,6 +29,10 @@
     "share_links": {
       "type": "array",
       "items": { "$ref": "#/components/schemas/DocumentShareLink" }
+    },
+    "stored_file": {
+      "nullable": true,
+      "allOf": [{ "$ref": "#/components/schemas/StoredFile" }]
     }
   },
   "required": [
@@ -36,6 +45,7 @@
     "mime_type",
     "size_bytes",
     "sha256",
+    "stored_file_id",
     "created_by_id",
     "created_at"
   ],

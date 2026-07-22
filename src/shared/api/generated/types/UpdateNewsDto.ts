@@ -37,4 +37,12 @@ export type UpdateNewsDto = {
    * @type string | undefined, date-time
    */
   publishedAt?: string;
+  /**
+   * @type string | undefined, date-time
+   */
+  publishUntil?: string;
+  /**
+   * @type string | undefined, date-time
+   */
+  displayPublishedAt?: string;
 };

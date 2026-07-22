@@ -5,6 +5,7 @@
 
 import type { Document } from "./Document";
 import type { DocumentShareLink } from "./DocumentShareLink";
+import type { StoredFile } from "./StoredFile";
 import type { User } from "./User";
 
 export type DocumentVersion = {
@@ -47,6 +48,10 @@ export type DocumentVersion = {
   /**
    * @type integer, int32
    */
+  stored_file_id: number | null;
+  /**
+   * @type integer, int32
+   */
   created_by_id: number | null;
   /**
    * @type string, date-time
@@ -62,4 +67,5 @@ export type DocumentVersion = {
    * @type array | undefined
    */
   share_links?: DocumentShareLink[];
+  stored_file?: StoredFile | null;
 };

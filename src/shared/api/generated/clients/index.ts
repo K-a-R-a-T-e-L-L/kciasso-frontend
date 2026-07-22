@@ -9,6 +9,7 @@ export { documentsControllerFile } from "./adminDocumentsController/documentsCon
 export { documentsControllerGet } from "./adminDocumentsController/documentsControllerGet";
 export { documentsControllerList } from "./adminDocumentsController/documentsControllerList";
 export { documentsControllerMakeCurrent } from "./adminDocumentsController/documentsControllerMakeCurrent";
+export { documentsControllerPlacementPublication } from "./adminDocumentsController/documentsControllerPlacementPublication";
 export { documentsControllerPlacements } from "./adminDocumentsController/documentsControllerPlacements";
 export { documentsControllerStatus } from "./adminDocumentsController/documentsControllerStatus";
 export { documentsControllerUpdate } from "./adminDocumentsController/documentsControllerUpdate";
@@ -21,6 +22,7 @@ export { adminNewsControllerGetCategories } from "./adminNewsController/adminNew
 export { adminNewsControllerGetNews } from "./adminNewsController/adminNewsControllerGetNews";
 export { adminNewsControllerGetNewsById } from "./adminNewsController/adminNewsControllerGetNewsById";
 export { adminNewsControllerMoveCategory } from "./adminNewsController/adminNewsControllerMoveCategory";
+export { adminNewsControllerPublication } from "./adminNewsController/adminNewsControllerPublication";
 export { adminNewsControllerUpdateCategory } from "./adminNewsController/adminNewsControllerUpdateCategory";
 export { adminNewsControllerUpdateNews } from "./adminNewsController/adminNewsControllerUpdateNews";
 export { adminNewsMediaControllerRemoveUnreferenced } from "./adminNewsMediaController/adminNewsMediaControllerRemoveUnreferenced";

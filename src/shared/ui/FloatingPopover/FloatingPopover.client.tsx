@@ -32,6 +32,8 @@ export default function FloatingPopover({ anchorRef, open, onClose, children, ro
       left = Math.max(margin, Math.min(left, innerWidth - width - margin));
       let top = rect.bottom + 8;
       if (top + height > innerHeight - margin && rect.top - height - 8 >= margin) top = rect.top - height - 8;
+      if (top + height > innerHeight - margin) top = Math.max(margin, innerHeight - margin - height);
+      if (top < margin) top = margin;
       setStyle({ left, top, visibility: "visible" });
     };
     update();

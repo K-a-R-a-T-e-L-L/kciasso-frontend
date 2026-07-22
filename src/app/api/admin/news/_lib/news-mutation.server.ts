@@ -6,7 +6,7 @@ export type NewsMutationResult = { ok: true; news: { id: number; slug: string; c
 
 function dto(input: NewsMutationRequest) {
   const coverImageUrl = input.cover.kind === "remove" ? null : input.cover.kind === "set" ? input.cover.url : undefined;
-  return { title: input.title, slug: input.slug, excerpt: input.excerpt, content: input.content, categoryId: input.categoryId ? Number(input.categoryId) : undefined, isPublished: input.publishMode !== "draft", publishedAt: input.publishMode === "schedule" ? input.publishedAt ?? undefined : input.publishMode === "publish-now" ? new Date().toISOString() : undefined, ...(coverImageUrl !== undefined ? { coverImageUrl } : {}) };
+  return { title: input.title, slug: input.slug, excerpt: input.excerpt, content: input.content, categoryId: input.categoryId ? Number(input.categoryId) : undefined, isPublished: input.publishMode !== "draft", publishedAt: input.publishMode === "schedule" ? input.publishedAt ?? undefined : input.publishMode === "publish-now" ? new Date().toISOString() : undefined, publishUntil: input.publishUntil || undefined, displayPublishedAt: input.displayPublishedAt || undefined, ...(coverImageUrl !== undefined ? { coverImageUrl } : {}) };
 }
 
 async function run(token: string, input: NewsMutationRequest, operation: () => Promise<any>): Promise<NewsMutationResult> {

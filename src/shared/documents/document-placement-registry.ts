@@ -180,6 +180,11 @@ export const DOCUMENT_PLACEMENT_GROUPS: PlacementGroup[] = [
         "video",
       ),
       item(
+        "regionalnyy-proekt.documents",
+        "Regionalnyy proekt documents",
+        "/regionalnyy-proekt/documents",
+      ),
+      item(
         "regionalnyy-proekt",
         "Общие материалы проекта",
         "/regionalnyy-proekt/materialy",

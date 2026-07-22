@@ -4,9 +4,25 @@
     "id": { "type": "number" },
     "sectionKey": { "type": "string" },
     "sortOrder": { "type": "number" },
+    "publicationStatus": {
+      "type": "string",
+      "enum": ["DRAFT", "SCHEDULED", "PUBLISHED"]
+    },
+    "publishFrom": { "format": "date-time", "type": "string" },
+    "publishUntil": { "format": "date-time", "type": "string" },
+    "displayPublishedAt": { "format": "date-time", "type": "string" },
+    "publicationRevision": { "type": "number" },
     "createdAt": { "format": "date-time", "type": "string" },
     "updatedAt": { "format": "date-time", "type": "string" }
   },
-  "required": ["id", "sectionKey", "sortOrder", "createdAt", "updatedAt"],
+  "required": [
+    "id",
+    "sectionKey",
+    "sortOrder",
+    "publicationStatus",
+    "publicationRevision",
+    "createdAt",
+    "updatedAt"
+  ],
   "x-readme-ref-name": "DocumentPlacementDto"
 }

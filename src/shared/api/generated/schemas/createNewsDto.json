@@ -11,7 +11,9 @@
     "coverImageUrl": { "type": "string", "nullable": true },
     "categoryId": { "type": "number" },
     "isPublished": { "type": "boolean" },
-    "publishedAt": { "format": "date-time", "type": "string" }
+    "publishedAt": { "format": "date-time", "type": "string" },
+    "publishUntil": { "format": "date-time", "type": "string" },
+    "displayPublishedAt": { "format": "date-time", "type": "string" }
   },
   "required": ["title", "excerpt", "content"],
   "x-readme-ref-name": "CreateNewsDto"

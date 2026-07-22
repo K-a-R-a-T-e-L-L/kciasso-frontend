@@ -13,6 +13,26 @@
       "nullable": true
     },
     "is_published": { "type": "boolean" },
+    "publication_status": {
+      "type": "string",
+      "enum": ["DRAFT", "SCHEDULED", "PUBLISHED"]
+    },
+    "publish_from": {
+      "type": "string",
+      "format": "date-time",
+      "nullable": true
+    },
+    "publish_until": {
+      "type": "string",
+      "format": "date-time",
+      "nullable": true
+    },
+    "display_published_at": {
+      "type": "string",
+      "format": "date-time",
+      "nullable": true
+    },
+    "publication_revision": { "type": "integer", "format": "int32" },
     "category_id": { "type": "integer", "format": "int32", "nullable": true },
     "author_id": { "type": "integer", "format": "int32", "nullable": true },
     "category": {
@@ -36,6 +56,11 @@
     "cover_image_url",
     "published_at",
     "is_published",
+    "publication_status",
+    "publish_from",
+    "publish_until",
+    "display_published_at",
+    "publication_revision",
     "category_id",
     "author_id",
     "created_at",

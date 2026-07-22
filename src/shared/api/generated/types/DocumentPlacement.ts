@@ -5,6 +5,15 @@
 
 import type { Document } from "./Document";
 
+export const documentPlacementPublicationStatusEnum = {
+  DRAFT: "DRAFT",
+  SCHEDULED: "SCHEDULED",
+  PUBLISHED: "PUBLISHED",
+} as const;
+
+export type DocumentPlacementPublicationStatusEnumKey =
+  (typeof documentPlacementPublicationStatusEnum)[keyof typeof documentPlacementPublicationStatusEnum];
+
 export type DocumentPlacement = {
   /**
    * @type integer, int32
@@ -22,6 +31,26 @@ export type DocumentPlacement = {
    * @type integer, int32
    */
   sort_order: number;
+  /**
+   * @type string
+   */
+  publication_status: DocumentPlacementPublicationStatusEnumKey;
+  /**
+   * @type string, date-time
+   */
+  publish_from: string | null;
+  /**
+   * @type string, date-time
+   */
+  publish_until: string | null;
+  /**
+   * @type string, date-time
+   */
+  display_published_at: string | null;
+  /**
+   * @type integer, int32
+   */
+  publication_revision: number;
   /**
    * @type string, date-time
    */

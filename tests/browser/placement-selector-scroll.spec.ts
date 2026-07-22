@@ -1,61 +1,87 @@
-import { expect, test, type Page } from "@playwright/test";
-import { config as loadEnv } from "dotenv";
+import { expect, test } from "@playwright/test";
+import { loginAsAdmin } from "./helpers/admin-auth";
+import { createPlacementFixture, PLACEMENT_FIXTURE_KEYS } from "./helpers/placement-fixture";
 
-loadEnv({ path: process.env.KCIASSO_BACKEND_ENV ?? "../kciasso-backend/.env", quiet: true });
+test.describe("permanent 67-placement floating popup acceptance", () => {
+  test("desktop/mobile portal, scroll, flip, shift, focus return and unmount", async ({ page, request }) => {
+    const fixture = await createPlacementFixture(request);
+    expect(fixture.placementKeys.length).toBeGreaterThanOrEqual(67);
+    const pageErrors: Error[] = [];
+    page.on("pageerror", (error) => pageErrors.push(error));
+    await loginAsAdmin(page);
+    await page.goto("/admin/documents");
+    const card = page.getByTestId(`document-card-${fixture.documentId}`);
+    await expect(card).toBeVisible();
+    const trigger = card.getByRole("button", { name: /\+.*65/ });
+    await expect(trigger).toBeVisible();
+    await trigger.focus();
+    await trigger.dispatchEvent("click");
 
-async function openPlacementSelector(page: Page) {
-  await page.goto("/admin/login");
+    const popup = page.getByRole("dialog").filter({ hasText: "Все размещения" });
+    await expect(popup).toBeVisible();
+    const rows = popup.locator("[class*='_placementRows']");
+    await expect(rows.locator("span")).toHaveCount(PLACEMENT_FIXTURE_KEYS.length);
+    expect(await popup.evaluate((node) => node.parentElement === document.body)).toBe(true);
+    expect(await popup.evaluate((node) => Boolean(node.closest("[data-testid^='document-card-']")))).toBe(false);
+    expect(await popup.evaluate((node) => getComputedStyle(node).position)).toBe("fixed");
+    const initialGeometry = await popup.evaluate((node) => { const r = node.getBoundingClientRect(); return { left: r.left, top: r.top, right: r.right, bottom: r.bottom, width: r.width, height: r.height, innerWidth, innerHeight }; });
+    console.log("initial popup geometry", initialGeometry);
+    expect(initialGeometry.left).toBeGreaterThanOrEqual(0);
+    expect(initialGeometry.top).toBeGreaterThanOrEqual(0);
+    expect(initialGeometry.right).toBeLessThanOrEqual(initialGeometry.innerWidth);
+    expect(initialGeometry.bottom).toBeLessThanOrEqual(initialGeometry.innerHeight);
+    expect(await rows.evaluate((node) => ({ top: node.scrollTop, scrollHeight: node.scrollHeight, clientHeight: node.clientHeight }))).toEqual(expect.objectContaining({ top: 0 }));
+    expect(await rows.evaluate((node) => node.scrollHeight > node.clientHeight)).toBe(true);
+    await rows.hover();
+    await page.mouse.wheel(0, 1200);
+    await expect.poll(() => rows.evaluate((node) => node.scrollTop)).toBeGreaterThan(0);
+    await rows.press("End");
+    await expect.poll(() => rows.evaluate((node) => node.scrollTop)).toBeGreaterThan(0);
+    await expect(rows.locator("span").last()).toBeVisible();
+    expect(await rows.locator("span").allTextContents()).toEqual(expect.arrayContaining([fixture.firstPlacementLabel, fixture.middlePlacementLabel, "Обучение"]));
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
 
-  const loginButton = page.getByRole("button", { name: "Войти" });
-  if (await loginButton.count()) {
-    await page.locator('input[name="email"]').fill(process.env.SUPER_ADMIN_EMAIL ?? "");
-    await page.locator('input[name="password"]').fill(process.env.SUPER_ADMIN_PASSWORD ?? "");
-    await loginButton.click();
-    await page.waitForURL(/\/admin\/(news|documents|settings|users)/);
-  }
+    await page.keyboard.press("Escape");
+    await expect(popup).toHaveCount(0);
+    await expect(trigger).toBeFocused();
 
-  await page.goto("/admin/documents");
-  await page.getByRole("button", { name: "Добавить документ" }).click();
-  await page.getByRole("button", { name: /Изменить размещение/ }).click();
+    await trigger.dispatchEvent("click");
+    await expect(popup).toBeVisible();
+    await popup.getByRole("button", { name: "Закрыть" }).click();
+    await expect(popup).toHaveCount(0);
+    await expect(trigger).toBeFocused();
 
-  const dialog = page.getByRole("dialog", { name: "Выбор размещений" });
-  await dialog.getByRole("button", { name: /Качество образования/ }).click();
-  await expect(dialog.locator("label[class*='_placementRow']")).toHaveCount(31);
-  return dialog;
-}
+    await trigger.evaluate((node) => { Object.assign((node as HTMLElement).style, { position: "fixed", right: "2px", bottom: "2px" }); });
+    await trigger.dispatchEvent("click");
+    await expect(popup).toBeVisible();
+    const popupBox = await popup.boundingBox();
+    const anchorBox = await trigger.boundingBox();
+    const geometry = { popup: { top: popupBox!.y, right: popupBox!.x + popupBox!.width, bottom: popupBox!.y + popupBox!.height, left: popupBox!.x }, anchor: { top: anchorBox!.y } };
+    expect(geometry.popup.bottom).toBeLessThanOrEqual(page.viewportSize()!.height - 12);
+    expect(geometry.popup.top).toBeLessThan(geometry.anchor.top);
+    expect(geometry.popup.right).toBeLessThanOrEqual(page.viewportSize()!.width - 12);
+    expect(geometry.popup.left).toBeGreaterThanOrEqual(12);
+    await page.keyboard.press("Escape");
+    await expect(popup).toHaveCount(0);
 
-test("общий список размещений прокручивается, а footer остаётся видимым", async ({ page }) => {
-  const dialog = await openPlacementSelector(page);
-  const scrollArea = dialog.locator("[class*='_placementGroups']");
-  const lastItem = dialog.locator("label[class*='_placementRow']").last();
-  const footer = dialog.getByRole("button", { name: "Применить" }).locator("..");
+    await trigger.dispatchEvent("click");
+    await expect(popup).toBeVisible();
+    await card.evaluate((node) => node.remove());
+    await page.keyboard.press("Escape");
+    await expect(popup).toHaveCount(0);
+    expect(pageErrors).toHaveLength(0);
+  });
 
-  const initial = await scrollArea.evaluate((element) => ({
-    clientHeight: element.clientHeight,
-    scrollHeight: element.scrollHeight,
-  }));
-  expect(initial.scrollHeight).toBeGreaterThan(initial.clientHeight);
-  await expect(footer).toBeInViewport();
-  expect(await page.evaluate(() => getComputedStyle(document.body).overflow)).toBe("hidden");
-  expect(await dialog.evaluate((overlay) => {
-    const panel = overlay.firstElementChild as HTMLElement;
-    const area = overlay.querySelector("[class*='_placementGroups']") as HTMLElement;
-    return document.documentElement.scrollWidth <= document.documentElement.clientWidth &&
-      panel.scrollWidth <= panel.clientWidth && area.scrollWidth <= area.clientWidth;
-  })).toBe(true);
-
-  await scrollArea.evaluate((element) => { element.scrollTop = element.scrollHeight; });
-  await expect.poll(() => scrollArea.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
-  await expect(lastItem).toBeInViewport();
-  await expect(footer).toBeInViewport();
-
-  await scrollArea.evaluate((element) => { element.scrollTop = 0; });
-  await scrollArea.hover();
-  await page.mouse.wheel(0, 5000);
-  await expect.poll(() => scrollArea.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
-  await expect(lastItem).toBeInViewport();
-  await expect(footer).toBeInViewport();
-
-  await dialog.getByRole("button", { name: "Закрыть" }).click();
-  await expect.poll(() => page.evaluate(() => getComputedStyle(document.body).overflow)).not.toBe("hidden");
+  test("actions menu returns focus to its trigger", async ({ page }) => {
+    await loginAsAdmin(page);
+    await page.goto("/admin/documents");
+    const trigger = page.getByRole("button", { name: "Действия документа" }).first();
+    await trigger.focus();
+    await trigger.click();
+    await expect(page.getByRole("menu")).toBeVisible();
+    await page.getByRole("menuitem").first().focus();
+    await page.keyboard.press("Escape");
+    await expect(page.getByRole("menu")).toHaveCount(0);
+    await expect.poll(() => page.evaluate(() => document.activeElement?.getAttribute("aria-label"))).toBe("Действия документа");
+  });
 });

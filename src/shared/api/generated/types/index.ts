@@ -90,6 +90,13 @@ export type {
   AdminNewsControllerMoveCategoryPathParams,
 } from "./AdminNewsControllerMoveCategory";
 export type {
+  AdminNewsControllerPublication201,
+  AdminNewsControllerPublicationMutation,
+  AdminNewsControllerPublicationMutationRequest,
+  AdminNewsControllerPublicationMutationResponse,
+  AdminNewsControllerPublicationPathParams,
+} from "./AdminNewsControllerPublication";
+export type {
   AdminNewsControllerUpdateCategory200,
   AdminNewsControllerUpdateCategory400,
   AdminNewsControllerUpdateCategory403,
@@ -171,8 +178,18 @@ export type {
 export type { Document, DocumentStatusEnumKey } from "./Document";
 export type { DocumentDto, DocumentDtoStatusEnumKey } from "./DocumentDto";
 export type { DocumentPaginationMetaDto } from "./DocumentPaginationMetaDto";
-export type { DocumentPlacement } from "./DocumentPlacement";
-export type { DocumentPlacementDto } from "./DocumentPlacementDto";
+export type {
+  DocumentPlacement,
+  DocumentPlacementPublicationStatusEnumKey,
+} from "./DocumentPlacement";
+export type {
+  DocumentPlacementDto,
+  DocumentPlacementDtoPublicationStatusEnumKey,
+} from "./DocumentPlacementDto";
+export type {
+  DocumentPlacementPublicationDto,
+  DocumentPlacementPublicationDtoCommandEnumKey,
+} from "./DocumentPlacementPublicationDto";
 export type {
   DocumentPlacementsControllerReorder200,
   DocumentPlacementsControllerReorder400,
@@ -244,6 +261,13 @@ export type {
   DocumentsControllerMakeCurrentPathParams,
 } from "./DocumentsControllerMakeCurrent";
 export type {
+  DocumentsControllerPlacementPublication201,
+  DocumentsControllerPlacementPublicationMutation,
+  DocumentsControllerPlacementPublicationMutationRequest,
+  DocumentsControllerPlacementPublicationMutationResponse,
+  DocumentsControllerPlacementPublicationPathParams,
+} from "./DocumentsControllerPlacementPublication";
+export type {
   DocumentsControllerPlacements200,
   DocumentsControllerPlacementsMutation,
   DocumentsControllerPlacementsMutationRequest,
@@ -280,7 +304,7 @@ export type {
   MoveNewsCategoryDto,
   MoveNewsCategoryDtoDirectionEnumKey,
 } from "./MoveNewsCategoryDto";
-export type { News } from "./News";
+export type { News, NewsPublicationStatusEnumKey } from "./News";
 export type { NewsArticleDto } from "./NewsArticleDto";
 export type { NewsCategory } from "./NewsCategory";
 export type { NewsCategoryDto } from "./NewsCategoryDto";
@@ -350,10 +374,15 @@ export type {
   PublicSiteSettingsResponseDto,
   PublicSiteSettingsResponseDtoHomeSectionsOrderEnumKey,
 } from "./PublicSiteSettingsResponseDto";
+export type {
+  PublicationCommandDto,
+  PublicationCommandDtoCommandEnumKey,
+} from "./PublicationCommandDto";
 export type { ReorderDocumentPlacementsDto } from "./ReorderDocumentPlacementsDto";
 export type { ResolveDocumentShareLinkDto } from "./ResolveDocumentShareLinkDto";
 export type { Section } from "./Section";
 export type { Session } from "./Session";
+export type { StoredFile } from "./StoredFile";
 export type { UpdateDocumentDto } from "./UpdateDocumentDto";
 export type { UpdateDocumentPlacementsDto } from "./UpdateDocumentPlacementsDto";
 export type {
@@ -456,6 +485,9 @@ export { currentUserDtoDocumentsAccessModeEnum } from "./CurrentUserDto";
 export { currentUserDtoRoleEnum } from "./CurrentUserDto";
 export { documentStatusEnum } from "./Document";
 export { documentDtoStatusEnum } from "./DocumentDto";
+export { documentPlacementPublicationStatusEnum } from "./DocumentPlacement";
+export { documentPlacementDtoPublicationStatusEnum } from "./DocumentPlacementDto";
+export { documentPlacementPublicationDtoCommandEnum } from "./DocumentPlacementPublicationDto";
 export { documentsControllerListQueryParamsGroupEnum } from "./DocumentsControllerList";
 export { documentsControllerListQueryParamsPageSizeEnum } from "./DocumentsControllerList";
 export { documentsControllerListQueryParamsSortByEnum } from "./DocumentsControllerList";
@@ -463,8 +495,10 @@ export { documentsControllerListQueryParamsSortDirectionEnum } from "./Documents
 export { documentsControllerListQueryParamsStatusEnum } from "./DocumentsControllerList";
 export { errorDtoErrorMessageEnum } from "./ErrorDto";
 export { moveNewsCategoryDtoDirectionEnum } from "./MoveNewsCategoryDto";
+export { newsPublicationStatusEnum } from "./News";
 export { newsStatusEnum } from "./NewsStatus";
 export { publicSiteSettingsResponseDtoHomeSectionsOrderEnum } from "./PublicSiteSettingsResponseDto";
+export { publicationCommandDtoCommandEnum } from "./PublicationCommandDto";
 export { updateDocumentStatusDtoStatusEnum } from "./UpdateDocumentStatusDto";
 export { updateSiteSettingsDtoHomeSectionsOrderEnum } from "./UpdateSiteSettingsDto";
 export { userDocumentGroupsEnum } from "./User";

@@ -1,0 +1,14 @@
+{
+  "type": "object",
+  "properties": {
+    "command": {
+      "type": "string",
+      "enum": ["draft", "publish_now", "schedule", "actualize", "publish_as_of"]
+    },
+    "publishFrom": { "type": "string" },
+    "publishUntil": { "type": "string" },
+    "displayPublishedAt": { "type": "string" }
+  },
+  "required": ["command"],
+  "x-readme-ref-name": "DocumentPlacementPublicationDto"
+}

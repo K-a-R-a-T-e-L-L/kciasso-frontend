@@ -3,6 +3,15 @@
  * Do not edit manually.
  */
 
+export const documentPlacementDtoPublicationStatusEnum = {
+  DRAFT: "DRAFT",
+  SCHEDULED: "SCHEDULED",
+  PUBLISHED: "PUBLISHED",
+} as const;
+
+export type DocumentPlacementDtoPublicationStatusEnumKey =
+  (typeof documentPlacementDtoPublicationStatusEnum)[keyof typeof documentPlacementDtoPublicationStatusEnum];
+
 export type DocumentPlacementDto = {
   /**
    * @type number
@@ -16,6 +25,26 @@ export type DocumentPlacementDto = {
    * @type number
    */
   sortOrder: number;
+  /**
+   * @type string
+   */
+  publicationStatus: DocumentPlacementDtoPublicationStatusEnumKey;
+  /**
+   * @type string | undefined, date-time
+   */
+  publishFrom?: string;
+  /**
+   * @type string | undefined, date-time
+   */
+  publishUntil?: string;
+  /**
+   * @type string | undefined, date-time
+   */
+  displayPublishedAt?: string;
+  /**
+   * @type number
+   */
+  publicationRevision: number;
   /**
    * @type string, date-time
    */

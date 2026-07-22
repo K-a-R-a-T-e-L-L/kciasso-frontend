@@ -68,7 +68,7 @@ export default function AdminNewsForm({ categories, initialData, mutation, submi
     try { prepared = buildNewsActionFormData(form, coverMutation); }
     catch { setSubmitError("Не удалось подготовить данные новости."); return; }
     const input: NewsMutationRequest = {
-      title: String(prepared.get("title") ?? ""), slug: String(prepared.get("slug") ?? ""), excerpt: String(prepared.get("excerpt") ?? ""), content: String(prepared.get("content") ?? ""), categoryId: String(prepared.get("categoryId") ?? ""), publishMode: String(prepared.get("publishMode") ?? "draft") as NewsMutationRequest["publishMode"], publishedAt: String(prepared.get("publishedAt") ?? "") || null,
+      title: String(prepared.get("title") ?? ""), slug: String(prepared.get("slug") ?? ""), excerpt: String(prepared.get("excerpt") ?? ""), content: String(prepared.get("content") ?? ""), categoryId: String(prepared.get("categoryId") ?? ""), publishMode: String(prepared.get("publishMode") ?? "draft") as NewsMutationRequest["publishMode"], publishedAt: String(prepared.get("publishedAt") ?? "") || null, publishUntil: String(prepared.get("publishUntil") ?? "") || null, displayPublishedAt: String(prepared.get("displayPublishedAt") ?? "") || null,
       cover: { kind: coverMutation.kind, url: "url" in coverMutation ? coverMutation.url : undefined, source: "source" in coverMutation ? coverMutation.source : undefined, ...(coverMutation.key ? { pendingOwnedMediaKey: coverMutation.key } : {}) },
     };
     setSaving(true); setSubmitError(null);
@@ -92,7 +92,7 @@ export default function AdminNewsForm({ categories, initialData, mutation, submi
         {coverError ? <p className={cls.error} role="alert">{coverError}</p> : null}
       </section>
       <label><span>Статус публикации</span><select name="publishMode" value={publishMode} onChange={e => setPublishMode(e.target.value as PublishMode)}><option value="draft">Черновик</option><option value="publish-now">Опубликовать сейчас</option><option value="schedule">Запланировать</option></select></label>
-      {publishMode === "schedule" ? <label><span>Дата и время публикации</span><input name="publishedAt" type="datetime-local" defaultValue={state.values?.publishedAt ?? dateLocal(initialData?.publishedAt)} required /></label> : <div className={cls.modeHint}><span>Пояснение</span><p>{publishMode === "draft" ? "Запись сохранится без публикации в публичной ленте." : "Дата публикации будет установлена текущим временем."}</p></div>}
+      {publishMode === "schedule" ? <label><span>Дата и время публикации</span><input name="publishedAt" type="datetime-local" defaultValue={state.values?.publishedAt ?? dateLocal(initialData?.publishedAt)} required /></label> : <div className={cls.modeHint}><span>Пояснение</span><p>{publishMode === "draft" ? "Запись сохранится без публикации в публичной ленте." : "Дата публикации будет установлена текущим временем."}</p></div>}<label><span>Показывать до (необязательно)</span><input name="publishUntil" type="datetime-local" /></label><label><span>Дата на сайте (необязательно)</span><input name="displayPublishedAt" type="datetime-local" defaultValue={dateLocal(initialData?.publishedAt)} /></label>
     </div>
     {actionError ? <p className={cls.error} role="alert">{actionError}</p> : null}<div className={cls.actions}><button type="submit" disabled={busy}>{uploading ? "Загрузка изображения…" : pending ? "Сохранение новости…" : submitLabel}</button></div>
   </form>;

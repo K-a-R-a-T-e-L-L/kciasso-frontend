@@ -12,6 +12,8 @@ export type ParsedNewsFormData = {
   content: string;
   publishMode: string;
   publishedAt?: string;
+  publishUntil?: string;
+  displayPublishedAt?: string;
   categoryId?: number;
   coverMutation: ServerCoverMutation;
   coverError?: string;
@@ -64,6 +66,8 @@ export function parseNewsFormData(formData: FormData): ParsedNewsFormData {
     content: String(formData.get("content") ?? "").trim(),
     publishMode: String(formData.get("publishMode") ?? "draft"),
     publishedAt: optionalDateTime(formData.get("publishedAt")),
+    publishUntil: optionalDateTime(formData.get("publishUntil")),
+    displayPublishedAt: optionalDateTime(formData.get("displayPublishedAt")),
     categoryId: optionalNumber(formData.get("categoryId")),
     coverMutation,
     coverError,

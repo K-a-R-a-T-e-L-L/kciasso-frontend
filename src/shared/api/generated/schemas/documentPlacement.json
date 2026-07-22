@@ -5,6 +5,26 @@
     "document_id": { "type": "integer", "format": "int32" },
     "section_key": { "type": "string" },
     "sort_order": { "type": "integer", "format": "int32" },
+    "publication_status": {
+      "type": "string",
+      "enum": ["DRAFT", "SCHEDULED", "PUBLISHED"]
+    },
+    "publish_from": {
+      "type": "string",
+      "format": "date-time",
+      "nullable": true
+    },
+    "publish_until": {
+      "type": "string",
+      "format": "date-time",
+      "nullable": true
+    },
+    "display_published_at": {
+      "type": "string",
+      "format": "date-time",
+      "nullable": true
+    },
+    "publication_revision": { "type": "integer", "format": "int32" },
     "created_at": { "type": "string", "format": "date-time" },
     "updated_at": { "type": "string", "format": "date-time" },
     "document": { "$ref": "#/components/schemas/Document" }
@@ -14,6 +34,11 @@
     "document_id",
     "section_key",
     "sort_order",
+    "publication_status",
+    "publish_from",
+    "publish_until",
+    "display_published_at",
+    "publication_revision",
     "created_at",
     "updated_at"
   ],

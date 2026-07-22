@@ -6,6 +6,15 @@
 import type { NewsCategory } from "./NewsCategory";
 import type { User } from "./User";
 
+export const newsPublicationStatusEnum = {
+  DRAFT: "DRAFT",
+  SCHEDULED: "SCHEDULED",
+  PUBLISHED: "PUBLISHED",
+} as const;
+
+export type NewsPublicationStatusEnumKey =
+  (typeof newsPublicationStatusEnum)[keyof typeof newsPublicationStatusEnum];
+
 export type News = {
   /**
    * @type integer, int32
@@ -39,6 +48,26 @@ export type News = {
    * @type boolean
    */
   is_published: boolean;
+  /**
+   * @type string
+   */
+  publication_status: NewsPublicationStatusEnumKey;
+  /**
+   * @type string, date-time
+   */
+  publish_from: string | null;
+  /**
+   * @type string, date-time
+   */
+  publish_until: string | null;
+  /**
+   * @type string, date-time
+   */
+  display_published_at: string | null;
+  /**
+   * @type integer, int32
+   */
+  publication_revision: number;
   /**
    * @type integer, int32
    */

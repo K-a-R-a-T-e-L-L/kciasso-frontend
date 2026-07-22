@@ -72,6 +72,10 @@ export const operations = {
     path: "/api/admin/news/:id",
     method: "delete",
   },
+  AdminNewsController_publication: {
+    path: "/api/admin/news/:id/publication",
+    method: "post",
+  },
   AdminNewsController_getCategories: {
     path: "/api/admin/news-categories",
     method: "get",
@@ -123,6 +127,10 @@ export const operations = {
   DocumentsController_list: {
     path: "/api/admin/documents",
     method: "get",
+  },
+  DocumentsController_placementPublication: {
+    path: "/api/admin/documents/:id/placements/:sectionKey/publication",
+    method: "post",
   },
   DocumentsController_get: {
     path: "/api/admin/documents/:id",
