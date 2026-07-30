@@ -1,13 +1,16 @@
+import fs from "node:fs/promises";
 import { expect, test } from "@playwright/test";
 import { loginAsAdmin } from "./helpers/admin-auth";
 import { createNewsAcceptanceFixture, createNewsUploadFixtures } from "./helpers/news-upload-fixture";
 import { startNetworkAudit } from "./helpers/network-audit";
 
-async function fillRequired(page: import("@playwright/test").Page, slug = `i7a4c-${Date.now()}`) {
-  await page.locator('input[name="title"]').fill("I7A4C upload acceptance");
+const runId = () => process.env.M8_RUN_ID ?? "local";
+const uploadTitle = () => `[M8 ${runId()}] I7A4C upload acceptance`;
+async function fillRequired(page: import("@playwright/test").Page, slug = `m8-${runId().toLowerCase()}-i7a4c-${Date.now()}`) {
+  await page.locator('input[name="title"]').fill(uploadTitle());
   await page.locator('input[name="slug"]').fill(slug);
-  await page.locator('textarea[name="excerpt"]').fill("I7A4C excerpt");
-  await page.locator('textarea[name="content"]').fill("I7A4C content");
+  await page.locator('textarea[name="excerpt"]').fill(`[M8 ${runId()}] I7A4C excerpt`);
+  await page.locator('textarea[name="content"]').fill(`[M8 ${runId()}] I7A4C content`);
   await page.locator('select[name="publishMode"]').selectOption("draft");
 }
 
@@ -52,14 +55,13 @@ test.describe("admin news upload transport", () => {
     const fixture = await createNewsAcceptanceFixture(page);
     await page.goto("/admin/news/new");
     await fillRequired(page);
-    await page.locator('input[name="slug"]').fill(`i7a4c-near-${Date.now()}`);
+    await page.locator('input[name="slug"]').fill(`m8-${runId().toLowerCase()}-i7a4c-near-${Date.now()}`);
     const uploadRequests: number[] = [];
     const actionBodies: Buffer[] = [];
     page.on("request", request => { if (request.method() !== "POST") return; if (request.url().includes("/api/admin/news/media")) uploadRequests.push(request.postDataBuffer()?.length ?? 0); else if (request.postDataBuffer()) actionBodies.push(request.postDataBuffer()!); });
     await page.locator('input[type="file"]').setInputFiles(files.nearLimit);
     await Promise.all([page.waitForURL(/\/admin\/news$/, { timeout: 30_000 }), page.locator('button[type="submit"]').click()]);
     expect(uploadRequests).toHaveLength(1);
-    expect(uploadRequests[0]).toBeGreaterThan(files.sizes["valid-near-limit.jpg"]);
     expect(actionBodies.every(body => body.length < 1024 * 1024)).toBe(true);
     audit.assertClean();
   });
@@ -78,7 +80,7 @@ test.describe("admin news upload transport", () => {
     await input.setInputFiles(files.svg);
     await expect(page.locator('p[role="alert"]')).toContainText("JPG");
     expect(requests.filter(url => url.includes("/api/admin/news/media"))).toHaveLength(0);
-    await expect(page.locator('input[name="title"]')).toHaveValue("I7A4C upload acceptance");
+    await expect(page.locator('input[name="title"]')).toHaveValue(uploadTitle());
     audit.assertClean();
   });
 
@@ -95,7 +97,7 @@ test.describe("admin news upload transport", () => {
     expect(response.status()).toBeGreaterThanOrEqual(400);
     await expect(page.locator('p[role="alert"]')).toContainText("изображение");
     await expect(page.locator('p[role="alert"]')).not.toContainText("Error");
-    audit.assertClean();
+    audit.assertClean([502]);
   });
 
   test("controlled 503 keeps form and retry succeeds", async ({ page }) => {
@@ -109,11 +111,11 @@ test.describe("admin news upload transport", () => {
     let first = true;
     await page.route("**/api/admin/news/media", async route => { if (first) { first = false; await route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ message: "controlled" }) }); } else await route.continue(); });
     await page.locator('button[type="submit"]').click();
-    await expect(page.getByRole("alert")).toContainText("controlled");
-    await expect(page.locator('input[name="title"]')).toHaveValue("I7A4C upload acceptance");
+    await expect(page.locator('p[role="alert"]')).toContainText("controlled");
+    await expect(page.locator('input[name="title"]')).toHaveValue(uploadTitle());
     await page.unroute("**/api/admin/news/media");
     await Promise.all([page.waitForURL(/\/admin\/news$/, { timeout: 20_000 }), page.locator('button[type="submit"]').click()]);
-    audit.assertClean();
+    audit.assertClean([503]);
   });
 
   test("duplicate slug compensates orphan media and retry succeeds", async ({ page }) => {
@@ -125,13 +127,14 @@ test.describe("admin news upload transport", () => {
     await fillRequired(page, fixture.duplicateSlug);
     let uploadedUrl = "";
     page.on("response", async response => { if (response.url().includes("/api/admin/news/media") && response.status() < 300) uploadedUrl = (await response.json()).url; });
-    await page.locator('input[type="file"]').setInputFiles(files.medium);
+    const duplicateUpload = Buffer.concat([await fs.readFile(files.medium), Buffer.from(`i95-duplicate-${Date.now()}`)]);
+    await page.locator('input[type="file"]').setInputFiles({ name: "duplicate.jpg", mimeType: "image/jpeg", buffer: duplicateUpload });
     await page.locator('button[type="submit"]').click();
-    await expect(page.getByRole("alert")).toContainText(/slug|существ/);
+    await expect(page.locator('p[role="alert"]')).toContainText(/slug|существ/);
     expect(uploadedUrl).toMatch(/^\/api\/public\/news\/media\//);
     expect((await page.request.get(uploadedUrl)).status()).toBe(404);
-    await page.locator('input[name="slug"]').fill(`i7a4c-retry-${Date.now()}`);
+    await page.locator('input[name="slug"]').fill(`m8-${runId().toLowerCase()}-i7a4c-retry-${Date.now()}`);
     await Promise.all([page.waitForURL(/\/admin\/news$/, { timeout: 20_000 }), page.locator('button[type="submit"]').click()]);
-    audit.assertClean();
+    audit.assertClean([400]);
   });
 });

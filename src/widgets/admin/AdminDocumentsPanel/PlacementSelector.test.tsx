@@ -1,8 +1,13 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render as rtlRender, screen } from "@testing-library/react";
+import { MantineProvider } from "@mantine/core";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { DOCUMENT_PLACEMENT_GROUPS } from "@/shared/documents/document-placement-registry";
 import PlacementSelector from "./PlacementSelector.client";
+
+function render(ui: Parameters<typeof rtlRender>[0], options: Parameters<typeof rtlRender>[1] = {}) {
+  return rtlRender(ui, { ...options, wrapper: MantineProvider });
+}
 
 afterEach(() => cleanup());
 

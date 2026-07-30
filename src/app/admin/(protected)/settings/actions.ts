@@ -31,8 +31,8 @@ export async function updateSiteSettingsAction(
     !payload.informationPhone ||
     !payload.egeTrustPhone ||
     !payload.email ||
-    payload.homeSectionsOrder.length !== 4 ||
-    new Set(payload.homeSectionsOrder).size !== 4 ||
+    payload.homeSectionsOrder.length !== HOME_SECTION_KEYS.length ||
+    new Set(payload.homeSectionsOrder).size !== HOME_SECTION_KEYS.length ||
     payload.homeSectionsOrder.some((key) => !HOME_SECTION_KEYS.includes(key))
   ) {
     return {

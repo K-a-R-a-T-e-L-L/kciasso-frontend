@@ -4,6 +4,7 @@
  */
 
 import type { NewsCategory } from "./NewsCategory";
+import type { NewsMedia } from "./NewsMedia";
 import type { User } from "./User";
 
 export const newsPublicationStatusEnum = {
@@ -40,6 +41,10 @@ export type News = {
    * @type string
    */
   cover_image_url: string | null;
+  /**
+   * @type integer, int32
+   */
+  cover_media_id: number | null;
   /**
    * @type string, date-time
    */
@@ -78,6 +83,7 @@ export type News = {
   author_id: number | null;
   category?: NewsCategory | null;
   author?: User | null;
+  cover_media?: NewsMedia | null;
   /**
    * @type string, date-time
    */

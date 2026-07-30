@@ -1,30 +1,16 @@
 "use client";
 
+import { Alert, Box, Button, PasswordInput, Stack, TextInput } from "@mantine/core";
 import { useActionState } from "react";
 import { loginAdminAction } from "@/app/admin/(auth)/login/actions";
 import { loginFormInitialState } from "./AdminLoginForm.types";
-import cls from "./AdminLoginForm.module.scss";
 
 export default function AdminLoginForm() {
   const [state, formAction, pending] = useActionState(loginAdminAction, loginFormInitialState);
-
-  return (
-    <form className={cls.form} action={formAction}>
-      <label>
-        <span>Email</span>
-        <input type="email" name="email" autoComplete="username" required />
-      </label>
-
-      <label>
-        <span>Пароль</span>
-        <input type="password" name="password" autoComplete="current-password" required />
-      </label>
-
-      {state.error ? <p className={cls.error}>{state.error}</p> : null}
-
-      <button type="submit" disabled={pending}>
-        {pending ? "Выполняется вход..." : "Войти"}
-      </button>
-    </form>
-  );
+  return <Box component="form" action={formAction}><Stack gap="md">
+    <TextInput label="Email" type="email" name="email" autoComplete="username" required />
+    <PasswordInput label="Пароль" name="password" autoComplete="current-password" required />
+    {state.error ? <Alert color="red">{state.error}</Alert> : null}
+    <Button type="submit" loading={pending}>{pending ? "Выполняется вход..." : "Войти"}</Button>
+  </Stack></Box>;
 }

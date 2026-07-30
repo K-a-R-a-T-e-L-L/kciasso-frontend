@@ -1,24 +1,38 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Fragment } from "react";
 import { getHomePageData } from "@/shared/api/adapters/home.adapter";
-import { topLinks } from "@/shared/config/navigation";
+import { getPublicPageLayout } from "@/shared/api/adapters/page-layout.adapter";
+import { getPublicSiteSettings } from "@/shared/api/adapters/site-settings.adapter";
 import Container from "@/shared/ui/Container/Container";
 import DirectionCard from "@/shared/ui/DirectionCard/DirectionCard";
 import ResourceCard from "@/shared/ui/ResourceCard/ResourceCard";
 import Section from "@/shared/ui/Section/Section";
 import SectionHeader from "@/shared/ui/SectionHeader/SectionHeader";
+import HomeImageCarousel from "@/widgets/pages/HomeImageCarousel/HomeImageCarousel.client";
+import PublicPageSections from "@/widgets/pages/PublicPageSections/PublicPageSections";
+import { PublicSystemSectionsProvider } from "@/widgets/pages/PublicPageSections/public-system-renderers";
+import PublicContactsBoundary from "@/widgets/sections/UniversalContactsSection/PublicContactsBoundary.client";
+import HomeHeroSection from "./HomeHeroSection";
 import cls from "./HomePage.module.scss";
 
 export default async function HomePage() {
+  const [data, layout, contacts] = await Promise.all([
+    getHomePageData(),
+    getPublicPageLayout("home"),
+    getPublicSiteSettings(),
+  ]);
+
+  if (!layout) {
+    throw new Error("PUBLIC_PAGE_LAYOUT_NOT_FOUND:home");
+  }
+
   const {
     homeDirections,
     latestNewsPreview,
     giaReferenceHub,
     officialResourceCards,
     services,
-    homeSectionsOrder,
-  } = await getHomePageData();
+  } = data;
   const quickDirections = [
     homeDirections[0],
     homeDirections[1],
@@ -31,10 +45,13 @@ export default async function HomePage() {
     },
     ...homeDirections.slice(3),
   ];
-  const [leadNews, ...secondaryNews] = latestNewsPreview;
 
-  const sectionRegistry = {
-    "home.quick-access": (
+  const systemSections = {
+    "home.hero": (
+      <HomeHeroSection latestNewsPreview={latestNewsPreview} />
+    ),
+    "home.carousel": <HomeImageCarousel />,
+    "home.main-sections": (
       <Section id="quick-access">
         <Container>
           <SectionHeader
@@ -50,7 +67,7 @@ export default async function HomePage() {
         </Container>
       </Section>
     ),
-    "home.resources": (
+    "home.important-resources": (
       <Section id="important-resources">
         <Container>
           <div className={cls.splitSection}>
@@ -73,7 +90,7 @@ export default async function HomePage() {
         </Container>
       </Section>
     ),
-    "home.gia-reference": (
+    "home.gia": (
       <Section id="gia-reference">
         <Container>
           <div className={cls.giaSection}>
@@ -137,119 +154,12 @@ export default async function HomePage() {
         </Container>
       </Section>
     ),
+    "global.contacts": <PublicContactsBoundary contacts={contacts} />,
   } as const;
 
   return (
-    <>
-      <section className={cls.hero}>
-        <Container>
-          <div className={cls.heroGrid}>
-            <div className={cls.heroCopy}>
-              <p className={cls.badge}>Кемеровская область — Кузбасс</p>
-              <h1>
-                <span>«Кузбасский центр</span>
-                <span>информационно-аналитического</span>
-                <span>сопровождения системы образования»</span>
-              </h1>
-              <p>
-                Информационно-аналитическое сопровождение государственной
-                итоговой аттестации, оценочных процедур и мониторинга качества
-                образования в Кузбассе.
-              </p>
-              <div className={cls.actions}>
-                <Link href="#quick-access">Выбрать раздел</Link>
-                <Link href="/o-centre/kontakty">Контакты</Link>
-              </div>
-              <div className={cls.officialLinks}>
-                <span>Официальные ресурсы</span>
-                <div>
-                  {topLinks.map((link) => (
-                    <a
-                      key={link.href}
-                      href={link.href}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      {link.title}
-                    </a>
-                  ))}
-                </div>
-              </div>
-            </div>
-            <div id="current-information" className={cls.heroVisual}>
-              <div className={cls.heroNewsPanel}>
-                <div className={cls.heroNewsHeader}>
-                  <span className={cls.heroNewsLabel}>Последние новости</span>
-                  <Link className={cls.heroNewsAll} href="/news">
-                    Все новости
-                  </Link>
-                </div>
-                {leadNews ? (
-                  <Link className={cls.heroLeadNews} href={leadNews.href}>
-                    <span
-                      className={cls.heroLeadMedia}
-                      aria-hidden={leadNews.coverImageUrl ? undefined : true}
-                    >
-                      {leadNews.coverImageUrl ? (
-                        <>
-                          <span className="sr-only">Изображение новости</span>
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={leadNews.coverImageUrl}
-                            alt={leadNews.title}
-                            className={cls.heroLeadImage}
-                          />
-                        </>
-                      ) : (
-                        <span className={cls.heroLeadPlaceholder}>
-                          <span>Новости</span>
-                        </span>
-                      )}
-                    </span>
-                    <span className={cls.heroLeadBody}>
-                      <span className={cls.heroNewsMeta}>
-                        <span>{leadNews.categoryTitle}</span>
-                        <time>{leadNews.date}</time>
-                      </span>
-                      <strong>{leadNews.title}</strong>
-                      <span>{leadNews.text}</span>
-                    </span>
-                  </Link>
-                ) : null}
-                {secondaryNews.length > 0 ? (
-                  <div className={cls.heroSecondaryNews}>
-                    {secondaryNews.map((item) => (
-                      <Link
-                        key={item.href}
-                        className={cls.heroNewsItem}
-                        href={item.href}
-                      >
-                        <span className={cls.heroNewsMeta}>
-                          <span>{item.categoryTitle}</span>
-                          <time>{item.date}</time>
-                        </span>
-                        <span className={cls.heroNewsItemTitleRow}>
-                          <strong>{item.title}</strong>
-                          <span
-                            className={cls.heroNewsArrow}
-                            aria-hidden="true"
-                          >
-                            →
-                          </span>
-                        </span>
-                        <span className={cls.heroNewsExcerpt}>{item.text}</span>
-                      </Link>
-                    ))}
-                  </div>
-                ) : null}
-              </div>
-            </div>
-          </div>
-        </Container>
-      </section>
-      {homeSectionsOrder.map((key) => (
-        <Fragment key={key}>{sectionRegistry[key]}</Fragment>
-      ))}
-    </>
+    <PublicSystemSectionsProvider sections={systemSections}>
+      <PublicPageSections pageKey={layout.pageKey} sections={layout.sections} />
+    </PublicSystemSectionsProvider>
   );
 }

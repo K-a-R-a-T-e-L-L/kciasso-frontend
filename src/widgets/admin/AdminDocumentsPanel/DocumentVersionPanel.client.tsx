@@ -1,9 +1,10 @@
 "use client";
 
+import { Box, Title, Button, Text } from "@mantine/core";
+
 import type { DocumentVersionDto } from "@/shared/api/generated/types";
 import DocumentShareLinks from "@/widgets/admin/DocumentShareLinks/DocumentShareLinks.client";
 import { formatDate, formatSize } from "./admin-document-response";
-import cls from "./DocumentVersionPanel.module.scss";
 
 type Props = {
   documentId: number;
@@ -20,20 +21,20 @@ type Props = {
 
 export default function DocumentVersionPanel({ documentId, versionDocumentId, versionFile, historyDocumentId, history, busy, onFileChange, onUpload, onCloseHistory, onMakeCurrent }: Props) {
   return <>
-    {versionDocumentId === documentId ? <form className={cls.inlineForm} onSubmit={(event) => onUpload(event, documentId)}>
-      <h3>Загрузить новую версию</h3>
-      <input type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.zip,.jpg,.jpeg,.png" onChange={(event) => onFileChange(event.target.files?.[0] ?? null)} required />
-      <button type="submit" disabled={busy}>Загрузить версию</button>
-      {versionFile ? <small>{versionFile.name}</small> : null}
-    </form> : null}
-    {historyDocumentId === documentId ? <div className={cls.history} role="dialog" aria-label={`История версий ${documentId}`}>
-      <div className={cls.historyHeader}><h3>История версий</h3><button type="button" onClick={onCloseHistory} aria-label="Закрыть">×</button></div>
-      {(history[documentId] ?? []).slice().sort((a, b) => b.versionNumber - a.versionNumber).map((item) => <div className={cls.version} data-testid={`version-row-${item.id}`} key={item.id}>
-        <div><strong>Версия {item.versionNumber}</strong>{item.isCurrent ? <span className={cls.current}>Текущая</span> : null}</div>
-        <span>{item.originalFilename}</span><span>{formatSize(item.sizeBytes)} · {formatDate(item.createdAt)}</span>
-        {!item.isCurrent ? <button type="button" onClick={() => onMakeCurrent(documentId, item)} disabled={busy}>Сделать текущей</button> : null}
+    {versionDocumentId === documentId ? <Box component="form" className={""} onSubmit={(event: any) => onUpload(event, documentId)}>
+      <Title>Загрузить новую версию</Title>
+      <Box component="input" type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.zip,.jpg,.jpeg,.png" onChange={(event: any) => onFileChange(event.target.files?.[0] ?? null)} required />
+      <Button type="submit" disabled={busy}>Загрузить версию</Button>
+      {versionFile ? <Text>{versionFile.name}</Text> : null}
+    </Box> : null}
+    {historyDocumentId === documentId ? <Box className={""} role="dialog" aria-label={`История версий ${documentId}`}>
+      <Box className={""}><Title>История версий</Title><Button type="button" onClick={onCloseHistory} aria-label="Закрыть">×</Button></Box>
+      {(history[documentId] ?? []).slice().sort((a, b) => b.versionNumber - a.versionNumber).map((item) => <Box className={""} data-testid={`version-row-${item.id}`} key={item.id}>
+        <Box><Text>Версия {item.versionNumber}</Text>{item.isCurrent ? <Text className={""}>Текущая</Text> : null}</Box>
+        <Text>{item.originalFilename}</Text><Text>{formatSize(item.sizeBytes)} · {formatDate(item.createdAt)}</Text>
+        {!item.isCurrent ? <Button type="button" onClick={() => onMakeCurrent(documentId, item)} disabled={busy}>Сделать текущей</Button> : null}
         <DocumentShareLinks version={item} />
-      </div>)}
-    </div> : null}
+      </Box>)}
+    </Box> : null}
   </>;
 }

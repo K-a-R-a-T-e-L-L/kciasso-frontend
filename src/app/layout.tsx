@@ -1,5 +1,10 @@
 import type { Metadata } from "next";
+import { ColorSchemeScript, mantineHtmlProps } from "@mantine/core";
+import "@mantine/core/styles.css";
+import "@mantine/carousel/styles.css";
+import "@mantine/notifications/styles.css";
 import "@/styles/globals.scss";
+import AppProviders from "./AppProviders.client";
 
 export const metadata: Metadata = {
   title: 'ГКУ "КЦИАССО"',
@@ -18,8 +23,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ru">
-      <body>{children}</body>
+    <html lang="ru" {...mantineHtmlProps}>
+      <head>
+        <ColorSchemeScript defaultColorScheme="light" />
+      </head>
+      <body><AppProviders>{children}</AppProviders></body>
     </html>
   );
 }

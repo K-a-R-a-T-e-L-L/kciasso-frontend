@@ -1,15 +1,18 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render as rtlRender, screen } from "@testing-library/react";
+import { MantineProvider } from "@mantine/core";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { AdminNewsDto } from "@/shared/api/generated/types";
 import AdminNewsForm from "./AdminNewsForm.client";
 
+function render(ui: Parameters<typeof rtlRender>[0], options: Parameters<typeof rtlRender>[1] = {}) {
+  return rtlRender(ui, { ...options, wrapper: MantineProvider });
+}
+
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
 });
-
-const action = vi.fn(async () => ({ error: null }));
 
 describe("AdminNewsForm cover image", () => {
   it("keeps cover inputs controlled for all existing cover states", () => {
@@ -23,19 +26,19 @@ describe("AdminNewsForm cover image", () => {
       coverImageUrl: null,
       status: "draft",
     } as unknown as AdminNewsDto;
-    const view = render(<AdminNewsForm categories={[]} initialData={initialData} action={action} submitLabel="Сохранить" />);
-    view.rerender(<AdminNewsForm categories={[]} initialData={{ ...initialData, coverImageUrl: "https://example.com/a.png" }} action={action} submitLabel="Сохранить" />);
+    const view = render(<AdminNewsForm categories={[]} initialData={initialData} mutation={{ method: "update", id: "1" }} submitLabel="Сохранить" />);
+    view.rerender(<AdminNewsForm categories={[]} initialData={{ ...initialData, coverImageUrl: "https://example.com/a.png" }} mutation={{ method: "update", id: "1" }} submitLabel="Сохранить" />);
     expect(consoleError).not.toHaveBeenCalledWith(expect.stringContaining("uncontrolled"));
   });
 
   it("allows the backend to generate a slug", () => {
-    render(<AdminNewsForm categories={[]} action={action} submitLabel="Сохранить" />);
+    render(<AdminNewsForm categories={[]} mutation={{ method: "create" }} submitLabel="Сохранить" />);
     expect(screen.getByRole("textbox", { name: /Slug \(необязательно\)/ })).not.toBeRequired();
     expect(screen.getByText("Оставьте поле пустым — адрес создастся автоматически из заголовка.")).toBeInTheDocument();
   });
 
   it("switches between file upload and URL input", async () => {
-    render(<AdminNewsForm categories={[]} action={action} submitLabel="Сохранить" />);
+    render(<AdminNewsForm categories={[]} mutation={{ method: "create" }} submitLabel="Сохранить" />);
     expect(screen.getByRole("button", { name: "Загрузить файл" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Указать ссылку" })).toBeInTheDocument();
     expect(screen.getByLabelText("Файл изображения")).toBeInTheDocument();
@@ -51,8 +54,8 @@ describe("AdminNewsForm cover image", () => {
   it("shows a preview and allows replacing or removing a selected file", async () => {
     vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:preview");
     vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => undefined);
-    render(<AdminNewsForm categories={[]} action={action} submitLabel="Сохранить" />);
-    const input = screen.getByLabelText("Файл изображения");
+    render(<AdminNewsForm categories={[]} mutation={{ method: "create" }} submitLabel="Сохранить" />);
+    const input = screen.getByLabelText("Файл изображения") as HTMLInputElement;
     await userEvent.upload(input, new File(["image"], "cover.webp", { type: "image/webp" }));
     expect(input.files).toHaveLength(1);
     expect(screen.getByRole("img", { name: "Предпросмотр изображения новости" })).toHaveAttribute(
@@ -65,7 +68,7 @@ describe("AdminNewsForm cover image", () => {
   });
 
   it("accepts only supported raster formats and caps the browser input at one file", () => {
-    render(<AdminNewsForm categories={[]} action={action} submitLabel="Сохранить" />);
+    render(<AdminNewsForm categories={[]} mutation={{ method: "create" }} submitLabel="Сохранить" />);
     const input = screen.getByLabelText("Файл изображения") as HTMLInputElement;
     expect(input.accept).toBe("image/jpeg,image/png,image/webp");
     expect(input.multiple).toBe(false);

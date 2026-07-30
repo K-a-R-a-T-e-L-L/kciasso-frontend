@@ -1,5 +1,7 @@
 "use client";
 
+import { Box, Title, Text, Button } from "@mantine/core";
+
 import { FormEvent, useEffect, useState } from "react";
 import {
   adminDocumentShareLinkRevokeControllerRevoke,
@@ -11,8 +13,8 @@ import type {
   DocumentShareLinkDto,
   DocumentVersionDto,
 } from "@/shared/api/generated/types";
+import { modals } from "@mantine/modals";
 import { getAdminApiErrorMessage } from "@/shared/admin/api-error";
-import cls from "./DocumentShareLinks.module.scss";
 
 type Props = { version: DocumentVersionDto };
 
@@ -164,8 +166,10 @@ export default function DocumentShareLinks({ version }: Props) {
   }
 
   async function revoke(id: number) {
-    if (!window.confirm("Отозвать ссылку? Файл и запись ссылки сохранятся."))
-      return;
+    modals.openConfirmModal({ title: "Отозвать ссылку?", children: "Файл и запись ссылки сохранятся.", labels: { confirm: "Отозвать", cancel: "Отмена" }, confirmProps: { color: "red" }, onConfirm: () => void revokeConfirmed(id) });
+  }
+
+  async function revokeConfirmed(id: number) {
     setBusy("revoke");
     setMessage(null);
     try {
@@ -184,62 +188,62 @@ export default function DocumentShareLinks({ version }: Props) {
   }
 
   return (
-    <section className={cls.section} aria-label="Ссылки для согласования">
-      <div className={cls.heading}>
-        <div>
-          <h4>Ссылки для согласования</h4>
-          <p>
+    <Box component="section" className={""} aria-label="Ссылки для согласования">
+      <Box className={""}>
+        <Box>
+          <Title>Ссылки для согласования</Title>
+          <Text>
             Версия {version.versionNumber} · {version.originalFilename}
-          </p>
-        </div>
-        <button
+          </Text>
+        </Box>
+        <Button
           type="button"
-          className={cls.refresh}
+          className={""}
           onClick={() => void refresh()}
           disabled={busy !== null}
         >
           Обновить
-        </button>
-      </div>
-      <div className={cls.versionMeta}>
+        </Button>
+      </Box>
+      <Box className={""}>
         Текущая версия: {version.versionNumber} · {version.mimeType} · {formatSize(version.sizeBytes)}
-      </div>
-      <form
-        className={cls.createForm}
+      </Box>
+      <Box component="form"
+        className={""}
         data-testid={`share-links-version-${version.id}`}
         onSubmit={create}
       >
-        <label>
+        <Box component="label">
           Срок действия{" "}
-          <input
+          <Box component="input"
             type="datetime-local"
             value={expiresAt}
-            onChange={(event) => setExpiresAt(event.target.value)}
+            onChange={(event: any) => setExpiresAt(event.target.value)}
             disabled={busy !== null}
           />
-        </label>
-        <small>
+        </Box>
+        <Text>
           Время указывается в часовом поясе браузера; пустое поле — без срока.
-        </small>
-        <button
+        </Text>
+        <Button
           type="submit"
           data-testid={`share-create-${version.id}`}
           disabled={busy !== null}
         >
           {busy === "create" ? "Создание…" : currentLink ? "Создать новую" : "Создать секретную ссылку"}
-        </button>
-      </form>
+        </Button>
+      </Box>
       {created ? (
-        <div className={cls.created}>
-          <strong>Новая ссылка создана</strong>
-          <output className={cls.url}>{created.url}</output>
-          <p>Любой человек, у которого есть эта ссылка, сможет открыть файл.</p>
-          <p>
+        <Box className={""}>
+          <Text>Новая ссылка создана</Text>
+          <Text className={""}>{created.url}</Text>
+          <Text>Любой человек, у которого есть эта ссылка, сможет открыть файл.</Text>
+          <Text>
             Версия {created.dto.versionNumber} ·{" "}
             {formatDate(created.dto.expiresAt)}
-          </p>
-          <div className={cls.rowActions}>
-            <button
+          </Text>
+          <Box className={""}>
+            <Button
               type="button"
               onClick={() =>
                 void copyText(created.url)
@@ -261,61 +265,61 @@ export default function DocumentShareLinks({ version }: Props) {
               }
             >
               Скопировать ссылку
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
-              className={cls.secondary}
+              className={""}
               onClick={() => setCreated(null)}
             >
               Закрыть
-            </button>
-          </div>
-        </div>
+            </Button>
+          </Box>
+        </Box>
       ) : null}
       {message ? (
-        <p
-          className={message.type === "error" ? cls.error : cls.success}
+        <Text
+          className={message.type === "error" ? "" : ""}
           role={message.type === "error" ? "alert" : "status"}
         >
           {message.text}
-        </p>
+        </Text>
       ) : null}
       {!currentLink && busy !== "load" ? (
-        <p className={cls.empty}>Активной секретной ссылки нет.</p>
+        <Text className={""}>Активной секретной ссылки нет.</Text>
       ) : null}
       {currentLink ? (
-        <div className={cls.list}>
+        <Box className={""}>
           {[currentLink].map((link) => (
-            <div
-              className={cls.item}
+            <Box
+              className={""}
               data-testid={`share-link-row-${link.id}`}
               key={link.id}
             >
-              <div>
-                <strong>{statusLabel(link)}</strong>
-                <span>Ссылка действует только для текущей версии документа.</span>
-              </div>
-              <div>
-                <span>Создана: {formatDate(link.createdAt)}</span>
-                <span>Срок: {formatDate(link.expiresAt)}</span>
-                <span>Открытий: {link.accessCount}</span>
-                <span>Последнее открытие: {formatDate(link.lastAccessAt)}</span>
-              </div>
+              <Box>
+                <Text>{statusLabel(link)}</Text>
+                <Text>Ссылка действует только для текущей версии документа.</Text>
+              </Box>
+              <Box>
+                <Text>Создана: {formatDate(link.createdAt)}</Text>
+                <Text>Срок: {formatDate(link.expiresAt)}</Text>
+                <Text>Открытий: {link.accessCount}</Text>
+                <Text>Последнее открытие: {formatDate(link.lastAccessAt)}</Text>
+              </Box>
               {link.isActive ? (
-                <button
+                <Button
                   type="button"
-                  className={cls.revoke}
+                  className={""}
                   data-testid={`share-revoke-${link.id}`}
                   onClick={() => void revoke(link.id)}
                   disabled={busy !== null}
                 >
                   {busy === "revoke" ? "Отзыв…" : "Отозвать"}
-                </button>
+                </Button>
               ) : null}
-            </div>
+            </Box>
           ))}
-        </div>
+        </Box>
       ) : null}
-    </section>
+    </Box>
   );
 }

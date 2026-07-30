@@ -7,6 +7,11 @@
     "excerpt": { "type": "string" },
     "content": { "type": "string" },
     "cover_image_url": { "type": "string", "nullable": true },
+    "cover_media_id": {
+      "type": "integer",
+      "format": "int32",
+      "nullable": true
+    },
     "published_at": {
       "type": "string",
       "format": "date-time",
@@ -43,6 +48,10 @@
       "nullable": true,
       "allOf": [{ "$ref": "#/components/schemas/User" }]
     },
+    "cover_media": {
+      "nullable": true,
+      "allOf": [{ "$ref": "#/components/schemas/NewsMedia" }]
+    },
     "created_at": { "type": "string", "format": "date-time" },
     "updated_at": { "type": "string", "format": "date-time" },
     "deleted_at": { "type": "string", "format": "date-time", "nullable": true }
@@ -54,6 +63,7 @@
     "excerpt",
     "content",
     "cover_image_url",
+    "cover_media_id",
     "published_at",
     "is_published",
     "publication_status",

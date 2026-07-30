@@ -1,3 +1,4 @@
+import { Box } from "@mantine/core";
 import { redirect } from 'next/navigation'
 
 import { clearAdminTokenCookie, requireAdminSectionToken } from '@/shared/admin/auth'
@@ -5,7 +6,6 @@ import { isAdminApiErrorStatus, isAdminApiTransportError } from '@/shared/admin/
 import { getAdminDocuments } from '@/shared/api/adapters/admin-documents.adapter'
 import AdminBackendUnavailable from '@/widgets/admin/AdminBackendUnavailable/AdminBackendUnavailable'
 import AdminDocumentsPanel from '@/widgets/admin/AdminDocumentsPanel/AdminDocumentsPanel.client'
-import cls from '@/widgets/admin/AdminShell/AdminShell.module.scss'
 import { DOCUMENT_GROUP_IDS, DOCUMENT_PLACEMENT_GROUPS, resolveDocumentPageContext } from '@/shared/documents/document-placement-registry'
 import { parseAdminDocumentQuery } from '@/shared/documents/document-query-state'
 
@@ -33,7 +33,7 @@ export default async function Page({ searchParams }: Props) {
     admin = auth.user
   } catch (error) {
     if (isAdminApiTransportError(error)) {
-      return <main className={cls.page}><AdminBackendUnavailable retryHref="/admin/documents" /></main>
+      return <Box component="main" className={""}><AdminBackendUnavailable retryHref="/admin/documents" /></Box>
     }
     throw error
   }
@@ -70,7 +70,7 @@ export default async function Page({ searchParams }: Props) {
     }
     if (isAdminApiErrorStatus(error, 403)) redirect('/admin/forbidden')
     if (isAdminApiTransportError(error)) {
-      return <main className={cls.page}><AdminBackendUnavailable retryHref="/admin/documents" /></main>
+      return <Box component="main" className={""}><AdminBackendUnavailable retryHref="/admin/documents" /></Box>
     }
     throw error
   }

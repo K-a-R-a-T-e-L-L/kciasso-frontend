@@ -1,10 +1,11 @@
+import { Box, Text, Title } from "@mantine/core";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { clearAdminTokenCookie, requireAdminSectionToken } from "@/shared/admin/auth";
 import { isAdminApiErrorStatus } from "@/shared/admin/api-error";
 import { getAdminNewsCategories } from "@/shared/api/adapters/admin-news.adapter";
 import DeleteNewsButton from "@/widgets/admin/DeleteNewsButton/DeleteNewsButton.client";
-import cls from "@/widgets/admin/AdminShell/AdminShell.module.scss";
+
 import { deleteCategoryAction, moveCategoryAction } from "./actions";
 import AdminCategoryReorder from "@/widgets/admin/AdminCategoryReorder/AdminCategoryReorder.client";
 
@@ -28,31 +29,31 @@ export default async function Page() {
   }
 
   return (
-    <section className={cls.section}>
-      <div className={cls.sectionHeader}>
-        <div>
-          <span className={cls.eyebrow}>Рубрики</span>
-          <h1>Рубрики новостей</h1>
-          <p>
+    <Box component="section" className={""}>
+      <Box className={""}>
+        <Box>
+          <Text className={""}>Рубрики</Text>
+          <Title>Рубрики новостей</Title>
+          <Text>
             Пользователь {user.email} может создавать, редактировать и удалять пустые рубрики. Если к рубрике
             уже привязаны новости, сначала перенесите их в другую рубрику.
-          </p>
-        </div>
-        <div className={cls.headerActions}>
-          <Link href="/admin/news" className={cls.secondaryAction}>
+          </Text>
+        </Box>
+        <Box className={""}>
+          <Link href="/admin/news" className={""}>
             К новостям
           </Link>
-          <Link href="/admin/news/categories/new" className={cls.primaryAction}>
+          <Link href="/admin/news/categories/new" className={""}>
             Создать рубрику
           </Link>
-        </div>
-      </div>
+        </Box>
+      </Box>
 
-      <div className={cls.tableCard}>
-        <div className={cls.tableWrap}><AdminCategoryReorder initialCategories={categories} move={moveCategoryAction} deleteCategory={async (id) => { "use server"; await deleteCategoryAction(id); }} /></div>
+      <Box className={""}>
+        <Box className={""}><AdminCategoryReorder initialCategories={categories} move={moveCategoryAction} deleteCategory={async (id) => { "use server"; await deleteCategoryAction(id); }} /></Box>
 
-        {categories.length === 0 ? <p className={cls.emptyState}>Рубрики пока не созданы.</p> : null}
-      </div>
-    </section>
+        {categories.length === 0 ? <Text className={""}>Рубрики пока не созданы.</Text> : null}
+      </Box>
+    </Box>
   );
 }

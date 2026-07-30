@@ -1,4 +1,5 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render as rtlRender, screen, waitFor } from "@testing-library/react";
+import { MantineProvider } from "@mantine/core";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import DocumentShareLinks from "./DocumentShareLinks.client";
@@ -6,6 +7,10 @@ import {
   adminDocumentShareLinksControllerCreate,
   adminDocumentShareLinksControllerList,
 } from "@/shared/api/generated/clients";
+
+function render(ui: Parameters<typeof rtlRender>[0], options: Parameters<typeof rtlRender>[1] = {}) {
+  return rtlRender(ui, { ...options, wrapper: MantineProvider });
+}
 
 vi.mock("@/shared/api/generated/clients", () => ({
   adminDocumentShareLinksControllerCreate: vi.fn(),

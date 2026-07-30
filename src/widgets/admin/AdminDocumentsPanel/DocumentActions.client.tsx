@@ -1,25 +1,90 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { IconEdit, IconFileUpload, IconHistory, IconInfoCircle, IconLink, IconTrash, IconDots, IconArrowUp, IconArrowDown } from "@tabler/icons-react";
+import { ActionIcon, Button, Group, Menu } from "@mantine/core";
+import {
+  IconArrowDown,
+  IconArrowUp,
+  IconDots,
+  IconEdit,
+  IconExternalLink,
+  IconFileUpload,
+  IconHistory,
+  IconInfoCircle,
+  IconLink,
+  IconTrash,
+} from "@tabler/icons-react";
 import type { DocumentDto, DocumentVersionDto } from "@/shared/api/generated/types";
-import FloatingPopover from "@/shared/ui/FloatingPopover/FloatingPopover.client";
-import cls from "./DocumentActions.module.scss";
 import PlacementPublicationControls from "./PlacementPublicationControls.client";
 
-type Props = { document: DocumentDto; version?: DocumentVersionDto | null; index: number; orderedLength: number; busy: boolean; onMove?: (id: number, offset: -1 | 1) => void; canReorder?: boolean; onOpenFile: (d: DocumentDto, v: DocumentVersionDto) => void; onEdit: (d: DocumentDto) => void; onToggleVersion: (id: number) => void; onHistory: (id: number) => void; onShare: (id: number) => void; onTechnical: (id: number) => void; onDelete: (id: number) => void };
-const ru = (s: string) => decodeURIComponent(s);
-const labels = { open: ru("%D0%9E%D1%82%D0%BA%D1%80%D1%8B%D1%82%D1%8C"), edit: ru("%D0%A0%D0%B5%D0%B4%D0%B0%D0%BA%D1%82%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D1%82%D1%8C"), menu: ru("%D0%94%D0%B5%D0%B9%D1%81%D1%82%D0%B2%D0%B8%D1%8F%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0") };
+type Props = {
+  document: DocumentDto;
+  version?: DocumentVersionDto | null;
+  index: number;
+  orderedLength: number;
+  busy: boolean;
+  onMove?: (id: number, offset: -1 | 1) => void;
+  canReorder?: boolean;
+  onOpenFile: (document: DocumentDto, version: DocumentVersionDto) => void;
+  onEdit: (document: DocumentDto) => void;
+  onToggleVersion: (id: number) => void;
+  onHistory: (id: number) => void;
+  onShare: (id: number) => void;
+  onTechnical: (id: number) => void;
+  onDelete: (id: number) => void;
+};
 
-export default function DocumentActions({ document: doc, version, index, orderedLength, busy, onMove, canReorder, onOpenFile, onEdit, onToggleVersion, onHistory, onShare, onTechnical, onDelete }: Props) {
-  const [open, setOpen] = useState(false);
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const close = () => setOpen(false);
-  const item = (label: string, icon: React.ReactNode, fn: () => void, disabled = false, destructive = false) => <button className={destructive ? cls.destructive : undefined} role="menuitem" type="button" disabled={disabled} onClick={() => { close(); if (triggerRef.current && document.contains(triggerRef.current)) triggerRef.current.focus(); fn(); }}><span className={cls.menuIcon}>{icon}</span>{label}</button>;
-  return <div className={cls.actions}>
-    {version ? <button type="button" onClick={() => onOpenFile(doc, version)}><IconFileUpload size={17} aria-hidden="true" />{labels.open}</button> : null}
-    {doc.canManage !== false ? <button type="button" onClick={() => onEdit(doc)}><IconEdit size={17} aria-hidden="true" />{labels.edit}</button> : null}
-    {doc.canManage !== false ? <><button ref={triggerRef} className={cls.menuTrigger} type="button" aria-label={labels.menu} aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen((v) => !v)}><IconDots size={19} aria-hidden="true" /></button><FloatingPopover anchorRef={triggerRef} open={open} onClose={close} role="menu" placement="bottom-end"><div className={cls.menu}>{item(ru("%D0%97%D0%B0%D0%BC%D0%B5%D0%BD%D0%B8%D1%82%D1%8C%20%D1%84%D0%B0%D0%B9%D0%BB"), <IconFileUpload size={18} />, () => onToggleVersion(doc.id))}{item(ru("%D0%92%D0%B5%D1%80%D1%81%D0%B8%D0%B8"), <IconHistory size={18} />, () => onHistory(doc.id))}{version ? item(ru("%D0%A1%D0%B5%D0%BA%D1%80%D0%B5%D1%82%D0%BD%D0%B0%D1%8F%20%D1%81%D1%81%D1%8B%D0%BB%D0%BA%D0%B0"), <IconLink size={18} />, () => onShare(doc.id)) : null}{item(ru("%D0%A2%D0%B5%D1%85%D0%BD%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B0%D1%8F%20%D0%B8%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%86%D0%B8%D1%8F"), <IconInfoCircle size={18} />, () => onTechnical(doc.id))}{canReorder && onMove ? <>{item(ru("%D0%92%D0%B2%D0%B5%D1%80%D1%85"), <IconArrowUp size={18} />, () => onMove(doc.id, -1), index === 0 || busy)}{item(ru("%D0%92%D0%BD%D0%B8%D0%B7"), <IconArrowDown size={18} />, () => onMove(doc.id, 1), index === orderedLength - 1 || busy)}</> : null}<div className={cls.menuSeparator} />{item(ru("%D0%A3%D0%B4%D0%B0%D0%BB%D0%B8%D1%82%D1%8C"), <IconTrash size={18} />, () => onDelete(doc.id), busy, true)}</div></FloatingPopover></> : null}
-    <PlacementPublicationControls documentId={doc.id} placements={doc.placements} canManage={doc.canManage !== false} onRefresh={async()=>window.location.reload()} />
-  </div>;
+export default function DocumentActions({
+  document,
+  version,
+  index,
+  orderedLength,
+  busy,
+  onMove,
+  canReorder,
+  onOpenFile,
+  onEdit,
+  onToggleVersion,
+  onHistory,
+  onShare,
+  onTechnical,
+  onDelete,
+}: Props) {
+  return (
+    <Group gap="xs" justify="flex-end" wrap="wrap">
+      {version ? (
+        <Button size="xs" leftSection={<IconExternalLink size={15} />} onClick={() => onOpenFile(document, version)}>
+          Открыть
+        </Button>
+      ) : null}
+      {document.canManage !== false ? (
+        <Button size="xs" variant="light" leftSection={<IconEdit size={15} />} onClick={() => onEdit(document)}>
+          Редактировать
+        </Button>
+      ) : null}
+      {document.canManage !== false ? (
+        <Menu position="bottom-end" withinPortal>
+          <Menu.Target>
+            <ActionIcon variant="subtle" aria-label="Действия документа"><IconDots size={19} /></ActionIcon>
+          </Menu.Target>
+          <Menu.Dropdown>
+            <Menu.Label>Файл и доступ</Menu.Label>
+            <Menu.Item leftSection={<IconFileUpload size={17} />} onClick={() => onToggleVersion(document.id)}>Заменить файл</Menu.Item>
+            <Menu.Item leftSection={<IconHistory size={17} />} onClick={() => onHistory(document.id)}>Версии</Menu.Item>
+            {version ? <Menu.Item leftSection={<IconLink size={17} />} onClick={() => onShare(document.id)}>Секретная ссылка</Menu.Item> : null}
+            <Menu.Item leftSection={<IconInfoCircle size={17} />} onClick={() => onTechnical(document.id)}>Техническая информация</Menu.Item>
+            {canReorder && onMove ? (
+              <>
+                <Menu.Divider />
+                <Menu.Item leftSection={<IconArrowUp size={17} />} disabled={index === 0 || busy} onClick={() => onMove(document.id, -1)}>Выше</Menu.Item>
+                <Menu.Item leftSection={<IconArrowDown size={17} />} disabled={index === orderedLength - 1 || busy} onClick={() => onMove(document.id, 1)}>Ниже</Menu.Item>
+              </>
+            ) : null}
+            <Menu.Divider />
+            <Menu.Item color="red" leftSection={<IconTrash size={17} />} disabled={busy} onClick={() => onDelete(document.id)}>Удалить</Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
+      ) : null}
+      <PlacementPublicationControls documentId={document.id} placements={document.placements} canManage={document.canManage !== false} onRefresh={async () => window.location.reload()} />
+    </Group>
+  );
 }

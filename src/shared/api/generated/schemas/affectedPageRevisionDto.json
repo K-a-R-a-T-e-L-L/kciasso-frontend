@@ -1,0 +1,9 @@
+{
+  "type": "object",
+  "properties": {
+    "pageKey": { "type": "string" },
+    "revision": { "type": "number" }
+  },
+  "required": ["pageKey", "revision"],
+  "x-readme-ref-name": "AffectedPageRevisionDto"
+}

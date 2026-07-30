@@ -7,7 +7,7 @@ test.describe("admin document floating popovers", () => {
     await page.goto("/admin/documents");
     const trigger = page.getByRole("button", { name: "Действия документа" }).first();
     await expect(trigger).toBeVisible();
-    await trigger.click();
+    await trigger.press("Enter");
     const menu = page.getByRole("menu").first();
     await expect(menu).toBeVisible();
     expect(await menu.evaluate((node) => Boolean(node.closest("[data-testid^='document-card-']")))).toBe(false);

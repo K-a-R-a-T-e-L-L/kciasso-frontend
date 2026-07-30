@@ -1,4 +1,5 @@
 import type { Dispatch, FormEvent, SetStateAction } from "react";
+import { modals } from "@mantine/modals";
 import type { DocumentDto, DocumentVersionDto } from "@/shared/api/generated/types";
 import { parseResponse } from "./admin-document-response";
 import { emptyForm, type EditableStatus, type FormState, type PanelMessage } from "./types";

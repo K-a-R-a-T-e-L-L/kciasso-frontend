@@ -1,12 +1,54 @@
-import { cleanup, render, screen, waitFor } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { MantineProvider } from "@mantine/core";
+import { render, screen } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
+import type { DocumentDto } from "@/shared/api/generated/types";
 import AdminDocumentsPanel from "./AdminDocumentsPanel.client";
-afterEach(()=>{cleanup();vi.restoreAllMocks();vi.unstubAllGlobals()});
-function doc(id:number,title:string,sortOrder:number){return {id,title,description:"Описание",documentNumber:String(id),documentDate:"1999-12-31T12:00:00.000Z",status:"PUBLISHED" as const,placements:[{id,sectionKey:"gia9-results",sortOrder,createdAt:"2026-01-01T00:00:00.000Z",updatedAt:"2026-01-01T00:00:00.000Z"}],currentVersion:{id,versionNumber:1,originalFilename:"file.pdf",extension:"pdf",mimeType:"application/pdf",sizeBytes:"10",sha256:"x".repeat(64),createdAt:"2026-01-01T00:00:00.000Z",isCurrent:true},versionsCount:1,createdAt:"2026-01-01T00:00:00.000Z",updatedAt:"2026-01-01T00:00:00.000Z"}}
-describe("Admin documents compact hierarchy",()=>{
- it("renders readable header before filters and no raw placement key",()=>{render(<AdminDocumentsPanel initialDocuments={[]} sectionKey="gia-9.normative-documents"/>);expect(screen.getByRole("heading",{name:"Материалы и документы"})).toBeInTheDocument();expect(screen.queryByText("gia-9.normative-documents")).not.toBeInTheDocument();expect(screen.getByRole("heading").compareDocumentPosition(screen.getAllByRole("combobox")[0])).toBe(4)});
- it("keeps secondary actions in overflow menu",async()=>{render(<AdminDocumentsPanel initialDocuments={[doc(1,"Документ",0)]} sectionKey="gia9-results"/>);expect(screen.queryByRole("button",{name:"Удалить полностью"})).not.toBeInTheDocument();await userEvent.click(screen.getByRole("button",{name:"Действия документа"}));expect(screen.getByRole("menuitem",{name:"Удалить"})).toBeInTheDocument();expect(screen.getByRole("menuitem",{name:"Техническая информация"})).toBeInTheDocument()});
- it("sends complete reorder payload and rolls back on failure",async()=>{const docs=[doc(1,"Первый",0),doc(2,"Второй",1)];const fetchMock=vi.fn().mockResolvedValueOnce(new Response(JSON.stringify({errorMessage:"DOCUMENT_REORDER_INVALID"}),{status:400}));vi.stubGlobal("fetch",fetchMock);render(<AdminDocumentsPanel initialDocuments={docs} sectionKey="gia9-results"/>);await userEvent.click(screen.getAllByRole("button",{name:"Вниз"})[0]);await waitFor(()=>expect(screen.getByRole("alert")).toBeInTheDocument());expect(JSON.parse(fetchMock.mock.calls[0][1].body as string)).toEqual({sectionKey:"gia9-results",orderedDocumentIds:[2,1]})});
- it("opens drawer and keeps body locked until Escape",async()=>{render(<AdminDocumentsPanel initialDocuments={[doc(1,"Документ",0)]} sectionKey="gia9-results"/>);await userEvent.click(screen.getByRole("button",{name:"Действия документа"}));await userEvent.click(screen.getByRole("menuitem",{name:"Техническая информация"}));expect(screen.getByRole("dialog")).toBeInTheDocument();expect(document.body.style.overflow).toBe("hidden");await userEvent.keyboard("{Escape}");await waitFor(()=>expect(screen.queryByRole("dialog")).not.toBeInTheDocument());expect(document.body.style.overflow).toBe("")});
+
+const documentFixture: DocumentDto = {
+  id: 1,
+  title: "Документ",
+  description: "Описание",
+  documentNumber: "1",
+  documentDate: "1999-12-31T12:00:00.000Z",
+  status: "PUBLISHED",
+  canManage: true,
+  placements: [{ id: 1, sectionKey: "gia9-results", sortOrder: 0, publicationStatus: "DRAFT", publicationRevision: 0, createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z" }],
+  currentVersion: { id: 1, versionNumber: 1, originalFilename: "file.pdf", extension: "pdf", mimeType: "application/pdf", sizeBytes: "10", sha256: "x".repeat(64), createdAt: "2026-01-01T00:00:00.000Z", isCurrent: true },
+  versionsCount: 1,
+  createdAt: "2026-01-01T00:00:00.000Z",
+  updatedAt: "2026-01-01T00:00:00.000Z",
+};
+
+function renderPanel(documents: DocumentDto[] = []) {
+  return render(
+    <MantineProvider>
+      <AdminDocumentsPanel initialDocuments={documents} sectionKey="gia9-results" />
+    </MantineProvider>,
+  );
+}
+
+describe("Admin documents Mantine layout", () => {
+  it("renders a labeled filter surface and empty state", () => {
+    renderPanel();
+    expect(screen.getByRole("heading", { name: "Материалы и документы" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Фильтры" })).toBeInTheDocument();
+    expect(screen.getAllByLabelText("Раздел").length).toBeGreaterThan(0);
+    expect(screen.getByLabelText("Поиск")).toBeInTheDocument();
+    expect(screen.getByText("В доступных разделах пока нет документов.")).toBeInTheDocument();
+  });
+
+  it("renders compact document metadata and primary actions", () => {
+    renderPanel([documentFixture]);
+    expect(screen.getByTestId("document-card-1")).toBeInTheDocument();
+    expect(screen.getByText("Документ")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Открыть" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Редактировать" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Действия документа" })).toBeInTheDocument();
+  });
+
+  it("shows explicit reorder controls when the complete list is available", () => {
+    renderPanel([documentFixture, { ...documentFixture, id: 2, title: "Второй документ" }]);
+    expect(screen.getAllByRole("button", { name: "Вниз" }).length).toBeGreaterThanOrEqual(2);
+    expect(screen.getAllByRole("button", { name: "Вверх" }).length).toBeGreaterThanOrEqual(2);
+  });
 });

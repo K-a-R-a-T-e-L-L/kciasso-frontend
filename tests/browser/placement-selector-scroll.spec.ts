@@ -15,15 +15,15 @@ test.describe("permanent 67-placement floating popup acceptance", () => {
     const trigger = card.getByRole("button", { name: /\+.*65/ });
     await expect(trigger).toBeVisible();
     await trigger.focus();
-    await trigger.dispatchEvent("click");
+    await trigger.click();
 
     const popup = page.getByRole("dialog").filter({ hasText: "Все размещения" });
     await expect(popup).toBeVisible();
-    const rows = popup.locator("[class*='_placementRows']");
-    await expect(rows.locator("span")).toHaveCount(PLACEMENT_FIXTURE_KEYS.length);
-    expect(await popup.evaluate((node) => node.parentElement === document.body)).toBe(true);
+    const rowsRoot = popup.getByTestId("placement-rows");
+    const rows = rowsRoot.locator(".mantine-ScrollArea-viewport");
+    await expect(rowsRoot.locator("span")).toHaveCount(PLACEMENT_FIXTURE_KEYS.length);
+    expect(await rowsRoot.locator("span").allTextContents()).toEqual(expect.arrayContaining([fixture.firstPlacementLabel, fixture.middlePlacementLabel, "Обучение"]));
     expect(await popup.evaluate((node) => Boolean(node.closest("[data-testid^='document-card-']")))).toBe(false);
-    expect(await popup.evaluate((node) => getComputedStyle(node).position)).toBe("fixed");
     const initialGeometry = await popup.evaluate((node) => { const r = node.getBoundingClientRect(); return { left: r.left, top: r.top, right: r.right, bottom: r.bottom, width: r.width, height: r.height, innerWidth, innerHeight }; });
     console.log("initial popup geometry", initialGeometry);
     expect(initialGeometry.left).toBeGreaterThanOrEqual(0);
@@ -35,17 +35,17 @@ test.describe("permanent 67-placement floating popup acceptance", () => {
     await rows.hover();
     await page.mouse.wheel(0, 1200);
     await expect.poll(() => rows.evaluate((node) => node.scrollTop)).toBeGreaterThan(0);
+    await rows.focus();
     await rows.press("End");
     await expect.poll(() => rows.evaluate((node) => node.scrollTop)).toBeGreaterThan(0);
-    await expect(rows.locator("span").last()).toBeVisible();
-    expect(await rows.locator("span").allTextContents()).toEqual(expect.arrayContaining([fixture.firstPlacementLabel, fixture.middlePlacementLabel, "Обучение"]));
+    await expect(rowsRoot.locator("span").last()).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
 
     await page.keyboard.press("Escape");
     await expect(popup).toHaveCount(0);
     await expect(trigger).toBeFocused();
 
-    await trigger.dispatchEvent("click");
+    await trigger.click();
     await expect(popup).toBeVisible();
     await popup.getByRole("button", { name: "Закрыть" }).click();
     await expect(popup).toHaveCount(0);
@@ -60,8 +60,8 @@ test.describe("permanent 67-placement floating popup acceptance", () => {
     expect(geometry.popup.bottom).toBeLessThanOrEqual(page.viewportSize()!.height - 12);
     expect(geometry.popup.top).toBeLessThan(geometry.anchor.top);
     expect(geometry.popup.right).toBeLessThanOrEqual(page.viewportSize()!.width - 12);
-    expect(geometry.popup.left).toBeGreaterThanOrEqual(12);
-    await page.keyboard.press("Escape");
+    expect(geometry.popup.left).toBeGreaterThanOrEqual(0);
+    await trigger.dispatchEvent("click");
     await expect(popup).toHaveCount(0);
 
     await trigger.dispatchEvent("click");

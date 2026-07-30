@@ -1,9 +1,10 @@
+import { Box, Text, Title } from "@mantine/core";
 import { redirect } from "next/navigation";
 import { clearAdminTokenCookie, requireSuperAdminToken } from "@/shared/admin/auth";
 import { isAdminApiErrorStatus } from "@/shared/admin/api-error";
 import { getAdminUserById } from "@/shared/api/adapters/admin-users.adapter";
 import AdminUserForm from "@/widgets/admin/AdminUserForm/AdminUserForm.client";
-import cls from "@/widgets/admin/AdminShell/AdminShell.module.scss";
+
 import { updateUserAction } from "../../actions";
 
 type Props = {
@@ -43,20 +44,20 @@ export default async function Page({ params }: Props) {
   }
 
   return (
-    <section className={cls.section}>
-      <div className={cls.sectionHeader}>
-        <div>
-          <span className={cls.eyebrow}>Пользователи</span>
-          <h1>Редактирование пользователя</h1>
-          <p>Измените профиль администратора и обновите набор доступных ему разделов.</p>
-        </div>
-      </div>
+    <Box component="section" className={""}>
+      <Box className={""}>
+        <Box>
+          <Text className={""}>Пользователи</Text>
+          <Title>Редактирование пользователя</Title>
+          <Text>Измените профиль администратора и обновите набор доступных ему разделов.</Text>
+        </Box>
+      </Box>
 
       <AdminUserForm
         initialData={user}
         action={updateUserAction.bind(null, userId)}
         submitLabel="Сохранить пользователя"
       />
-    </section>
+    </Box>
   );
 }

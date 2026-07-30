@@ -1,0 +1,9 @@
+{
+  "type": "object",
+  "properties": {
+    "sectionIds": { "type": "array", "items": { "type": "number" } },
+    "expectedRevision": { "type": "number" }
+  },
+  "required": ["sectionIds", "expectedRevision"],
+  "x-readme-ref-name": "ReorderPageSectionsDto"
+}

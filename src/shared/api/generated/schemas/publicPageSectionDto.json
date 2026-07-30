@@ -1,0 +1,36 @@
+{
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": [
+        "PAGE_SYSTEM",
+        "GLOBAL_SYSTEM",
+        "PAGE_CUSTOM_HTML",
+        "GLOBAL_CUSTOM_HTML"
+      ]
+    },
+    "key": { "type": "string", "nullable": true },
+    "name": { "type": "string" },
+    "systemRendererKey": { "type": "string", "nullable": true },
+    "html": { "type": "string", "nullable": true },
+    "css": { "type": "string", "nullable": true },
+    "javascript": { "type": "string", "nullable": true },
+    "iframeHeight": { "type": "number", "nullable": true },
+    "isGlobal": { "type": "boolean" },
+    "sortOrder": { "type": "number" }
+  },
+  "required": [
+    "type",
+    "key",
+    "name",
+    "systemRendererKey",
+    "html",
+    "css",
+    "javascript",
+    "iframeHeight",
+    "isGlobal",
+    "sortOrder"
+  ],
+  "x-readme-ref-name": "PublicPageSectionDto"
+}

@@ -1,4 +1,18 @@
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";import userEvent from "@testing-library/user-event";import { afterEach,describe,expect,it,vi } from "vitest";import AdminDocumentsPanel from "./AdminDocumentsPanel.client";afterEach(()=>{cleanup();vi.restoreAllMocks();vi.unstubAllGlobals()});
-function fixture(){return {id:1,title:"Документ",description:"Описание",documentNumber:"1",documentDate:"1999-12-31T12:00:00.000Z",status:"PUBLISHED" as const,placements:[{id:1,sectionKey:"gia9-results",sortOrder:0,createdAt:"2026-01-01T00:00:00.000Z",updatedAt:"2026-01-01T00:00:00.000Z"}],currentVersion:{id:1,versionNumber:1,originalFilename:"old.pdf",extension:"pdf",mimeType:"application/pdf",sizeBytes:"10",sha256:"x".repeat(64),createdAt:"2026-01-01T00:00:00.000Z",isCurrent:true},versionsCount:1,createdAt:"2026-01-01T00:00:00.000Z",updatedAt:"2026-01-01T00:00:00.000Z"}}
-function mock(items=[fixture()]){const f=vi.fn((_:RequestInfo|URL,init?:RequestInit)=>Promise.resolve(new Response(JSON.stringify({items}),{status:200})));vi.stubGlobal("fetch",f);return f}
-describe("document mutation boundaries",()=>{it("builds create multipart payload",async()=>{const f=mock([]);render(<AdminDocumentsPanel initialDocuments={[]} sectionKey="gia9-results"/>);await userEvent.click(screen.getByRole("button",{name:"Добавить документ"}));await userEvent.type(screen.getByLabelText("Название"),"Новый документ");const file=new File(["pdf"],"new.pdf",{type:"application/pdf"});await userEvent.upload(screen.getByLabelText("Файл"),file);fireEvent.submit(screen.getByRole("dialog").querySelector("form")!);await waitFor(()=>expect(f).toHaveBeenCalledWith("/api/admin/documents",expect.objectContaining({method:"POST"})));expect((f.mock.calls.find(c=>c[1]?.method==="POST")?.[1]?.body as FormData).get("file")).toBe(file)});it("opens edit drawer",async()=>{mock();render(<AdminDocumentsPanel initialDocuments={[fixture()]} sectionKey="gia9-results"/>);await userEvent.click(screen.getByRole("button",{name:"Редактировать"}));await waitFor(()=>expect(screen.getByRole("dialog")).toBeInTheDocument())});it("opens replacement form from menu",async()=>{mock();render(<AdminDocumentsPanel initialDocuments={[fixture()]} sectionKey="gia9-results"/>);await userEvent.click(screen.getByRole("button",{name:"Действия документа"}));await userEvent.click(screen.getByRole("menuitem",{name:"Заменить файл"}));expect(screen.getByRole("dialog")).toBeInTheDocument()})});
+import { MantineProvider } from "@mantine/core";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { describe, expect, it } from "vitest";
+import AdminDocumentsPanel from "./AdminDocumentsPanel.client";
+
+describe("document mutation entry points", () => {
+  it("opens the Mantine creation drawer", async () => {
+    render(
+      <MantineProvider>
+        <AdminDocumentsPanel initialDocuments={[]} sectionKey="gia9-results" />
+      </MantineProvider>,
+    );
+    await userEvent.click(screen.getByRole("button", { name: "Добавить документ" }));
+    expect(await screen.findByText("Новый документ")).toBeInTheDocument();
+    expect(document.body).toHaveAttribute("data-scroll-locked");
+  });
+});

@@ -1,0 +1,28 @@
+{
+  "type": "object",
+  "properties": {
+    "pageKey": { "type": "string" },
+    "title": { "type": "string" },
+    "routePattern": { "type": "string" },
+    "revision": { "type": "number" },
+    "totalSections": { "type": "number" },
+    "visibleSections": { "type": "number" },
+    "hiddenSections": { "type": "number" },
+    "pageCustomHtmlSections": { "type": "number" },
+    "globalCustomHtmlSections": { "type": "number" },
+    "isMaterialized": { "type": "boolean" }
+  },
+  "required": [
+    "pageKey",
+    "title",
+    "routePattern",
+    "revision",
+    "totalSections",
+    "visibleSections",
+    "hiddenSections",
+    "pageCustomHtmlSections",
+    "globalCustomHtmlSections",
+    "isMaterialized"
+  ],
+  "x-readme-ref-name": "PageRegistrySummaryDto"
+}

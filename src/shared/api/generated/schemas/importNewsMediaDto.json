@@ -1,0 +1,6 @@
+{
+  "type": "object",
+  "properties": { "url": { "type": "string", "format": "uri" } },
+  "required": ["url"],
+  "x-readme-ref-name": "ImportNewsMediaDto"
+}

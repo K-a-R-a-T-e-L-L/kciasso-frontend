@@ -1,24 +1,300 @@
 "use client";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { IconX } from "@tabler/icons-react";
+
+import { useMemo, useState } from "react";
+import {
+  Alert,
+  Anchor,
+  Box,
+  Button,
+  Drawer,
+  Grid,
+  Group,
+  Paper,
+  Pagination,
+  Select,
+  Stack,
+  Text,
+  TextInput,
+  Title,
+} from "@mantine/core";
+import { IconFilter, IconPlus, IconSearch, IconX } from "@tabler/icons-react";
 import type { DocumentDto, DocumentVersionDto } from "@/shared/api/generated/types";
 import { openDocumentFile } from "@/shared/documents/document-file.client";
 import type { DocumentsPageContext } from "@/shared/documents/document-placement-registry";
 import { DOCUMENT_PLACEMENT_GROUPS } from "@/shared/documents/document-placement-registry";
 import { serializeAdminDocumentQuery, type AdminDocumentQueryState } from "@/shared/documents/document-query-state";
+import AdminPageHeader from "@/shared/ui/admin/AdminPageHeader";
 import DocumentCard, { type DrawerSection } from "./DocumentCard.client";
 import DocumentMetadataForm from "./DocumentMetadataForm.client";
 import PlacementSelector from "./PlacementSelector.client";
 import useAdminDocumentMutations from "./useAdminDocumentMutations";
 import { parseResponse } from "./admin-document-response";
 import { emptyForm, type FormState, type PanelMessage } from "./types";
-import cls from "./AdminDocumentsPanel.module.scss";
-export { parseResponse } from "./admin-document-response"; export { default as PlacementSelector } from "./PlacementSelector.client";
-type Props={initialDocuments:DocumentDto[];sectionKey:string;allowedGroupIds?:string[];canSeeAll?:boolean;pageContext?:DocumentsPageContext;query?:AdminDocumentQueryState;pagination?:{page:number;pageSize:number;total:number;totalPages:number}};
-const fallback:DocumentsPageContext={mode:"default",title:"Материалы и документы",eyebrow:"Материалы и документы",helperText:"Выберите доступный раздел, чтобы открыть документы.",emptyText:"В доступных разделах пока нет документов.",breadcrumbs:["Материалы и документы"],queryPlacementKey:"gia-9.normative-documents"};
-export default function AdminDocumentsPanel({initialDocuments,sectionKey,allowedGroupIds,canSeeAll=false,pageContext=fallback,query:queryInput,pagination:paginationInput}:Props){const legacy=!queryInput;const query=queryInput??{sortBy:"updatedAt",sortDirection:"desc",page:1,pageSize:20};const pagination=paginationInput??{page:1,pageSize:20,total:initialDocuments.length,totalPages:1};const [documents,setDocuments]=useState(initialDocuments),[form,setForm]=useState<FormState>(emptyForm),[file,setFile]=useState<File|null>(null),[placements,setPlacements]=useState([sectionKey]),[createOpen,setCreateOpen]=useState(false),[editingId,setEditingId]=useState<number|null>(null),[editingForm,setEditingForm]=useState<FormState>(emptyForm),[editingPlacements,setEditingPlacements]=useState<string[]>([]),[versionDocumentId,setVersionDocumentId]=useState<number|null>(null),[shareDocumentId,setShareDocumentId]=useState<number|null>(null),[historyDocumentId,setHistoryDocumentId]=useState<number|null>(null),[technicalDocumentId,setTechnicalDocumentId]=useState<number|null>(null),[drawer,setDrawer]=useState<DrawerSection|null>(null),[placementPicker,setPlacementPicker]=useState<"create"|"edit"|null>(null),[expandedPlacements,setExpandedPlacements]=useState<Record<number,boolean>>({}),[versionFile,setVersionFile]=useState<File|null>(null),[history,setHistory]=useState<Record<number,DocumentVersionDto[]>>({}),[busy,setBusy]=useState<string|null>(null),[message,setMessage]=useState<PanelMessage>(null),[search,setSearch]=useState(query.search??"");const previousFocus=useRef<HTMLElement|null>(null);
-const ordered=useMemo(()=>documents,[documents]);const field=(setter:React.Dispatch<React.SetStateAction<FormState>>,key:keyof FormState,value:string)=>setter(c=>({...c,[key]:value}));const refresh=async()=>{const qs=serializeAdminDocumentQuery(query);const r=await fetch(`/api/admin/documents${qs?`?${qs}`:""}`);setDocuments((await parseResponse(r)).items)};const navigate=(patch:Partial<AdminDocumentQueryState>)=>{const next={...query,...patch};const qs=serializeAdminDocumentQuery(next);window.location.href=`${window.location.pathname}${qs?`?${qs}`:""}`};const canReorder=legacy||(pageContext.mode==="placement"&&!query.search&&!query.status&&query.sortBy==="placementOrder"&&query.sortDirection==="asc"&&pagination.total<=pagination.pageSize);const context=query.placement?`placement:${query.placement}`:query.group?`group:${query.group}`:query.scope==="all"?"all":"default";
-const openDrawer=(section:DrawerSection,id:number)=>{previousFocus.current=document.activeElement as HTMLElement|null;setDrawer(section);setVersionDocumentId(section==="replace"||section==="versions"?id:null);setShareDocumentId(section==="share"?id:null);setTechnicalDocumentId(section==="technical"?id:null);setHistoryDocumentId(null);if(section==="edit"){const d=documents.find(x=>x.id===id);if(d){setEditingId(id);setEditingPlacements(d.placements.map(x=>x.sectionKey));setEditingForm({title:d.title,description:d.description??"",documentNumber:d.documentNumber??"",documentDate:d.documentDate?.slice(0,10)??""})}}};const closeDrawer=()=>{setDrawer(null);setEditingId(null);setVersionDocumentId(null);setShareDocumentId(null);setTechnicalDocumentId(null);setHistoryDocumentId(null)};useEffect(()=>{if(!drawer)return;const previous=document.body.style.overflow;document.body.style.overflow="hidden";const dialog=()=>document.querySelector<HTMLElement>('[role="dialog"][aria-modal="true"]');const focus=()=>{const d=dialog();if(d){const first=d.querySelector<HTMLElement>('button,input,select,textarea,[tabindex]:not([tabindex="-1"])');(first??d).focus()}};const raf=requestAnimationFrame(focus);const key=(e:KeyboardEvent)=>{if(e.key==="Escape"){e.preventDefault();closeDrawer();return}if(e.key!=="Tab")return;const d=dialog();if(!d)return;const items=[...d.querySelectorAll<HTMLElement>('button,input,select,textarea,[tabindex]:not([tabindex="-1"])')].filter(x=>!x.hasAttribute("disabled"));if(!items.length)return;const first=items[0],last=items[items.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}};document.addEventListener("keydown",key);return()=>{cancelAnimationFrame(raf);document.body.style.overflow=previous;document.removeEventListener("keydown",key);previousFocus.current?.focus();previousFocus.current=null}},[drawer]);
-const mutations=useAdminDocumentMutations({sectionKey,documents,orderedDocuments:ordered,form,file,placements,editingPlacements,editingForm,versionFile,history,setDocuments,setForm,setFile,setPlacements,setEditingId,setVersionFile,setVersionDocumentId,setHistory,setBusy,setMessage,setCreateOpen,refresh});const openFile=(d:DocumentDto,v:DocumentVersionDto)=>void openDocumentFile(d.id,v.id,v.originalFilename).catch(e=>setMessage({type:"error",text:e.message}));
-return <section className={cls.page}><header className={cls.header}><div><span className={cls.eyebrow}>{pageContext.eyebrow}</span><h1>{pageContext.title}</h1><p>{pageContext.breadcrumbs.join(" · ")}</p><p>{pageContext.helperText}</p></div><button type="button" className={cls.primary} onClick={()=>setCreateOpen(true)}>Добавить документ</button></header><div className={cls.filters}><label>Раздел<select value={context} onChange={e=>navigate({group:e.target.value.startsWith("group:")?e.target.value.slice(6):undefined,placement:e.target.value.startsWith("placement:")?e.target.value.slice(10):undefined,page:1})}><option value="default">Доступные материалы</option>{canSeeAll?<option value="all">Все материалы</option>:null}{DOCUMENT_PLACEMENT_GROUPS.map(g=><optgroup key={g.id} label={g.title}><option value={`group:${g.id}`}>{g.title}</option>{g.items.map(i=><option key={i.key} value={`placement:${i.key}`}>{i.title}</option>)}</optgroup>)}</select></label><form className={cls.searchForm} onSubmit={e=>{e.preventDefault();navigate({search:search.trim()||undefined,page:1})}}><input aria-label="Поиск" value={search} onChange={e=>setSearch(e.target.value)} placeholder="Поиск"/><button type="submit">Найти</button></form><label>Статус<select value={query.status??""} onChange={e=>navigate({status:e.target.value||undefined,page:1})}><option value="">Все</option><option value="DRAFT">Черновик</option><option value="PUBLISHED">Опубликован</option></select></label><label>Сортировка<select value={`${query.sortBy}:${query.sortDirection}`} onChange={e=>{const [sortBy,sortDirection]=e.target.value.split(":");navigate({sortBy,sortDirection,page:1})}}><option value="updatedAt:desc">Обновлено</option><option value="createdAt:desc">Создано</option><option value="title:asc">Название</option></select></label></div>{query.search||query.status||query.group||query.placement?<div className={cls.activeFilters} role="status">Фильтры активны <button type="button" onClick={()=>navigate({search:undefined,status:undefined,group:undefined,placement:undefined,page:1})}>Очистить</button></div>:null}{message?<p role={message.type==="error"?"alert":"status"} className={message.type==="error"?cls.error:cls.success}>{message.text}</p>:null}
-{createOpen?<div className={cls.overlay} role="dialog" aria-modal="true"><div className={cls.modal}><div className={cls.modalHeader}><h2>Новый документ</h2><button type="button" className={cls.close} aria-label="Закрыть" onClick={()=>setCreateOpen(false)}><IconX size={22}/></button></div><DocumentMetadataForm mode="create" form={form} onFieldChange={(k,v)=>field(setForm,k,v)} placements={placements} onOpenPlacement={()=>setPlacementPicker("create")} onSubmit={mutations.submitCreate} busy={busy==="create"} file={file} onFileChange={setFile}/></div></div>:null}{placementPicker?<PlacementSelector allowedGroupIds={allowedGroupIds} value={placementPicker==="create"?placements:editingPlacements} onApply={keys=>{if(placementPicker==="create")setPlacements(keys);else setEditingPlacements(keys);setPlacementPicker(null)}} onCancel={()=>setPlacementPicker(null)}/>:null}<div className={cls.list}>{ordered.map((d,i)=><DocumentCard key={d.id} document={d} index={i} orderedLength={ordered.length} canReorder={canReorder} expanded={Boolean(expandedPlacements[d.id])} editing={editingId===d.id} versionDocumentId={versionDocumentId} shareDocumentId={shareDocumentId} historyDocumentId={historyDocumentId} versionFile={versionFile} history={history} editingForm={editingForm} editingPlacements={editingPlacements} busy={busy} drawer={drawer&&(editingId===d.id||versionDocumentId===d.id||shareDocumentId===d.id||technicalDocumentId===d.id)?drawer:null} onCloseDrawer={closeDrawer} onToggleExpanded={id=>setExpandedPlacements(c=>({...c,[id]:!c[id]}))} onMove={canReorder?mutations.move:undefined} onOpenFile={openFile} onEdit={d=>openDrawer("edit",d.id)} onToggleVersion={id=>openDrawer("replace",id)} onHistory={id=>{mutations.loadHistory(id);openDrawer("versions",id)}} onShare={id=>openDrawer("share",id)} onTechnical={id=>openDrawer("technical",id)} onDelete={mutations.deleteDocument} onStatusChange={mutations.changeStatus} onEditFieldChange={(k,v)=>field(setEditingForm,k,v)} onOpenPlacement={()=>setPlacementPicker("edit")} onSaveMetadata={mutations.saveMetadata} onCancelEdit={closeDrawer} onVersionFileChange={setVersionFile} onUploadVersion={mutations.uploadVersion} onCloseHistory={()=>setHistoryDocumentId(null)} onMakeCurrent={mutations.makeCurrent}/>)}</div><footer className={cls.pagination}><span>Показано {pagination.total?(pagination.page-1)*pagination.pageSize+1:0}–{Math.min(pagination.page*pagination.pageSize,pagination.total)} из {pagination.total}</span><label>На странице<select value={pagination.pageSize} onChange={e=>navigate({pageSize:Number(e.target.value),page:1})}><option value={20}>20</option><option value={50}>50</option><option value={100}>100</option></select></label><button type="button" disabled={pagination.page<=1} onClick={()=>navigate({page:pagination.page-1})}>Назад</button><button type="button" disabled={pagination.page>=pagination.totalPages} onClick={()=>navigate({page:pagination.page+1})}>Далее</button></footer>{ordered.length===0?<p className={cls.empty}>{pageContext.emptyText}</p>:null}</section>}
+
+export { parseResponse } from "./admin-document-response";
+export { default as PlacementSelector } from "./PlacementSelector.client";
+
+type Props = {
+  initialDocuments: DocumentDto[];
+  sectionKey: string;
+  allowedGroupIds?: string[];
+  canSeeAll?: boolean;
+  pageContext?: DocumentsPageContext;
+  query?: AdminDocumentQueryState;
+  pagination?: { page: number; pageSize: number; total: number; totalPages: number };
+};
+
+const fallback: DocumentsPageContext = {
+  mode: "default",
+  title: "Материалы и документы",
+  eyebrow: "Документы",
+  helperText: "Выберите доступный раздел, чтобы открыть документы.",
+  emptyText: "В доступных разделах пока нет документов.",
+  breadcrumbs: ["Материалы и документы"],
+  queryPlacementKey: "gia-9.normative-documents",
+};
+
+export default function AdminDocumentsPanel({
+  initialDocuments,
+  sectionKey,
+  allowedGroupIds,
+  canSeeAll = false,
+  pageContext = fallback,
+  query: queryInput,
+  pagination: paginationInput,
+}: Props) {
+  const legacy = !queryInput;
+  const query = queryInput ?? { sortBy: "updatedAt", sortDirection: "desc", page: 1, pageSize: 20 };
+  const pagination = paginationInput ?? { page: 1, pageSize: 20, total: initialDocuments.length, totalPages: 1 };
+  const [documents, setDocuments] = useState(initialDocuments);
+  const [form, setForm] = useState<FormState>(emptyForm);
+  const [file, setFile] = useState<File | null>(null);
+  const [placements, setPlacements] = useState([sectionKey]);
+  const [createOpen, setCreateOpen] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingForm, setEditingForm] = useState<FormState>(emptyForm);
+  const [editingPlacements, setEditingPlacements] = useState<string[]>([]);
+  const [versionDocumentId, setVersionDocumentId] = useState<number | null>(null);
+  const [shareDocumentId, setShareDocumentId] = useState<number | null>(null);
+  const [historyDocumentId, setHistoryDocumentId] = useState<number | null>(null);
+  const [technicalDocumentId, setTechnicalDocumentId] = useState<number | null>(null);
+  const [drawer, setDrawer] = useState<DrawerSection | null>(null);
+  const [placementPicker, setPlacementPicker] = useState<"create" | "edit" | null>(null);
+  const [expandedPlacements, setExpandedPlacements] = useState<Record<number, boolean>>({});
+  const [versionFile, setVersionFile] = useState<File | null>(null);
+  const [history, setHistory] = useState<Record<number, DocumentVersionDto[]>>({});
+  const [busy, setBusy] = useState<string | null>(null);
+  const [message, setMessage] = useState<PanelMessage>(null);
+  const [search, setSearch] = useState(query.search ?? "");
+
+  const ordered = useMemo(() => documents, [documents]);
+  const field = (setter: React.Dispatch<React.SetStateAction<FormState>>, key: keyof FormState, value: string) =>
+    setter((current) => ({ ...current, [key]: value }));
+  const refresh = async () => {
+    const qs = serializeAdminDocumentQuery(query);
+    const response = await fetch(`/api/admin/documents${qs ? `?${qs}` : ""}`);
+    setDocuments((await parseResponse(response)).items);
+  };
+  const navigate = (patch: Partial<AdminDocumentQueryState>) => {
+    const next = { ...query, ...patch };
+    const qs = serializeAdminDocumentQuery(next);
+    window.location.assign(`${window.location.pathname}${qs ? `?${qs}` : ""}`);
+  };
+  const canReorder = legacy || (
+    pageContext.mode === "placement"
+    && !query.search
+    && !query.status
+    && query.sortBy === "placementOrder"
+    && query.sortDirection === "asc"
+    && pagination.total <= pagination.pageSize
+  );
+  const context = query.placement ? `placement:${query.placement}` : query.group ? `group:${query.group}` : query.scope === "all" ? "all" : "default";
+  const sectionOptions = [
+    { value: "default", label: "Доступные материалы" },
+    ...(canSeeAll ? [{ value: "all", label: "Все материалы" }] : []),
+    ...DOCUMENT_PLACEMENT_GROUPS.flatMap((group) => [
+      { group: group.title, items: [
+        { value: `group:${group.id}`, label: `Все: ${group.title}` },
+        ...group.items.map((item) => ({ value: `placement:${item.key}`, label: item.title })),
+      ] },
+    ]),
+  ];
+
+  const closeDrawer = () => {
+    setDrawer(null);
+    setEditingId(null);
+    setVersionDocumentId(null);
+    setShareDocumentId(null);
+    setHistoryDocumentId(null);
+    setTechnicalDocumentId(null);
+  };
+  const openDrawer = (section: DrawerSection, id: number) => {
+    setDrawer(section);
+    setVersionDocumentId(section === "replace" || section === "versions" ? id : null);
+    setShareDocumentId(section === "share" ? id : null);
+    setTechnicalDocumentId(section === "technical" ? id : null);
+    if (section === "edit") {
+      const document = documents.find((item) => item.id === id);
+      if (document) {
+        setEditingId(id);
+        setEditingPlacements(document.placements.map((item) => item.sectionKey));
+        setEditingForm({
+          title: document.title,
+          description: document.description ?? "",
+          documentNumber: document.documentNumber ?? "",
+          documentDate: document.documentDate?.slice(0, 10) ?? "",
+        });
+      }
+    }
+  };
+
+  const mutations = useAdminDocumentMutations({
+    sectionKey, documents, orderedDocuments: ordered, form, file, placements, editingPlacements, editingForm,
+    versionFile, history, setDocuments, setForm, setFile, setPlacements, setEditingId, setVersionFile,
+    setVersionDocumentId, setHistory, setBusy, setMessage, setCreateOpen, refresh,
+  });
+  const openFile = (document: DocumentDto, version: DocumentVersionDto) =>
+    void openDocumentFile(document.id, version.id, version.originalFilename)
+      .catch((error) => setMessage({ type: "error", text: error.message }));
+
+  return (
+    <Stack gap="lg" miw={0}>
+      <AdminPageHeader
+        eyebrow={pageContext.eyebrow}
+        title={pageContext.title}
+        description={pageContext.helperText}
+        actions={<Button leftSection={<IconPlus size={18} />} onClick={() => setCreateOpen(true)}>Добавить документ</Button>}
+      />
+
+      <Paper p={{ base: "md", sm: "lg" }} shadow="sm" withBorder>
+        <Group gap="xs" mb="md"><IconFilter size={18} /><Title order={3} size="h5">Фильтры</Title></Group>
+        <Grid align="flex-end">
+          <Grid.Col span={{ base: 12, md: 4 }}>
+            <Select
+              label="Раздел"
+              value={context}
+              data={sectionOptions}
+              searchable
+              onChange={(value) => {
+                const next = value ?? "default";
+                navigate({
+                  group: next.startsWith("group:") ? next.slice(6) : undefined,
+                  placement: next.startsWith("placement:") ? next.slice(10) : undefined,
+                  scope: next === "all" ? "all" : undefined,
+                  page: 1,
+                });
+              }}
+            />
+          </Grid.Col>
+          <Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
+            <TextInput
+              label="Поиск"
+              value={search}
+              onChange={(event) => setSearch(event.currentTarget.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  event.preventDefault();
+                  navigate({ search: search.trim() || undefined, page: 1 });
+                }
+              }}
+              placeholder="Название или номер"
+              leftSection={<IconSearch size={16} />}
+            />
+          </Grid.Col>
+          <Grid.Col span={{ base: 12, sm: 6, md: 2 }}>
+            <Select label="Статус" clearable value={query.status ?? null} data={[{ value: "DRAFT", label: "Черновик" }, { value: "PUBLISHED", label: "Опубликован" }]} onChange={(status) => navigate({ status: status || undefined, page: 1 })} />
+          </Grid.Col>
+          <Grid.Col span={{ base: 12, sm: 6, md: 2 }}>
+            <Select
+              label="Сортировка"
+              value={`${query.sortBy}:${query.sortDirection}`}
+              data={[{ value: "updatedAt:desc", label: "Недавно обновлённые" }, { value: "createdAt:desc", label: "Недавно созданные" }, { value: "title:asc", label: "По названию" }]}
+              onChange={(value) => {
+                const [sortBy, sortDirection] = (value ?? "updatedAt:desc").split(":");
+                navigate({ sortBy, sortDirection, page: 1 });
+              }}
+            />
+          </Grid.Col>
+          <Grid.Col span={{ base: 12, sm: 6, md: 1 }}>
+            <Button fullWidth aria-label="Найти" onClick={() => navigate({ search: search.trim() || undefined, page: 1 })}><IconSearch size={18} /></Button>
+          </Grid.Col>
+        </Grid>
+        {query.search || query.status || query.group || query.placement ? (
+          <Group mt="md"><Text size="sm" c="dimmed">Фильтры активны</Text><Button aria-label="Очистить" variant="subtle" size="compact-sm" leftSection={<IconX size={15} />} onClick={() => navigate({ search: undefined, status: undefined, group: undefined, placement: undefined, page: 1 })}>Сбросить</Button></Group>
+        ) : null}
+      </Paper>
+
+      {message ? <Alert color={message.type === "error" ? "red" : "teal"} role={message.type === "error" ? "alert" : "status"}>{message.text}</Alert> : null}
+
+      <Stack gap="sm">
+        {ordered.map((document, index) => (
+          <DocumentCard
+            key={document.id}
+            document={document}
+            index={index}
+            orderedLength={ordered.length}
+            canReorder={canReorder}
+            expanded={Boolean(expandedPlacements[document.id])}
+            editing={editingId === document.id}
+            versionDocumentId={versionDocumentId}
+            shareDocumentId={shareDocumentId}
+            historyDocumentId={historyDocumentId}
+            versionFile={versionFile}
+            history={history}
+            editingForm={editingForm}
+            editingPlacements={editingPlacements}
+            busy={busy}
+            drawer={drawer && (editingId === document.id || versionDocumentId === document.id || shareDocumentId === document.id || technicalDocumentId === document.id) ? drawer : null}
+            onCloseDrawer={closeDrawer}
+            onToggleExpanded={(id) => setExpandedPlacements((current) => ({ ...current, [id]: !current[id] }))}
+            onMove={canReorder ? mutations.move : undefined}
+            onOpenFile={openFile}
+            onEdit={(item) => openDrawer("edit", item.id)}
+            onToggleVersion={(id) => openDrawer("replace", id)}
+            onHistory={(id) => { void mutations.loadHistory(id); openDrawer("versions", id); }}
+            onShare={(id) => openDrawer("share", id)}
+            onTechnical={(id) => openDrawer("technical", id)}
+            onDelete={mutations.deleteDocument}
+            onStatusChange={mutations.changeStatus}
+            onEditFieldChange={(key, value) => field(setEditingForm, key, value)}
+            onOpenPlacement={() => setPlacementPicker("edit")}
+            onSaveMetadata={mutations.saveMetadata}
+            onCancelEdit={closeDrawer}
+            onVersionFileChange={setVersionFile}
+            onUploadVersion={mutations.uploadVersion}
+            onCloseHistory={() => setHistoryDocumentId(null)}
+            onMakeCurrent={mutations.makeCurrent}
+          />
+        ))}
+        {ordered.length === 0 ? <Paper data-testid="documents-empty-state" p="xl" ta="center" withBorder><Text c="dimmed">{pageContext.emptyText}</Text></Paper> : null}
+      </Stack>
+
+      <Paper p="md" withBorder>
+        <Group justify="space-between">
+          <Text size="sm" c="dimmed">Показано {pagination.total ? (pagination.page - 1) * pagination.pageSize + 1 : 0}–{Math.min(pagination.page * pagination.pageSize, pagination.total)} из {pagination.total}</Text>
+          <Group>
+            <Select w={110} aria-label="На странице" value={String(pagination.pageSize)} data={["20", "50", "100"]} onChange={(value) => navigate({ pageSize: Number(value), page: 1 })} />
+            <Pagination value={pagination.page} total={Math.max(1, pagination.totalPages)} onChange={(page) => navigate({ page })} />
+          </Group>
+        </Group>
+      </Paper>
+
+      <Drawer opened={createOpen} onClose={() => setCreateOpen(false)} title="Новый документ" position="right" size="lg">
+        <DocumentMetadataForm mode="create" form={form} onFieldChange={(key, value) => field(setForm, key, value)} placements={placements} onOpenPlacement={() => setPlacementPicker("create")} onSubmit={mutations.submitCreate} busy={busy === "create"} file={file} onFileChange={setFile} />
+      </Drawer>
+
+      {placementPicker ? (
+        <PlacementSelector
+          allowedGroupIds={allowedGroupIds}
+          value={placementPicker === "create" ? placements : editingPlacements}
+          onApply={(keys) => {
+            if (placementPicker === "create") setPlacements(keys);
+            else setEditingPlacements(keys);
+            setPlacementPicker(null);
+          }}
+          onCancel={() => setPlacementPicker(null)}
+        />
+      ) : null}
+    </Stack>
+  );
+}

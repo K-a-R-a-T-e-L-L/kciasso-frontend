@@ -9,6 +9,6 @@ test.describe("public news detail cover", () => {
     const covers = page.locator("article img");
     await expect(covers).toHaveCount(0, { timeout: 1000 }).catch(async () => expect(covers).toHaveCount(1));
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
-    expect(await page.locator("body").evaluate((body) => body.innerText.length)).toBeGreaterThan(0);
+    expect(await page.locator("body").evaluate((body) => (body as HTMLElement).innerText.length)).toBeGreaterThan(0);
   });
 });

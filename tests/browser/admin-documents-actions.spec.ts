@@ -8,9 +8,10 @@ test.describe("admin document actions", () => {
     const fixture = await readDocumentsFixture(page);
     const card = page.getByTestId(`document-card-${fixture[0].id}`);
     await expect(card).toBeVisible();
-    const fileResponse = page.waitForResponse(r => r.url().includes(`/api/admin/documents/${fixture[0].id}/versions/${fixture[0].versionId}/file`));
-    await Promise.all([fileResponse, card.getByRole("button", { name: "Открыть" }).click()]);
-    const response = await fileResponse;
+    const [response] = await Promise.all([
+      page.waitForResponse((r) => r.url().includes(`/api/admin/documents/${fixture[0].id}/versions/`) && r.url().endsWith("/file") && r.request().method() === "GET"),
+      card.getByRole("button", { name: "Открыть" }).click(),
+    ]);
     expect(response.status()).toBe(200);
     expect(response.headers()["content-type"]).toContain("application/pdf");
     expect(response.headers()["content-disposition"]).toContain("filename");
@@ -20,7 +21,7 @@ test.describe("admin document actions", () => {
     await expect(page.getByRole("dialog")).toBeVisible();
     await page.getByRole("button", { name: "Отмена" }).click();
     await expect(page).toHaveURL(/\/admin\/documents/);
-    await card.locator('button[aria-label="Действия документа"]').click();
+    await card.locator('button[aria-label="Действия документа"]').press("Enter");
     await expect(page.getByRole("menuitem", { name: "Заменить файл" })).toBeVisible();
     await expect(page.getByRole("menuitem", { name: "Версии" })).toBeVisible();
     await expect(page.getByRole("menuitem", { name: "Техническая информация" })).toBeVisible();

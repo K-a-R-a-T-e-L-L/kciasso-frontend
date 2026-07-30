@@ -1,9 +1,9 @@
+import { Box, Text, Title } from "@mantine/core";
 import { redirect } from "next/navigation";
 import { clearAdminTokenCookie, requireAdminSectionToken } from "@/shared/admin/auth";
 import { isAdminApiErrorStatus } from "@/shared/admin/api-error";
 import { getAdminNewsById, getAdminNewsCategories } from "@/shared/api/adapters/admin-news.adapter";
 import AdminNewsForm from "@/widgets/admin/AdminNewsForm/AdminNewsForm.client";
-import cls from "@/widgets/admin/AdminShell/AdminShell.module.scss";
 
 type Props = {
   params: Promise<{
@@ -46,14 +46,14 @@ export default async function Page({ params }: Props) {
   }
 
   return (
-    <section className={cls.section}>
-      <div className={cls.sectionHeader}>
-        <div>
-          <span className={cls.eyebrow}>Новости</span>
-          <h1>Редактирование новости</h1>
-          <p>Здесь можно менять содержимое, рубрику и сценарий публикации новости.</p>
-        </div>
-      </div>
+    <Box component="section" className={""}>
+      <Box className={""}>
+        <Box>
+          <Text className={""}>Новости</Text>
+          <Title>Редактирование новости</Title>
+          <Text>Здесь можно менять содержимое, рубрику и сценарий публикации новости.</Text>
+        </Box>
+      </Box>
 
       <AdminNewsForm
         categories={categories}
@@ -61,6 +61,6 @@ export default async function Page({ params }: Props) {
         mutation={{ method: "update", id: String(newsId) }}
         submitLabel="Сохранить изменения"
       />
-    </section>
+    </Box>
   );
 }

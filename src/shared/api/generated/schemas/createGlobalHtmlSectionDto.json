@@ -1,0 +1,12 @@
+{
+  "type": "object",
+  "properties": {
+    "name": { "type": "string" },
+    "html": { "type": "string" },
+    "css": { "type": "string" },
+    "javascript": { "type": "string" },
+    "iframeHeight": { "type": "number" }
+  },
+  "required": ["name", "html"],
+  "x-readme-ref-name": "CreateGlobalHtmlSectionDto"
+}

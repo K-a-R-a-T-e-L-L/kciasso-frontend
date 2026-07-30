@@ -1,98 +1,59 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
+import { Anchor, Box, Button, Grid, GridCol, Group, Paper, Select, Stack, TextInput } from "@mantine/core";
+
 import { clearAdminTokenCookie, requireSuperAdminToken } from "@/shared/admin/auth";
 import { isAdminApiErrorStatus } from "@/shared/admin/api-error";
 import { getAdminUsers } from "@/shared/api/adapters/admin-users.adapter";
-import cls from "@/widgets/admin/AdminShell/AdminShell.module.scss";
-import DeleteNewsButton from "@/widgets/admin/DeleteNewsButton/DeleteNewsButton.client";
+import AdminPageHeader from "@/shared/ui/admin/AdminPageHeader";
+import AdminLinkButton from "@/shared/ui/admin/AdminLinkButton.client";
+import AdminUsersRegistry from "@/widgets/admin/AdminUsersRegistry/AdminUsersRegistry";
 import { deleteUserAction } from "./actions";
 
-export default async function Page() {
+type SearchParams = { search?: string; role?: string; status?: string };
+
+export default async function Page({ searchParams }: { searchParams: Promise<SearchParams> }) {
+  const params = await searchParams;
   const { token, user } = await requireSuperAdminToken();
   let users;
-
   try {
     users = await getAdminUsers(token);
   } catch (error) {
-    if (isAdminApiErrorStatus(error, 401)) {
-      await clearAdminTokenCookie();
-      redirect("/admin/login");
-    }
-
-    if (isAdminApiErrorStatus(error, 403)) {
-      redirect("/admin/forbidden");
-    }
-
+    if (isAdminApiErrorStatus(error, 401)) { await clearAdminTokenCookie(); redirect("/admin/login"); }
+    if (isAdminApiErrorStatus(error, 403)) redirect("/admin/forbidden");
     throw error;
   }
 
-  return (
-    <section className={cls.section}>
-      <div className={cls.sectionHeader}>
-        <div>
-          <span className={cls.eyebrow}>Пользователи</span>
-          <h1>Подадмины и права</h1>
-          <p>Как super-admin ({user.email}) вы можете создавать подадминов и назначать им доступ к разделам.</p>
-        </div>
-        <Link href="/admin/users/new" className={cls.primaryAction}>
-          Создать пользователя
-        </Link>
-      </div>
+  const search = params.search?.trim().toLocaleLowerCase("ru-RU") ?? "";
+  const role = params.role === "SUPER_ADMIN" || params.role === "ADMIN" ? params.role : "";
+  const status = params.status === "active" || params.status === "inactive" ? params.status : "";
+  const filtered = users.filter((item) => {
+    const matchesSearch = !search || `${item.name} ${item.email}`.toLocaleLowerCase("ru-RU").includes(search);
+    const matchesRole = !role || item.role === role;
+    const matchesStatus = !status || item.isActive === (status === "active");
+    return matchesSearch && matchesRole && matchesStatus;
+  });
 
-      <div className={cls.tableCard}>
-        <div className={cls.tableWrap}>
-          <table className={cls.table}>
-            <thead>
-              <tr>
-                <th>Пользователь</th>
-                <th>Роль</th>
-                <th>Права</th>
-                <th>Действия</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((item) => (
-                <tr key={item.id}>
-                  <td>
-                    <strong>{item.name}</strong>
-                    <span>{item.email}</span>
-                  </td>
-                  <td>
-                    <span className={item.role === "SUPER_ADMIN" ? cls.statusPublished : cls.statusDraft}>
-                      {item.role === "SUPER_ADMIN" ? "Super-admin" : "Admin"} · {item.isActive ? "активен" : "отключён"}
-                    </span>
-                  </td>
-                  <td>
-                    <div className={cls.metaList}>
-                      {item.role === "SUPER_ADMIN" ? <span className={cls.metaBadge}>Полный административный доступ</span> : null}
-                      {item.canManageSiteSettings ? <span className={cls.metaBadge}>Настройки сайта</span> : null}
-                      {item.canManageNews ? <span className={cls.metaBadge}>Новости</span> : null}
-                      {item.documentsAccessMode === "ALL" ? <span className={cls.metaBadge}>Все документы</span> : null}
-                      {item.documentsAccessMode === "SELECTED_GROUPS" && item.documentGroups.length > 0 ? <span className={cls.metaBadge}>Документы: {item.documentGroups.length} групп</span> : null}
-                      {item.role === "ADMIN" && !item.canManageSiteSettings && !item.canManageNews && (item.documentsAccessMode === "NONE" || item.documentGroups.length === 0) ? <span className={cls.metaBadge}>Без доступа к контенту</span> : null}
-                    </div>
-                  </td>
-                  <td>
-                    <div className={cls.tableActions}>
-                      <Link href={`/admin/users/${item.id}/edit`}>Редактировать</Link>
-                      {item.id === user.id ? (
-                        <span>Текущий аккаунт</span>
-                      ) : (
-                        <DeleteNewsButton
-                          action={deleteUserAction.bind(null, item.id)}
-                          confirmText="Удалить пользователя? Его сессии и права будут отключены сразу."
-                          idleLabel="Удалить"
-                          pendingLabel="Удаление..."
-                        />
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
+  return (
+    <Stack gap="lg">
+      <AdminPageHeader
+        eyebrow="Пользователи"
+        title="Подадмины и права"
+        description={`Как super-admin (${user.email}) вы можете создавать пользователей и назначать доступ.`}
+        actions={<AdminLinkButton href="/admin/users/new">Добавить пользователя</AdminLinkButton>}
+      />
+      <Paper p="md" shadow="sm">
+        <Box component="form" action="/admin/users" method="get">
+          <Grid align="flex-end">
+            <GridCol span={{ base: 12, md: 5 }}><TextInput name="search" label="Поиск" placeholder="Имя или email" defaultValue={params.search ?? ""} /></GridCol>
+            <GridCol span={{ base: 12, sm: 6, md: 2 }}><Select name="role" label="Роль" defaultValue={role || null} clearable data={[{ value: "SUPER_ADMIN", label: "Super-admin" }, { value: "ADMIN", label: "Admin" }]} /></GridCol>
+            <GridCol span={{ base: 12, sm: 6, md: 2 }}><Select name="status" label="Статус" defaultValue={status || null} clearable data={[{ value: "active", label: "Активен" }, { value: "inactive", label: "Отключён" }]} /></GridCol>
+            <GridCol span={{ base: 12, md: 3 }}><Group gap="xs" wrap="nowrap"><Button type="submit" flex={1}>Применить</Button><Anchor href="/admin/users" size="sm">Сбросить</Anchor></Group></GridCol>
+          </Grid>
+        </Box>
+      </Paper>
+      <Paper p={{ base: "xs", sm: "md" }} shadow="sm">
+        <AdminUsersRegistry users={filtered} currentUserId={user.id} deleteAction={deleteUserAction} />
+      </Paper>
+    </Stack>
   );
 }

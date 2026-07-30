@@ -1,0 +1,8 @@
+{
+  "type": "object",
+  "properties": {
+    "expectedDefinitionRevision": { "type": "number", "minimum": 1 }
+  },
+  "required": ["expectedDefinitionRevision"],
+  "x-readme-ref-name": "DeleteGlobalHtmlSectionDto"
+}

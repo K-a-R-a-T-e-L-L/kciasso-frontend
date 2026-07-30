@@ -100,6 +100,10 @@ export const operations = {
     path: "/api/admin/news/media",
     method: "post",
   },
+  AdminNewsMediaController_import: {
+    path: "/api/admin/news/media/import",
+    method: "post",
+  },
   AdminNewsMediaController_removeUnreferenced: {
     path: "/api/admin/news/media/:key",
     method: "delete",
@@ -195,5 +199,57 @@ export const operations = {
   PublicDocumentsController_file: {
     path: "/api/public/documents/:id/file",
     method: "get",
+  },
+  PagesController_getPublic: {
+    path: "/api/public/pages/:pageKey/layout",
+    method: "get",
+  },
+  PagesController_registry: {
+    path: "/api/admin/pages/registry",
+    method: "get",
+  },
+  PagesController_layout: {
+    path: "/api/admin/pages/:pageKey/layout",
+    method: "get",
+  },
+  PagesController_create: {
+    path: "/api/admin/pages/:pageKey/sections",
+    method: "post",
+  },
+  PagesController_update: {
+    path: "/api/admin/pages/:pageKey/sections/:placementId",
+    method: "patch",
+  },
+  PagesController_remove: {
+    path: "/api/admin/pages/:pageKey/sections/:placementId",
+    method: "delete",
+  },
+  PagesController_toggle: {
+    path: "/api/admin/pages/:pageKey/sections/:placementId/toggle",
+    method: "post",
+  },
+  PagesController_reorder: {
+    path: "/api/admin/pages/:pageKey/sections/reorder",
+    method: "post",
+  },
+  PagesController_globals: {
+    path: "/api/admin/pages/global-sections",
+    method: "get",
+  },
+  PagesController_createGlobal: {
+    path: "/api/admin/pages/global-sections",
+    method: "post",
+  },
+  PagesController_global: {
+    path: "/api/admin/pages/global-sections/:definitionId",
+    method: "get",
+  },
+  PagesController_updateGlobal: {
+    path: "/api/admin/pages/global-sections/:definitionId",
+    method: "patch",
+  },
+  PagesController_deleteGlobal: {
+    path: "/api/admin/pages/global-sections/:definitionId",
+    method: "delete",
   },
 };

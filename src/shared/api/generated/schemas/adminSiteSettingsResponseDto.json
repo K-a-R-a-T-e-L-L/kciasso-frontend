@@ -10,6 +10,7 @@
       "items": {
         "type": "string",
         "enum": [
+          "home.slider",
           "home.quick-access",
           "home.resources",
           "home.gia-reference",

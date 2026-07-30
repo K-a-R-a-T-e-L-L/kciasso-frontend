@@ -16,7 +16,7 @@ type Props = {
 export default function FloatingPopover({ anchorRef, open, onClose, children, role = "dialog", placement = "bottom-start" }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const wasOpen = useRef(false);
-  const [style, setStyle] = useState<React.CSSProperties>({ visibility: "hidden" });
+  const [style, setStyle] = useState<React.CSSProperties>({ left: 12, top: 12, visibility: "visible" });
 
   useLayoutEffect(() => {
     if (!open) return;

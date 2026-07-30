@@ -1,0 +1,69 @@
+{
+  "type": "object",
+  "properties": {
+    "pageKey": { "type": "string" },
+    "title": { "type": "string" },
+    "routePattern": { "type": "string" },
+    "revision": { "type": "number" },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "placementId": { "type": "number" },
+          "definitionId": { "type": "number" },
+          "type": {
+            "type": "string",
+            "enum": [
+              "PAGE_SYSTEM",
+              "GLOBAL_SYSTEM",
+              "PAGE_CUSTOM_HTML",
+              "GLOBAL_CUSTOM_HTML"
+            ]
+          },
+          "key": { "type": "string", "nullable": true },
+          "name": { "type": "string" },
+          "description": { "type": "string", "nullable": true },
+          "systemRendererKey": { "type": "string", "nullable": true },
+          "sortOrder": { "type": "number" },
+          "isVisible": { "type": "boolean" },
+          "isGlobal": { "type": "boolean" },
+          "ownerPageKey": { "type": "string", "nullable": true },
+          "iframeHeight": { "type": "number", "nullable": true },
+          "canEditContent": { "type": "boolean" },
+          "canDelete": { "type": "boolean" },
+          "canToggle": { "type": "boolean" },
+          "canReorder": { "type": "boolean" },
+          "editHref": { "type": "string", "nullable": true },
+          "definitionRevision": { "type": "number" },
+          "html": { "type": "string" },
+          "css": { "type": "string" },
+          "javascript": { "type": "string" }
+        },
+        "required": [
+          "placementId",
+          "definitionId",
+          "type",
+          "key",
+          "name",
+          "description",
+          "systemRendererKey",
+          "sortOrder",
+          "isVisible",
+          "isGlobal",
+          "ownerPageKey",
+          "iframeHeight",
+          "canEditContent",
+          "canDelete",
+          "canToggle",
+          "canReorder",
+          "editHref",
+          "definitionRevision"
+        ],
+        "x-readme-ref-name": "PageSectionDescriptorDto"
+      }
+    }
+  },
+  "required": ["pageKey", "title", "routePattern", "revision", "sections"],
+  "x-readme-ref-name": "AdminPageLayoutResponseDto"
+}

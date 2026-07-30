@@ -5,6 +5,7 @@ import { defaultSiteSettingsDto } from "@/shared/content/default-site-settings";
 import type { ContactEntry, SiteContacts } from "@/shared/content/content.types";
 
 export const HOME_SECTION_KEYS = [
+  "home.slider",
   "home.quick-access",
   "home.resources",
   "home.gia-reference",

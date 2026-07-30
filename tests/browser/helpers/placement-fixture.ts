@@ -1,4 +1,5 @@
 import type { APIRequestContext } from "@playwright/test";
+import fs from "node:fs/promises";
 
 export const PLACEMENT_FIXTURE_KEYS = [
   "gia-9.normative-documents", "gia-9.demo", "gia-9.deadlines", "gia-9.results", "gia-9.reports",
@@ -20,14 +21,20 @@ export type PlacementFixture = {
 
 export async function createPlacementFixture(request: APIRequestContext): Promise<PlacementFixture> {
   const backend = process.env.KCIASSO_BACKEND_URL ?? "http://127.0.0.1:4491";
-  const auth = await request.post(`${backend}/api/user/authenticate`, {
-    data: {
-      email: process.env.KCIASSO_ADMIN_EMAIL ?? "admin-i6b6@example.com",
-      password: process.env.KCIASSO_ADMIN_PASSWORD ?? "AdminI6b6Pass123!",
-    },
-  });
-  if (!auth.ok()) throw new Error(`fixture auth failed: ${auth.status()}`);
-  const token = (await auth.json()).token as string;
+  const tokenFile = process.env.M8_API_TOKEN_FILE;
+  const token = tokenFile
+    ? await fs.readFile(tokenFile, "utf8")
+    : await request
+        .post(`${backend}/api/user/authenticate`, {
+          data: {
+            email: process.env.KCIASSO_ADMIN_EMAIL ?? "admin-i6b6@example.com",
+            password: process.env.KCIASSO_ADMIN_PASSWORD ?? "AdminI6b6Pass123!",
+          },
+        })
+        .then(async (auth) => {
+          if (!auth.ok()) throw new Error(`fixture auth failed: ${auth.status()}`);
+          return (await auth.json()).token as string;
+        });
   const cardTitle = `I84 placement fixture ${Date.now()}`;
   const form = new FormData();
   for (const key of PLACEMENT_FIXTURE_KEYS) form.append("placementKeys", key);

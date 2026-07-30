@@ -1,0 +1,11 @@
+{
+  "type": "object",
+  "properties": {
+    "statusCode": { "type": "number" },
+    "message": { "type": "string" },
+    "error": { "type": "string" },
+    "missingPageKeys": { "type": "array", "items": { "type": "string" } }
+  },
+  "required": ["statusCode", "message"],
+  "x-readme-ref-name": "PageErrorResponseDto"
+}

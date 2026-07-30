@@ -2,12 +2,14 @@ import { defineConfig } from "@playwright/test";
 
 export default defineConfig({
   testDir: "./tests/browser",
+  globalSetup: process.env.PLAYWRIGHT_AUTH_STATE ? "./tests/browser/global-setup.ts" : undefined,
   fullyParallel: false,
   reporter: "line",
   use: {
     baseURL: process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:3000",
     headless: process.env.PLAYWRIGHT_HEADLESS !== "false",
     trace: "retain-on-failure",
+    ...(process.env.PLAYWRIGHT_AUTH_STATE ? { storageState: process.env.PLAYWRIGHT_AUTH_STATE } : {}),
   },
   projects: [
     { name: "desktop-1366x768", use: { viewport: { width: 1366, height: 768 } } },

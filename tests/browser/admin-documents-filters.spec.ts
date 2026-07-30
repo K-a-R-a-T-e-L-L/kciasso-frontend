@@ -15,11 +15,17 @@ test.describe("admin document filters and pagination", () => {
     await page.getByRole("button", { name: "Очистить" }).click();
     await expect(page).not.toHaveURL(/search=/);
     const status = page.getByLabel("Статус").first();
-    await status.selectOption("PUBLISHED");
+    await status.click();
+    await page.getByRole("option", { name: "Опубликован", exact: true }).click();
     await expect(page).toHaveURL(/status=PUBLISHED/);
-    await page.getByLabel("Сортировка").selectOption("title:asc");
+    await page.getByRole("textbox", { name: "Сортировка" }).click();
+    await Promise.all([
+      page.waitForURL(/sortBy=title/),
+      page.getByRole("option", { name: "По названию", exact: true }).click(),
+    ]);
     await expect(page).toHaveURL(/sortBy=title/);
-    await page.getByLabel("На странице").selectOption("50");
+    await page.getByRole("textbox", { name: "На странице" }).click();
+    await page.getByRole("option", { name: "50", exact: true }).click();
     await expect(page).toHaveURL(/pageSize=50/);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBeTruthy();
   });

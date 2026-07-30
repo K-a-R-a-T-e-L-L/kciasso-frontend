@@ -19,7 +19,8 @@ export type EditableSection = {
 
 export const editableSections: EditableSection[] = [
   { id: "home.hero", title: "Hero главной страницы", route: "/", kind: "mixed", order: 1, isEditable: true },
-  { id: "home.quick-access", title: "Основные разделы", route: "/", kind: "links", parentId: "home.hero", order: 2, isEditable: true },
+  { id: "home.slider", title: "Карусель главной страницы", route: "/", kind: "media", parentId: "home.hero", order: 2, isEditable: true },
+  { id: "home.quick-access", title: "Основные разделы", route: "/", kind: "links", parentId: "home.hero", order: 3, isEditable: true },
   { id: "home.resources", title: "Важные ресурсы", route: "/", kind: "links", parentId: "home.hero", order: 3, isEditable: true },
   { id: "home.news-preview", title: "Превью новостей", route: "/", kind: "news", parentId: "home.hero", order: 4, isEditable: true },
   { id: "home.contacts", title: "Контакты на главной", route: "/", kind: "contacts", parentId: "home.hero", order: 5, isEditable: true },

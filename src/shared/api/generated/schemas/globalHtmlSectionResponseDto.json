@@ -1,0 +1,27 @@
+{
+  "type": "object",
+  "properties": {
+    "definitionId": { "type": "number" },
+    "key": { "type": "string", "nullable": true },
+    "name": { "type": "string" },
+    "revision": { "type": "number" },
+    "iframeHeight": { "type": "number", "nullable": true },
+    "visiblePlacements": { "type": "number" },
+    "hiddenPlacements": { "type": "number" },
+    "totalPlacements": { "type": "number" },
+    "html": { "type": "string" },
+    "css": { "type": "string" },
+    "javascript": { "type": "string" }
+  },
+  "required": [
+    "definitionId",
+    "key",
+    "name",
+    "revision",
+    "iframeHeight",
+    "visiblePlacements",
+    "hiddenPlacements",
+    "totalPlacements"
+  ],
+  "x-readme-ref-name": "GlobalHtmlSectionResponseDto"
+}

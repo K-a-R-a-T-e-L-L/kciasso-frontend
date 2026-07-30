@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getGiaReferencePageBySlug } from "@/shared/api/adapters/gia.adapter";
 import ContentPage from "@/widgets/pages/ContentPage/ContentPage";
 import { getPublicDocuments } from "@/shared/api/adapters/public-documents.adapter";
+import OrderedPublicPage from "@/widgets/pages/PageLayoutRenderer/OrderedPublicPage";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -14,9 +15,16 @@ export default async function Page({ params }: Props) {
   if (!page) notFound();
 
   return (
-    <ContentPage
-      page={page}
-      publicDocuments={await getPublicDocuments(`gia.${slug}`)}
+    <OrderedPublicPage
+      pageKey="gia"
+      systemSections={{
+        "gia.root": (
+          <ContentPage
+            page={page}
+            publicDocuments={await getPublicDocuments(`gia.${slug}`)}
+          />
+        ),
+      }}
     />
   );
 }

@@ -1,0 +1,20 @@
+{
+  "type": "object",
+  "properties": {
+    "definitionId": { "type": "number" },
+    "affectedPages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "pageKey": { "type": "string" },
+          "revision": { "type": "number" }
+        },
+        "required": ["pageKey", "revision"],
+        "x-readme-ref-name": "AffectedPageRevisionDto"
+      }
+    }
+  },
+  "required": ["definitionId", "affectedPages"],
+  "x-readme-ref-name": "DeleteGlobalHtmlSectionResponseDto"
+}

@@ -1,10 +1,11 @@
 "use client";
 
+import { Box, Text, Button } from "@mantine/core";
+
 import { useActionState } from "react";
 import type { AdminNewsCategoryDto } from "@/shared/api/generated/types";
 import type { AdminCategoryFormState } from "./AdminCategoryForm.types";
 import { adminCategoryFormInitialState } from "./AdminCategoryForm.types";
-import cls from "@/widgets/admin/AdminNewsForm/AdminNewsForm.module.scss";
 
 type Props = {
   initialData?: AdminNewsCategoryDto;
@@ -16,37 +17,37 @@ export default function AdminCategoryForm({ initialData, action, submitLabel }: 
   const [state, formAction, pending] = useActionState(action, adminCategoryFormInitialState);
 
   return (
-    <form className={cls.form} action={formAction}>
-      <div className={cls.grid}>
-        <label>
-          <span>Название</span>
-          <input type="text" name="title" defaultValue={initialData?.title ?? ""} required />
-        </label>
+    <Box component="form" className={""} action={formAction}>
+      <Box className={""}>
+        <Box component="label">
+          <Text>Название</Text>
+          <Box component="input" type="text" name="title" defaultValue={initialData?.title ?? ""} required />
+        </Box>
 
-        <label>
-          <span>Slug (необязательно)</span>
-          <input type="text" name="slug" defaultValue={initialData?.slug ?? ""} />
-          <small>Оставьте поле пустым — адрес создастся автоматически из названия.</small>
-        </label>
+        <Box component="label">
+          <Text>Slug (необязательно)</Text>
+          <Box component="input" type="text" name="slug" defaultValue={initialData?.slug ?? ""} />
+          <Text>Оставьте поле пустым — адрес создастся автоматически из названия.</Text>
+        </Box>
 
-        <label className={cls.spanFull}>
-          <span>Описание</span>
-          <textarea name="description" rows={5} defaultValue={initialData?.description ?? ""} />
-        </label>
+        <Box component="label" className={""}>
+          <Text>Описание</Text>
+          <Box component="textarea" name="description" rows={5} defaultValue={initialData?.description ?? ""} />
+        </Box>
 
-        <label className={cls.checkbox}>
-          <input type="checkbox" name="isActive" defaultChecked={initialData?.isActive ?? true} />
-          <span>Категория активна</span>
-        </label>
-      </div>
+        <Box component="label" className={""}>
+          <Box component="input" type="checkbox" name="isActive" defaultChecked={initialData?.isActive ?? true} />
+          <Text>Категория активна</Text>
+        </Box>
+      </Box>
 
-      {state.error ? <p className={cls.error}>{state.error}</p> : null}
+      {state.error ? <Text className={""}>{state.error}</Text> : null}
 
-      <div className={cls.actions}>
-        <button type="submit" disabled={pending}>
+      <Box className={""}>
+        <Button type="submit" disabled={pending}>
           {pending ? "Сохранение..." : submitLabel}
-        </button>
-      </div>
-    </form>
+        </Button>
+      </Box>
+    </Box>
   );
 }

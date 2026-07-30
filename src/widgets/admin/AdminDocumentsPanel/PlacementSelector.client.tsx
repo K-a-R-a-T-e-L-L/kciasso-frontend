@@ -1,9 +1,10 @@
 "use client";
 
+import { Box, Title, Text, Button } from "@mantine/core";
+
 import { useEffect, useMemo, useState } from "react";
 import { IconChevronDown, IconSearch, IconSelectAll, IconTrash, IconX } from "@tabler/icons-react";
 import { DOCUMENT_PLACEMENT_GROUPS } from "@/shared/documents/document-placement-registry";
-import cls from "./PlacementSelector.module.scss";
 
 export type PlacementSelectorProps = {
   value: string[];
@@ -41,43 +42,43 @@ export default function PlacementSelector({ value, onApply, onCancel, allowedGro
   const toggleGroup = (id: string) => setOpenGroupId((current) => current === id ? null : id);
 
   return (
-    <div className={cls.overlay} role="dialog" aria-modal="true" aria-labelledby="placement-selector-title">
-      <div className={cls.placementModal}>
-        <div className={cls.modalHeader}>
-          <div>
-            <h2 id="placement-selector-title">Выбор размещений</h2>
-            <p className={cls.selectedSummary}>Выбрано разделов: {draft.length}</p>
-          </div>
-          <button type="button" className={cls.close} onClick={onCancel} aria-label="Закрыть"><IconX size={22} stroke={1.8} aria-hidden="true" /></button>
-        </div>
-        <label className={cls.placementSearchWrap}>
+    <Box className={""} role="dialog" aria-modal="true" aria-labelledby="placement-selector-title">
+      <Box className={""}>
+        <Box className={""}>
+          <Box>
+            <Title id="placement-selector-title">Выбор размещений</Title>
+            <Text className={""}>Выбрано разделов: {draft.length}</Text>
+          </Box>
+          <Button type="button" className={""} onClick={onCancel} aria-label="Закрыть"><IconX size={22} stroke={1.8} aria-hidden="true" /></Button>
+        </Box>
+        <Box component="label" className={""}>
           <IconSearch size={20} stroke={1.8} aria-hidden="true" />
-          <input className={cls.placementSearch} value={query} onChange={(event) => handleSearchChange(event.target.value)} placeholder="Поиск по названию раздела" aria-label="Поиск по названию раздела" />
-        </label>
-        <div className={cls.placementGroups}>
+          <Box component="input" className={""} value={query} onChange={(event: any) => handleSearchChange(event.target.value)} placeholder="Поиск по названию раздела" aria-label="Поиск по названию раздела" />
+        </Box>
+        <Box className={""}>
           {groups.map((group) => {
             const selected = group.allItems.filter((item) => draft.includes(item.key)).length;
             const expanded = openGroupId === group.id;
             return (
-              <section className={cls.placementGroup} key={group.id}>
-                <button type="button" className={cls.groupHeader} onClick={() => toggleGroup(group.id)} aria-expanded={expanded}>
-                  <span><strong>{group.title}</strong><small>выбрано {selected} из {group.allItems.length}</small></span>
-                  <IconChevronDown className={cls.groupChevron} data-expanded={expanded ? "true" : "false"} size={20} stroke={1.8} aria-hidden="true" />
-                </button>
+              <Box component="section" className={""} key={group.id}>
+                <Button type="button" className={""} onClick={() => toggleGroup(group.id)} aria-expanded={expanded}>
+                  <Text><Text>{group.title}</Text><Text>выбрано {selected} из {group.allItems.length}</Text></Text>
+                  <IconChevronDown className={""} data-expanded={expanded ? "true" : "false"} size={20} stroke={1.8} aria-hidden="true" />
+                </Button>
                 {expanded ? <>
-                  <div className={cls.groupActions}>
-                    <button type="button" onClick={() => setDraft((current) => [...new Set([...current, ...group.allItems.map((item) => item.key)])])}><IconSelectAll size={17} stroke={1.8} aria-hidden="true" />Выбрать все</button>
-                    <button type="button" onClick={() => setDraft((current) => current.filter((key) => !group.allItems.some((item) => item.key === key)))}><IconTrash size={17} stroke={1.8} aria-hidden="true" />Очистить</button>
-                  </div>
-                  <div className={cls.placementRows}>{group.items.map((item) => <label className={cls.placementRow} key={item.key}><input type="checkbox" checked={draft.includes(item.key)} onChange={() => toggle(item.key)} /><span>{item.title}</span></label>)}</div>
+                  <Box className={""}>
+                    <Button type="button" onClick={() => setDraft((current) => [...new Set([...current, ...group.allItems.map((item) => item.key)])])}><IconSelectAll size={17} stroke={1.8} aria-hidden="true" />Выбрать все</Button>
+                    <Button type="button" onClick={() => setDraft((current) => current.filter((key) => !group.allItems.some((item) => item.key === key)))}><IconTrash size={17} stroke={1.8} aria-hidden="true" />Очистить</Button>
+                  </Box>
+                  <Box className={""}>{group.items.map((item) => <Box component="label" className={""} key={item.key}><Box component="input" type="checkbox" checked={draft.includes(item.key)} onChange={() => toggle(item.key)} /><Text>{item.title}</Text></Box>)}</Box>
                 </> : null}
-              </section>
+              </Box>
             );
           })}
-          {groups.length === 0 ? <p className={cls.noResults}>Ничего не найдено.</p> : null}
-        </div>
-        <div className={cls.modalActions}><button type="button" className={cls.primary} onClick={() => onApply(draft)}>Применить</button><button type="button" onClick={onCancel}>Отмена</button></div>
-      </div>
-    </div>
+          {groups.length === 0 ? <Text className={""}>Ничего не найдено.</Text> : null}
+        </Box>
+        <Box className={""}><Button type="button" className={""} onClick={() => onApply(draft)}>Применить</Button><Button type="button" onClick={onCancel}>Отмена</Button></Box>
+      </Box>
+    </Box>
   );
 }

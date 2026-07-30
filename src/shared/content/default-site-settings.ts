@@ -14,6 +14,7 @@ export const defaultSiteSettingsDto: PublicSiteSettingsResponseDto = {
   egeTrustPhone: "8 (495) 198-93-38",
   email: "info@kcias.ru",
   homeSectionsOrder: [
+    "home.slider",
     "home.quick-access",
     "home.resources",
     "home.gia-reference",

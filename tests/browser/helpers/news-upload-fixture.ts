@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import type { Page } from "@playwright/test";
+import { adminApiToken } from "./admin-api-token";
 
 const JPEG_1X1 = Buffer.from("/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////2wBDAf//////////////////////////////////////////////////////////////////////////////////////wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAX/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIQAxAAAAH/AP/EABQQAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQEAAT8Af//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQIBAT8Af//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQMBAT8Af//Z", "base64");
 
@@ -28,11 +29,10 @@ export async function createNewsUploadFixtures(root = path.resolve("tests/browse
 
 export async function createNewsAcceptanceFixture(page: Page) {
   const base = process.env.KCIASSO_BACKEND_URL ?? "http://127.0.0.1:4476";
-  const auth = await page.request.post(`${base}/api/user/authenticate`, { data: { email: process.env.KCIASSO_ADMIN_EMAIL ?? "admin@gmail.com", password: process.env.KCIASSO_ADMIN_PASSWORD ?? "AdminI6b6Pass123!" } });
-  if (!auth.ok()) throw new Error(`fixture auth failed: ${auth.status()}`);
-  const token = (await auth.json()).token as string;
-  const duplicateSlug = `i7a4c-duplicate-${Date.now()}`;
-  const seeded = await page.request.post(`${base}/api/admin/news`, { headers: { authorization: `Bearer ${token}` }, data: { title: "I7A4C duplicate target", slug: duplicateSlug, excerpt: "fixture", content: "fixture" } });
+  const runId = process.env.M8_RUN_ID ?? "local";
+  const token = await adminApiToken(page);
+  const duplicateSlug = `m8-${runId.toLowerCase()}-i7a4c-duplicate-${Date.now()}`;
+  const seeded = await page.request.post(`${base}/api/admin/news`, { headers: { authorization: `Bearer ${token}` }, data: { title: `[M8 ${runId}] I7A4C duplicate target`, slug: duplicateSlug, excerpt: "fixture", content: "fixture" } });
   if (!seeded.ok()) throw new Error(`duplicate fixture failed: ${seeded.status()}`);
   return { adminEmail: process.env.KCIASSO_ADMIN_EMAIL ?? "admin@gmail.com", adminPassword: process.env.KCIASSO_ADMIN_PASSWORD ?? "AdminI6b6Pass123!", duplicateSlug, duplicateId: (await seeded.json()).id };
 }

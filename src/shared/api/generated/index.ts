@@ -118,6 +118,12 @@ export type {
 } from "./types/AdminNewsControllerUpdateNews";
 export type { AdminNewsDto } from "./types/AdminNewsDto";
 export type {
+  AdminNewsMediaControllerImport201,
+  AdminNewsMediaControllerImportMutation,
+  AdminNewsMediaControllerImportMutationRequest,
+  AdminNewsMediaControllerImportMutationResponse,
+} from "./types/AdminNewsMediaControllerImport";
+export type {
   AdminNewsMediaControllerRemoveUnreferenced204,
   AdminNewsMediaControllerRemoveUnreferencedMutation,
   AdminNewsMediaControllerRemoveUnreferencedMutationResponse,
@@ -129,6 +135,7 @@ export type {
   AdminNewsMediaControllerUploadMutationRequest,
   AdminNewsMediaControllerUploadMutationResponse,
 } from "./types/AdminNewsMediaControllerUpload";
+export type { AdminPageLayoutResponseDto } from "./types/AdminPageLayoutResponseDto";
 export type {
   AdminSiteSettingsControllerGetSettings200,
   AdminSiteSettingsControllerGetSettings403,
@@ -159,6 +166,7 @@ export type {
   AdminUserUpdateDtoDocumentsAccessModeEnumKey,
   AdminUserUpdateDtoRoleEnumKey,
 } from "./types/AdminUserUpdateDto";
+export type { AffectedPageRevisionDto } from "./types/AffectedPageRevisionDto";
 export type {
   CreateAdminUserDto,
   CreateAdminUserDtoDocumentGroupsEnumKey,
@@ -166,8 +174,11 @@ export type {
   CreateAdminUserDtoRoleEnumKey,
 } from "./types/CreateAdminUserDto";
 export type { CreateDocumentShareLinkDto } from "./types/CreateDocumentShareLinkDto";
+export type { CreateGlobalHtmlSectionDto } from "./types/CreateGlobalHtmlSectionDto";
+export type { CreateGlobalHtmlSectionResponseDto } from "./types/CreateGlobalHtmlSectionResponseDto";
 export type { CreateNewsCategoryDto } from "./types/CreateNewsCategoryDto";
 export type { CreateNewsDto } from "./types/CreateNewsDto";
+export type { CreatePageSectionDto } from "./types/CreatePageSectionDto";
 export type { CreatedDocumentShareLinkDto } from "./types/CreatedDocumentShareLinkDto";
 export type {
   CurrentUserDto,
@@ -175,6 +186,9 @@ export type {
   CurrentUserDtoDocumentsAccessModeEnumKey,
   CurrentUserDtoRoleEnumKey,
 } from "./types/CurrentUserDto";
+export type { DeleteGlobalHtmlSectionDto } from "./types/DeleteGlobalHtmlSectionDto";
+export type { DeleteGlobalHtmlSectionResponseDto } from "./types/DeleteGlobalHtmlSectionResponseDto";
+export type { DeletePageSectionDto } from "./types/DeletePageSectionDto";
 export type { Document, DocumentStatusEnumKey } from "./types/Document";
 export type {
   DocumentDto,
@@ -303,6 +317,8 @@ export type {
   DocumentsControllerVersionsQueryResponse,
 } from "./types/DocumentsControllerVersions";
 export type { ErrorDto, ErrorDtoErrorMessageEnumKey } from "./types/ErrorDto";
+export type { GlobalHtmlSectionResponseDto } from "./types/GlobalHtmlSectionResponseDto";
+export type { ImportNewsMediaDto } from "./types/ImportNewsMediaDto";
 export type {
   MoveNewsCategoryDto,
   MoveNewsCategoryDtoDirectionEnumKey,
@@ -313,9 +329,135 @@ export type { NewsCategory } from "./types/NewsCategory";
 export type { NewsCategoryDto } from "./types/NewsCategoryDto";
 export type { NewsCategoryMoveResponseDto } from "./types/NewsCategoryMoveResponseDto";
 export type { NewsListItemDto } from "./types/NewsListItemDto";
+export type { NewsMedia, NewsMediaStatusEnumKey } from "./types/NewsMedia";
 export type { NewsMediaUploadDto } from "./types/NewsMediaUploadDto";
 export type { NewsPaginationMetaDto } from "./types/NewsPaginationMetaDto";
 export type { NewsStatus, NewsStatusEnumKey } from "./types/NewsStatus";
+export type { PageErrorResponseDto } from "./types/PageErrorResponseDto";
+export type { PageRegistrySummaryDto } from "./types/PageRegistrySummaryDto";
+export type {
+  PageSectionDescriptorDto,
+  PageSectionDescriptorDtoTypeEnumKey,
+} from "./types/PageSectionDescriptorDto";
+export type {
+  PagesControllerCreate201,
+  PagesControllerCreate400,
+  PagesControllerCreate403,
+  PagesControllerCreate404,
+  PagesControllerCreate409,
+  PagesControllerCreateMutation,
+  PagesControllerCreateMutationRequest,
+  PagesControllerCreateMutationResponse,
+  PagesControllerCreatePathParams,
+} from "./types/PagesControllerCreate";
+export type {
+  PagesControllerCreateGlobal201,
+  PagesControllerCreateGlobal403,
+  PagesControllerCreateGlobal404,
+  PagesControllerCreateGlobal409,
+  PagesControllerCreateGlobalMutation,
+  PagesControllerCreateGlobalMutationRequest,
+  PagesControllerCreateGlobalMutationResponse,
+} from "./types/PagesControllerCreateGlobal";
+export type {
+  PagesControllerDeleteGlobal200,
+  PagesControllerDeleteGlobal403,
+  PagesControllerDeleteGlobal404,
+  PagesControllerDeleteGlobal409,
+  PagesControllerDeleteGlobalMutation,
+  PagesControllerDeleteGlobalMutationRequest,
+  PagesControllerDeleteGlobalMutationResponse,
+  PagesControllerDeleteGlobalPathParams,
+} from "./types/PagesControllerDeleteGlobal";
+export type {
+  PagesControllerGetPublic200,
+  PagesControllerGetPublic404,
+  PagesControllerGetPublicPathParams,
+  PagesControllerGetPublicQuery,
+  PagesControllerGetPublicQueryResponse,
+} from "./types/PagesControllerGetPublic";
+export type {
+  PagesControllerGlobal200,
+  PagesControllerGlobal403,
+  PagesControllerGlobal404,
+  PagesControllerGlobalPathParams,
+  PagesControllerGlobalQuery,
+  PagesControllerGlobalQueryResponse,
+} from "./types/PagesControllerGlobal";
+export type {
+  PagesControllerGlobals200,
+  PagesControllerGlobals403,
+  PagesControllerGlobalsQuery,
+  PagesControllerGlobalsQueryResponse,
+} from "./types/PagesControllerGlobals";
+export type {
+  PagesControllerLayout200,
+  PagesControllerLayout403,
+  PagesControllerLayout404,
+  PagesControllerLayoutPathParams,
+  PagesControllerLayoutQuery,
+  PagesControllerLayoutQueryResponse,
+} from "./types/PagesControllerLayout";
+export type {
+  PagesControllerRegistry200,
+  PagesControllerRegistry403,
+  PagesControllerRegistryQuery,
+  PagesControllerRegistryQueryResponse,
+} from "./types/PagesControllerRegistry";
+export type {
+  PagesControllerRemove200,
+  PagesControllerRemove400,
+  PagesControllerRemove403,
+  PagesControllerRemove404,
+  PagesControllerRemove409,
+  PagesControllerRemoveMutation,
+  PagesControllerRemoveMutationRequest,
+  PagesControllerRemoveMutationResponse,
+  PagesControllerRemovePathParams,
+} from "./types/PagesControllerRemove";
+export type {
+  PagesControllerReorder200,
+  PagesControllerReorder400,
+  PagesControllerReorder403,
+  PagesControllerReorder404,
+  PagesControllerReorder409,
+  PagesControllerReorderMutation,
+  PagesControllerReorderMutationRequest,
+  PagesControllerReorderMutationResponse,
+  PagesControllerReorderPathParams,
+} from "./types/PagesControllerReorder";
+export type {
+  PagesControllerToggle200,
+  PagesControllerToggle400,
+  PagesControllerToggle403,
+  PagesControllerToggle404,
+  PagesControllerToggle409,
+  PagesControllerToggleMutation,
+  PagesControllerToggleMutationRequest,
+  PagesControllerToggleMutationResponse,
+  PagesControllerTogglePathParams,
+} from "./types/PagesControllerToggle";
+export type {
+  PagesControllerUpdate200,
+  PagesControllerUpdate400,
+  PagesControllerUpdate403,
+  PagesControllerUpdate404,
+  PagesControllerUpdate409,
+  PagesControllerUpdateMutation,
+  PagesControllerUpdateMutationRequest,
+  PagesControllerUpdateMutationResponse,
+  PagesControllerUpdatePathParams,
+} from "./types/PagesControllerUpdate";
+export type {
+  PagesControllerUpdateGlobal200,
+  PagesControllerUpdateGlobal403,
+  PagesControllerUpdateGlobal404,
+  PagesControllerUpdateGlobal409,
+  PagesControllerUpdateGlobalMutation,
+  PagesControllerUpdateGlobalMutationRequest,
+  PagesControllerUpdateGlobalMutationResponse,
+  PagesControllerUpdateGlobalPathParams,
+} from "./types/PagesControllerUpdateGlobal";
 export type { PaginatedAdminNewsDto } from "./types/PaginatedAdminNewsDto";
 export type { PaginatedDocumentsDto } from "./types/PaginatedDocumentsDto";
 export type { PaginatedNewsDto } from "./types/PaginatedNewsDto";
@@ -368,6 +510,11 @@ export type {
   PublicNewsMediaControllerGetQuery,
   PublicNewsMediaControllerGetQueryResponse,
 } from "./types/PublicNewsMediaControllerGet";
+export type { PublicPageLayoutResponseDto } from "./types/PublicPageLayoutResponseDto";
+export type {
+  PublicPageSectionDto,
+  PublicPageSectionDtoTypeEnumKey,
+} from "./types/PublicPageSectionDto";
 export type {
   PublicSiteSettingsControllerGetSettings200,
   PublicSiteSettingsControllerGetSettingsQuery,
@@ -382,18 +529,22 @@ export type {
   PublicationCommandDtoCommandEnumKey,
 } from "./types/PublicationCommandDto";
 export type { ReorderDocumentPlacementsDto } from "./types/ReorderDocumentPlacementsDto";
+export type { ReorderPageSectionsDto } from "./types/ReorderPageSectionsDto";
 export type { ResolveDocumentShareLinkDto } from "./types/ResolveDocumentShareLinkDto";
 export type { Section } from "./types/Section";
 export type { Session } from "./types/Session";
 export type { StoredFile } from "./types/StoredFile";
+export type { TogglePageSectionDto } from "./types/TogglePageSectionDto";
 export type { UpdateDocumentDto } from "./types/UpdateDocumentDto";
 export type { UpdateDocumentPlacementsDto } from "./types/UpdateDocumentPlacementsDto";
 export type {
   UpdateDocumentStatusDto,
   UpdateDocumentStatusDtoStatusEnumKey,
 } from "./types/UpdateDocumentStatusDto";
+export type { UpdateGlobalHtmlSectionDto } from "./types/UpdateGlobalHtmlSectionDto";
 export type { UpdateNewsCategoryDto } from "./types/UpdateNewsCategoryDto";
 export type { UpdateNewsDto } from "./types/UpdateNewsDto";
+export type { UpdatePageSectionDto } from "./types/UpdatePageSectionDto";
 export type {
   UpdateSiteSettingsDto,
   UpdateSiteSettingsDtoHomeSectionsOrderEnumKey,
@@ -500,11 +651,25 @@ export { adminNewsControllerMoveCategory } from "./clients/adminNewsController/a
 export { adminNewsControllerPublication } from "./clients/adminNewsController/adminNewsControllerPublication";
 export { adminNewsControllerUpdateCategory } from "./clients/adminNewsController/adminNewsControllerUpdateCategory";
 export { adminNewsControllerUpdateNews } from "./clients/adminNewsController/adminNewsControllerUpdateNews";
+export { adminNewsMediaControllerImport } from "./clients/adminNewsMediaController/adminNewsMediaControllerImport";
 export { adminNewsMediaControllerRemoveUnreferenced } from "./clients/adminNewsMediaController/adminNewsMediaControllerRemoveUnreferenced";
 export { adminNewsMediaControllerUpload } from "./clients/adminNewsMediaController/adminNewsMediaControllerUpload";
 export { adminSiteSettingsControllerGetSettings } from "./clients/adminSiteSettingsController/adminSiteSettingsControllerGetSettings";
 export { adminSiteSettingsControllerUpdateSettings } from "./clients/adminSiteSettingsController/adminSiteSettingsControllerUpdateSettings";
 export { operations } from "./clients/operations";
+export { pagesControllerCreate } from "./clients/pageLayoutsController/pagesControllerCreate";
+export { pagesControllerCreateGlobal } from "./clients/pageLayoutsController/pagesControllerCreateGlobal";
+export { pagesControllerDeleteGlobal } from "./clients/pageLayoutsController/pagesControllerDeleteGlobal";
+export { pagesControllerGetPublic } from "./clients/pageLayoutsController/pagesControllerGetPublic";
+export { pagesControllerGlobal } from "./clients/pageLayoutsController/pagesControllerGlobal";
+export { pagesControllerGlobals } from "./clients/pageLayoutsController/pagesControllerGlobals";
+export { pagesControllerLayout } from "./clients/pageLayoutsController/pagesControllerLayout";
+export { pagesControllerRegistry } from "./clients/pageLayoutsController/pagesControllerRegistry";
+export { pagesControllerRemove } from "./clients/pageLayoutsController/pagesControllerRemove";
+export { pagesControllerReorder } from "./clients/pageLayoutsController/pagesControllerReorder";
+export { pagesControllerToggle } from "./clients/pageLayoutsController/pagesControllerToggle";
+export { pagesControllerUpdate } from "./clients/pageLayoutsController/pagesControllerUpdate";
+export { pagesControllerUpdateGlobal } from "./clients/pageLayoutsController/pagesControllerUpdateGlobal";
 export { publicDocumentShareLinksControllerResolve } from "./clients/publicDocumentShareLinksController/publicDocumentShareLinksControllerResolve";
 export { publicDocumentsControllerFile } from "./clients/publicDocumentsController/publicDocumentsControllerFile";
 export { publicDocumentsControllerList } from "./clients/publicDocumentsController/publicDocumentsControllerList";
@@ -548,7 +713,10 @@ export { documentsControllerListQueryParamsStatusEnum } from "./types/DocumentsC
 export { errorDtoErrorMessageEnum } from "./types/ErrorDto";
 export { moveNewsCategoryDtoDirectionEnum } from "./types/MoveNewsCategoryDto";
 export { newsPublicationStatusEnum } from "./types/News";
+export { newsMediaStatusEnum } from "./types/NewsMedia";
 export { newsStatusEnum } from "./types/NewsStatus";
+export { pageSectionDescriptorDtoTypeEnum } from "./types/PageSectionDescriptorDto";
+export { publicPageSectionDtoTypeEnum } from "./types/PublicPageSectionDto";
 export { publicSiteSettingsResponseDtoHomeSectionsOrderEnum } from "./types/PublicSiteSettingsResponseDto";
 export { publicationCommandDtoCommandEnum } from "./types/PublicationCommandDto";
 export { updateDocumentStatusDtoStatusEnum } from "./types/UpdateDocumentStatusDto";

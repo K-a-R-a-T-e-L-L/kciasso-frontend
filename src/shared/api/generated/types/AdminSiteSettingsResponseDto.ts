@@ -4,6 +4,7 @@
  */
 
 export const adminSiteSettingsResponseDtoHomeSectionsOrderEnum = {
+  "home.slider": "home.slider",
   "home.quick-access": "home.quick-access",
   "home.resources": "home.resources",
   "home.gia-reference": "home.gia-reference",

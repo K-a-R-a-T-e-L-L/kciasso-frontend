@@ -26,6 +26,10 @@ export type CreateNewsDto = {
    */
   coverImageUrl?: string | null;
   /**
+   * @type number
+   */
+  coverMediaId?: number | null;
+  /**
    * @type number | undefined
    */
   categoryId?: number;

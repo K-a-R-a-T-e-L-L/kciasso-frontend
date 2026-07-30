@@ -1,25 +1,12 @@
-import Link from "next/link";
+import { Alert, Group, Stack, Text, Title } from "@mantine/core";
 import { getAdminBackendUnavailableMessage } from "@/shared/admin/api-error";
-import cls from "@/widgets/admin/AdminShell/AdminShell.module.scss";
+import AdminLinkButton from "@/shared/ui/admin/AdminLinkButton.client";
 
-type Props = {
-  retryHref?: string;
-};
-
-export default function AdminBackendUnavailable({ retryHref = "/admin/login" }: Props) {
-  return (
-    <section className={cls.standaloneCard}>
-      <span className={cls.eyebrow}>Admin</span>
-      <h1>Панель временно недоступна</h1>
-      <p>{getAdminBackendUnavailableMessage()}</p>
-      <div className={cls.actions}>
-        <Link href={retryHref} className={cls.primaryAction}>
-          Повторить попытку
-        </Link>
-        <Link href="/" className={cls.secondaryAction}>
-          Вернуться на сайт
-        </Link>
-      </div>
-    </section>
-  );
+export default function AdminBackendUnavailable({ retryHref = "/admin/login" }: { retryHref?: string }) {
+  return <Stack maw={720} mx="auto" p="xl">
+    <Text size="xs" fw={800} tt="uppercase" c="kciassoBlue.6">Admin</Text>
+    <Title order={1}>Панель временно недоступна</Title>
+    <Alert color="red">{getAdminBackendUnavailableMessage()}</Alert>
+    <Group><AdminLinkButton href={retryHref}>Повторить попытку</AdminLinkButton><AdminLinkButton href="/" variant="default">Вернуться на сайт</AdminLinkButton></Group>
+  </Stack>;
 }

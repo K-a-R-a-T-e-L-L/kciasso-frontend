@@ -2,7 +2,6 @@ import { getGiaReferenceHub } from "@/shared/api/adapters/gia.adapter";
 import { getLatestNewsPreview } from "@/shared/api/adapters/news.adapter";
 import { homeDirections } from "@/shared/content/home.mock";
 import { officialResourceCards, services } from "@/shared/content/resources.mock";
-import { getHomeSectionsOrder } from "@/shared/api/adapters/site-settings.adapter";
 
 export async function getHomePageData() {
   return {
@@ -11,6 +10,5 @@ export async function getHomePageData() {
     giaReferenceHub: await getGiaReferenceHub(),
     officialResourceCards,
     services,
-    homeSectionsOrder: await getHomeSectionsOrder(),
   };
 }

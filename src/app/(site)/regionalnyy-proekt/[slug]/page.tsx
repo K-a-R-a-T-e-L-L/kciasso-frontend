@@ -4,6 +4,7 @@ import { getPublicDocuments } from "@/shared/api/adapters/public-documents.adapt
 import RegionalProjectSectionPage, {
   type RegionalProjectSection,
 } from "@/widgets/pages/RegionalProjectSectionPage/RegionalProjectSectionPage";
+import OrderedPublicPage from "@/widgets/pages/PageLayoutRenderer/OrderedPublicPage";
 
 const sections: Record<string, RegionalProjectSection> = {
   materialy: {
@@ -49,10 +50,17 @@ export default async function Page({
     getPublicDocuments(section.documentKey),
   ]);
   return (
-    <RegionalProjectSectionPage
-      page={page}
-      section={section}
-      publicDocuments={publicDocuments}
+    <OrderedPublicPage
+      pageKey="regional-project.section"
+      systemSections={{
+        "regional-project.section": (
+          <RegionalProjectSectionPage
+            page={page}
+            section={section}
+            publicDocuments={publicDocuments}
+          />
+        ),
+      }}
     />
   );
 }
