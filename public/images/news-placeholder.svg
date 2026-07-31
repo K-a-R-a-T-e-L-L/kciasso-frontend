@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title description">
+  <title id="title">Изображение новости</title>
+  <desc id="description">Нейтральная заглушка для новости без обложки</desc>
+  <rect width="640" height="360" rx="24" fill="#eef4fa"/>
+  <path d="M0 284 146 151l112 96 88-77 294 190H0Z" fill="#b7cde0"/>
+  <circle cx="488" cy="102" r="42" fill="#fff"/>
+  <path d="M242 82h156v20H242zm-54 42h264v16H188zm36 38h192v16H224z" fill="#07549b" opacity=".72"/>
+</svg>

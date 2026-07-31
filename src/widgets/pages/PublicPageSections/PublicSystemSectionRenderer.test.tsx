@@ -9,8 +9,14 @@ import {
 
 describe("PublicSystemSectionRenderer", () => {
   it("has one callable mapping for every backend registry renderer key", () => {
-    expect(KNOWN_PUBLIC_SYSTEM_RENDERER_KEYS).toHaveLength(30);
-    expect(new Set(KNOWN_PUBLIC_SYSTEM_RENDERER_KEYS).size).toBe(30);
+    expect(KNOWN_PUBLIC_SYSTEM_RENDERER_KEYS).toHaveLength(31);
+    expect(new Set(KNOWN_PUBLIC_SYSTEM_RENDERER_KEYS).size).toBe(31);
+    expect(KNOWN_PUBLIC_SYSTEM_RENDERER_KEYS).toEqual(
+      expect.arrayContaining(["gia-11.essay", "gia-11.analytics"]),
+    );
+    expect(KNOWN_PUBLIC_SYSTEM_RENDERER_KEYS).not.toContain(
+      "gia-11.additional",
+    );
     for (const key of KNOWN_PUBLIC_SYSTEM_RENDERER_KEYS) {
       expect(PUBLIC_SYSTEM_RENDERERS[key]).toEqual(expect.any(Function));
     }

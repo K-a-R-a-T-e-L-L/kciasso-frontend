@@ -7,6 +7,7 @@ import { Carousel, CarouselSlide } from "@mantine/carousel";
 import { useReducedMotion } from "@mantine/hooks";
 import Autoplay from "embla-carousel-autoplay";
 import { IconArrowRight } from "@tabler/icons-react";
+import Container from "@/shared/ui/Container/Container";
 
 export type HomeSlide = {
   id: string;
@@ -30,7 +31,8 @@ export default function HomeImageCarousel({ slides = HOME_SLIDES }: { slides?: H
 
   return (
     <Box component="section" aria-label="Основные разделы сайта" py={{ base: "md", sm: "xl" }}>
-      <Carousel
+      <Container data-home-carousel-container>
+        <Carousel
         withIndicators
         plugins={reducedMotion ? [] : [autoplay]}
         onMouseEnter={() => autoplay.stop()}
@@ -61,7 +63,8 @@ export default function HomeImageCarousel({ slides = HOME_SLIDES }: { slides?: H
             </Paper>
           </CarouselSlide>
         ))}
-      </Carousel>
+        </Carousel>
+      </Container>
     </Box>
   );
 }

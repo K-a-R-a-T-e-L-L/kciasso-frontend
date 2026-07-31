@@ -41,7 +41,10 @@ export const navigation: NavItem[] = [
     href: "/regionalnyy-proekt",
     kind: "dropdown",
     items: [
-      { title: "ЕГЭ: от выбора до зачисления", href: "/regionalnyy-proekt#ege" },
+      {
+        title: "ЕГЭ: от выбора до зачисления",
+        href: "/regionalnyy-proekt#ege",
+      },
       { title: "Вузы Кузбасса", href: "/regionalnyy-proekt#vuz" },
       { title: "Видеоматериалы вузов", href: "/regionalnyy-proekt#video" },
     ],
@@ -98,11 +101,26 @@ export const navigation: NavItem[] = [
     href: "/gia-9",
     kind: "dropdown",
     items: [
-      { title: "Нормативные документы", href: "/gia-9?section=normative-documents" },
-      { title: "Демоверсии", href: "/gia-9?section=demo" },
-      { title: "Сроки проведения", href: "/gia-9?section=deadlines" },
-      { title: "Результаты", href: "/gia-9?section=results" },
-      { title: "Отчеты комиссий", href: "/gia-9?section=reports" },
+      {
+        title: "Нормативные документы",
+        href: "/gia-9/normative-documents",
+      },
+      {
+        title: "Демоверсии",
+        href: "/gia-9/demo",
+      },
+      {
+        title: "Сроки проведения",
+        href: "/gia-9/deadlines",
+      },
+      {
+        title: "Результаты",
+        href: "/gia-9/results",
+      },
+      {
+        title: "Отчеты комиссий",
+        href: "/gia-9/reports",
+      },
     ],
   },
   {
@@ -110,13 +128,34 @@ export const navigation: NavItem[] = [
     href: "/gia-11",
     kind: "dropdown",
     items: [
-      { title: "Нормативные документы", href: "/gia-11?section=normative-documents" },
-      { title: "Демоверсии", href: "/gia-11?section=demo" },
-      { title: "Сроки проведения", href: "/gia-11?section=deadlines" },
-      { title: "Результаты", href: "/gia-11?section=results" },
-      { title: "Отчеты комиссий", href: "/gia-11?section=reports" },
-      { title: "Итоговое сочинение", href: "/gia-11?section=essay" },
-      { title: "Аналитические материалы ЕГЭ", href: "/gia-11?section=analytics" },
+      {
+        title: "Нормативные документы",
+        href: "/gia-11/normative-documents",
+      },
+      {
+        title: "Демоверсии",
+        href: "/gia-11/demo",
+      },
+      {
+        title: "Сроки проведения",
+        href: "/gia-11/deadlines",
+      },
+      {
+        title: "Результаты",
+        href: "/gia-11/results",
+      },
+      {
+        title: "Отчеты комиссий",
+        href: "/gia-11/reports",
+      },
+      {
+        title: "Итоговое сочинение",
+        href: "/gia-11/essay",
+      },
+      {
+        title: "Аналитические материалы ЕГЭ",
+        href: "/gia-11/analytics",
+      },
     ],
   },
   {
@@ -126,7 +165,10 @@ export const navigation: NavItem[] = [
     items: [
       { title: "Контакты", href: "/o-centre/kontakty" },
       { title: "Об учреждении", href: "/o-centre/ob-uchrezhdenii" },
-      { title: "Противодействие коррупции", href: "/o-centre/protivodeystvie-korruptsii" },
+      {
+        title: "Противодействие коррупции",
+        href: "/o-centre/protivodeystvie-korruptsii",
+      },
       { title: "Совещания", href: "/o-centre/soveshchaniya" },
       { title: "Обучение", href: "/o-centre/obuchenie" },
     ],
@@ -162,6 +204,7 @@ export const usefulResources: NavLink[] = [
   {
     title: "РЦОИ России",
     href: "https://rcoi.ru/",
-    description: "Информационный ресурс региональных центров обработки информации",
+    description:
+      "Информационный ресурс региональных центров обработки информации",
   },
 ];

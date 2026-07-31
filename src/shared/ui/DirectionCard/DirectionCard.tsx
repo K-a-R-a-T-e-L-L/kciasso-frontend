@@ -51,7 +51,7 @@ export default function DirectionCard({
       {content}
     </a>
   ) : (
-    <Link className={className} href={href} aria-label={ariaLabel}>
+    <Link className={className} style={{height: '100%'}} href={href} aria-label={ariaLabel}>
       {content}
     </Link>
   );

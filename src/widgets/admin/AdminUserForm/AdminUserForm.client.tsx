@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { Alert, Box, Button, Checkbox, Divider, Group, PasswordInput, Radio, Select, SimpleGrid, Stack, Text, TextInput, Title } from "@mantine/core";
+import { Alert, Button, Checkbox, Divider, Group, PasswordInput, Radio, Select, SimpleGrid, Stack, Text, TextInput, Title } from "@mantine/core";
 import type { AdminUserDto } from "@/shared/api/generated/types";
 import type { AdminUserFormState } from "./AdminUserForm.types";
 import { adminUserFormInitialState } from "./AdminUserForm.types";
@@ -27,7 +27,7 @@ export default function AdminUserForm({ initialData, includePassword = false, ac
   const toggleGroup = (group: Group) => setGroups((current) => current.includes(group) ? current.filter((item) => item !== group) : [...current, group]);
   const summary = role === "SUPER_ADMIN" ? "Полный административный доступ, включая пользователей." : [siteSettings && "настройки сайта", news && "новости", mode === "ALL" ? "все документы" : mode === "SELECTED_GROUPS" && groups.length ? `документы: ${groups.length} групп` : null].filter(Boolean).join(", ") || "Нет доступа к контенту";
 
-  return <Box component="form" action={formAction}><Stack gap="lg">
+  return <Stack component="form" {...({ action: formAction } as { action: typeof formAction })} gap="lg">
     <SimpleGrid cols={{ base: 1, sm: 2 }}>
       <TextInput label="Имя" name="name" defaultValue={initialData?.name ?? ""} required />
       <TextInput label="Email" type="email" name="email" defaultValue={initialData?.email ?? ""} required />
@@ -47,5 +47,5 @@ export default function AdminUserForm({ initialData, includePassword = false, ac
     </Stack>
     {state.error ? <Alert color="red">{state.error}</Alert> : null}
     <Button type="submit" loading={pending}>{pending ? "Сохранение..." : submitLabel}</Button>
-  </Stack></Box>;
+  </Stack>;
 }

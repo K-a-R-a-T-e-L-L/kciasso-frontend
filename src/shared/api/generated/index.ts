@@ -69,6 +69,8 @@ export type {
   AdminNewsControllerGetNews403,
   AdminNewsControllerGetNewsQuery,
   AdminNewsControllerGetNewsQueryParams,
+  AdminNewsControllerGetNewsQueryParamsSortEnumKey,
+  AdminNewsControllerGetNewsQueryParamsStatusEnumKey,
   AdminNewsControllerGetNewsQueryResponse,
 } from "./types/AdminNewsControllerGetNews";
 export type {
@@ -687,6 +689,8 @@ export { userControllerGetAdminUsers } from "./clients/usersController/userContr
 export { userControllerMe } from "./clients/usersController/userControllerMe";
 export { userControllerUpdate } from "./clients/usersController/userControllerUpdate";
 export { userControllerUpdateAdminUser } from "./clients/usersController/userControllerUpdateAdminUser";
+export { adminNewsControllerGetNewsQueryParamsSortEnum } from "./types/AdminNewsControllerGetNews";
+export { adminNewsControllerGetNewsQueryParamsStatusEnum } from "./types/AdminNewsControllerGetNews";
 export { adminSiteSettingsResponseDtoHomeSectionsOrderEnum } from "./types/AdminSiteSettingsResponseDto";
 export { adminUserDtoDocumentGroupsEnum } from "./types/AdminUserDto";
 export { adminUserDtoDocumentsAccessModeEnum } from "./types/AdminUserDto";

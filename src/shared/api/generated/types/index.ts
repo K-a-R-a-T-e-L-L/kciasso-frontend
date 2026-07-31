@@ -69,6 +69,8 @@ export type {
   AdminNewsControllerGetNews403,
   AdminNewsControllerGetNewsQuery,
   AdminNewsControllerGetNewsQueryParams,
+  AdminNewsControllerGetNewsQueryParamsSortEnumKey,
+  AdminNewsControllerGetNewsQueryParamsStatusEnumKey,
   AdminNewsControllerGetNewsQueryResponse,
 } from "./AdminNewsControllerGetNews";
 export type {
@@ -621,6 +623,8 @@ export type {
   UserControllerUpdateAdminUserPathParams,
 } from "./UserControllerUpdateAdminUser";
 export type { UserSectionPermission } from "./UserSectionPermission";
+export { adminNewsControllerGetNewsQueryParamsSortEnum } from "./AdminNewsControllerGetNews";
+export { adminNewsControllerGetNewsQueryParamsStatusEnum } from "./AdminNewsControllerGetNews";
 export { adminSiteSettingsResponseDtoHomeSectionsOrderEnum } from "./AdminSiteSettingsResponseDto";
 export { adminUserDtoDocumentGroupsEnum } from "./AdminUserDto";
 export { adminUserDtoDocumentsAccessModeEnum } from "./AdminUserDto";

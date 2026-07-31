@@ -48,8 +48,9 @@ describe("PlacementSelector", () => {
   it("locks body scrolling and restores the previous value on close", () => {
     document.body.style.overflow = "clip";
     const view = render(<PlacementSelector value={[]} onApply={vi.fn()} onCancel={vi.fn()} />);
-    expect(document.body.style.overflow).toBe("hidden");
+    expect(document.body).toHaveAttribute("data-scroll-locked", "1");
     view.unmount();
+    expect(document.body).not.toHaveAttribute("data-scroll-locked");
     expect(document.body.style.overflow).toBe("clip");
     document.body.style.overflow = "";
   });

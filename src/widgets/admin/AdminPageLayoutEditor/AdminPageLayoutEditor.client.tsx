@@ -1,22 +1,24 @@
 "use client";
 
 import { useState } from "react";
-import { DndContext, KeyboardSensor, PointerSensor, closestCenter, useSensor, useSensors, type DragEndEvent } from "@dnd-kit/core";
-import { SortableContext, arrayMove, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { DndContext, KeyboardSensor, PointerSensor, TouchSensor, closestCenter, useSensor, useSensors, type DragEndEvent } from "@dnd-kit/core";
+import { SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Alert, Badge, Box, Button, Card, Group, Modal, NumberInput, Paper, Stack, Switch, Text, Textarea, TextInput, Title } from "@mantine/core";
+import { Alert, Badge, Box, Button, Card, Collapse, Group, Modal, NumberInput, Paper, Stack, Switch, Text, Textarea, TextInput, Title, Tooltip } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import Link from "next/link";
-import type {
-  AdminGlobalHtmlSection,
-  AdminPageLayout,
-  AdminPageSection,
-} from "@/shared/api/adapters/admin-page-layout.adapter";
+import type { AdminPageLayout, AdminPageSection } from "@/shared/api/adapters/admin-page-layout.adapter";
+import {
+  PAGE_DND_SENSOR_OPTIONS,
+  clampPreviewHeight,
+  reorderSections,
+  sectionActionModel,
+  sectionUiModel,
+} from "./admin-section-view-model";
 
 type Props = {
   pageKey: string;
   initialData: AdminPageLayout;
-  inheritedGlobalSections?: AdminGlobalHtmlSection[];
   canManageCustomHtml: boolean;
 };
 
@@ -58,6 +60,9 @@ function SortableSection({
     id: section.placementId,
     disabled: disabled || !section.canReorder,
   });
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const model = sectionUiModel(section);
+  const actions = sectionActionModel(section);
   const srcDoc = `<style>${section.css ?? ""}</style>${section.html ?? ""}<script>${section.javascript ?? ""}</script>`;
 
   return (
@@ -70,17 +75,27 @@ function SortableSection({
     >
       <Group justify="space-between" align="flex-start" wrap="wrap">
         <Group gap="sm" align="flex-start">
-          <Button variant="subtle" size="compact-md" {...attributes} {...listeners} aria-label="Перетащить секцию">
-            ↕
-          </Button>
+          {section.canReorder ? (
+            <Tooltip label="Перетащите, чтобы изменить порядок">
+              <Button
+                variant="subtle"
+                size="compact-md"
+                {...attributes}
+                {...listeners}
+                aria-label={`Переместить секцию ${model.friendlyTitle}`}
+                disabled={disabled}
+              >
+                ↕
+              </Button>
+            </Tooltip>
+          ) : null}
           <Stack gap={3}>
             <Group gap="xs">
-              <Text fw={700}>{index + 1}. {section.name}</Text>
-              <Badge variant="light">{section.type}</Badge>
-              {section.isGlobal ? <Badge color="violet">GLOBAL</Badge> : null}
+              <Text fw={700}>{index + 1}. {model.friendlyTitle}</Text>
+              <Badge variant="light" color={model.badgeColor}>{model.badgeLabel}</Badge>
             </Group>
             <Text size="sm" c="dimmed">
-              {section.systemRendererKey ?? `iframe ${section.iframeHeight ?? 320}px`}
+              {model.friendlyDescription ?? model.immutableReason}
             </Text>
           </Stack>
         </Group>
@@ -91,28 +106,41 @@ function SortableSection({
             disabled={disabled || !section.canToggle}
             label="Видима"
           />
-          <Button variant="subtle" onClick={onEdit} disabled={disabled || !section.canEditContent}>
+          {actions.edit ? <Button variant="subtle" onClick={onEdit} disabled={disabled}>
             Изменить
-          </Button>
-          {section.canDelete ? (
+          </Button> : null}
+          {actions.remove ? (
             <Button color="red" variant="subtle" onClick={onDelete} disabled={disabled}>
               Удалить
             </Button>
           ) : null}
+          {actions.globalHref ? (
+            <Button component={Link} href={actions.globalHref} variant="subtle">
+              Открыть глобальную секцию
+            </Button>
+          ) : null}
+          {model.settingsHref ? (
+            <Button component={Link} href={model.settingsHref} variant="subtle">
+              Настройки контактов
+            </Button>
+          ) : null}
         </Group>
       </Group>
-      {section.canEditContent ? (
-        <Box
-          component="iframe"
-          mt="md"
-          w="100%"
-          h={section.iframeHeight ?? 320}
-          title={`Предпросмотр: ${section.name}`}
-          srcDoc={srcDoc}
-          sandbox="allow-scripts allow-forms allow-modals allow-popups allow-downloads"
-          referrerPolicy="no-referrer"
-        />
-      ) : null}
+      {actions.preview ? <>
+        <Button variant="subtle" size="xs" onClick={() => setPreviewOpen((value) => !value)} aria-expanded={previewOpen}>{previewOpen ? "\u0421\u043a\u0440\u044b\u0442\u044c \u043f\u0440\u0435\u0434\u043f\u0440\u043e\u0441\u043c\u043e\u0442\u0440" : "\u041f\u043e\u043a\u0430\u0437\u0430\u0442\u044c \u043f\u0440\u0435\u0434\u043f\u0440\u043e\u0441\u043c\u043e\u0442\u0440"}</Button>
+        <Collapse in={previewOpen}>
+          {previewOpen ? (section.html ? <Box
+            component="iframe"
+            mt="md"
+            w="100%"
+            h={clampPreviewHeight(section.iframeHeight)}
+            title={`Предпросмотр: ${section.name}`}
+            srcDoc={srcDoc}
+            sandbox="allow-scripts allow-forms allow-modals allow-popups allow-downloads"
+            referrerPolicy="no-referrer"
+          /> : <Text size="sm" c="dimmed">{"\u041f\u0440\u0435\u0434\u043f\u0440\u043e\u0441\u043c\u043e\u0442\u0440 \u043f\u043e\u043a\u0430 \u043f\u0443\u0441\u0442"}</Text>) : null}
+        </Collapse>
+      </> : <Text mt="xs" size="sm" c="dimmed">Системный раздел отображается на публичной странице</Text>}
     </Card>
   );
 }
@@ -120,7 +148,6 @@ function SortableSection({
 export default function AdminPageLayoutEditor({
   pageKey,
   initialData,
-  inheritedGlobalSections = [],
   canManageCustomHtml,
 }: Props) {
   const [sections, setSections] = useState(() => [...initialData.sections].sort((a, b) => a.sortOrder - b.sortOrder));
@@ -131,7 +158,8 @@ export default function AdminPageLayoutEditor({
   const [modalOpen, setModalOpen] = useState(false);
   const [custom, setCustom] = useState<CustomForm>(emptyCustom);
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, PAGE_DND_SENSOR_OPTIONS.pointer),
+    useSensor(TouchSensor, PAGE_DND_SENSOR_OPTIONS.touch),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
   );
 
@@ -154,13 +182,14 @@ export default function AdminPageLayoutEditor({
     });
     if (response.status === 409) {
       await load().catch(() => undefined);
-      throw new Error("Layout изменён другим администратором. Данные перезагружены.");
+      throw new StaleLayoutError();
     }
     if (!response.ok) throw new Error("Не удалось сохранить изменения");
     acceptLayout(await response.json() as AdminPageLayout);
   };
 
-  const saveOrder = async (next: AdminPageSection[]) => {
+  const saveOrder = async (next: AdminPageSection[], previous: AdminPageSection[]) => {
+    setSections(next);
     setBusy(true);
     setError("");
     try {
@@ -169,8 +198,16 @@ export default function AdminPageLayoutEditor({
         expectedRevision: revision,
       });
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "Не удалось сохранить порядок");
-      await load().catch(() => undefined);
+      if (reason instanceof StaleLayoutError) {
+        const message = "Страница была изменена в другой вкладке. Загружен актуальный порядок.";
+        setError(message);
+        notifications.show({ color: "orange", message });
+      } else {
+        setSections(previous);
+        const message = reason instanceof Error ? reason.message : "Не удалось сохранить порядок. Порядок восстановлен.";
+        setError(message);
+        notifications.show({ color: "red", message });
+      }
     } finally {
       setBusy(false);
     }
@@ -178,9 +215,9 @@ export default function AdminPageLayoutEditor({
 
   const onDragEnd = ({ active, over }: DragEndEvent) => {
     if (!over || active.id === over.id || busy) return;
-    const from = sections.findIndex((item) => item.placementId === active.id);
-    const to = sections.findIndex((item) => item.placementId === over.id);
-    if (from >= 0 && to >= 0) void saveOrder(arrayMove(sections, from, to));
+    const previous = sections;
+    const next = reorderSections(sections, Number(active.id), Number(over.id));
+    if (next !== previous) void saveOrder(next, previous);
   };
 
   const toggle = async (section: AdminPageSection) => {
@@ -251,7 +288,7 @@ export default function AdminPageLayoutEditor({
         <Stack gap={3}>
           <Text size="xs" fw={800} tt="uppercase" c="kciassoBlue.6">Редактор страниц</Text>
           <Title order={2}>Секции страницы: {initialData.title}</Title>
-          <Text c="dimmed">{initialData.routePattern} · Ревизия {revision} · {sections.length} секций</Text>
+          <Text c="dimmed">{initialData.routePattern} · {sections.length} секций</Text>
         </Stack>
         {canManageCustomHtml ? <Button onClick={() => beginEdit()} disabled={busy}>Добавить HTML-секцию</Button> : null}
       </Group>
@@ -277,25 +314,6 @@ export default function AdminPageLayoutEditor({
           </SortableContext>
         </DndContext>
       )}
-      {inheritedGlobalSections.length ? (
-        <Stack gap="sm">
-          <Group justify="space-between">
-            <Title order={3}>Глобальные HTML-секции</Title>
-            <Button component={Link} href="/admin/pages?tab=global" variant="light">Открыть глобальный редактор</Button>
-          </Group>
-          {inheritedGlobalSections.map((section) => (
-            <Card key={section.definitionId} withBorder>
-              <Group justify="space-between">
-                <Stack gap={2}>
-                  <Group><Text fw={700}>{section.name}</Text><Badge color="violet">GLOBAL</Badge></Group>
-                  <Text size="sm" c="dimmed">Содержимое общее, порядок и видимость управляются отдельно на каждой странице.</Text>
-                </Stack>
-                <Badge>{section.visiblePlacements}/{section.totalPlacements} видимых</Badge>
-              </Group>
-            </Card>
-          ))}
-        </Stack>
-      ) : null}
       <Modal
         opened={canManageCustomHtml && modalOpen}
         onClose={() => { setModalOpen(false); setEditing(null); }}
@@ -313,4 +331,10 @@ export default function AdminPageLayoutEditor({
       </Modal>
     </Stack>
   );
+}
+
+class StaleLayoutError extends Error {
+  constructor() {
+    super("STALE_PAGE_LAYOUT_REVISION");
+  }
 }

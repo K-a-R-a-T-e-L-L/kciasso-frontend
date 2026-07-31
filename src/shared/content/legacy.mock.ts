@@ -1,4 +1,5 @@
 import { usefulResources } from "@/shared/config/navigation";
+import { getGiaSections } from "@/shared/content/gia-sections";
 
 export type CardItem = {
   title: string;
@@ -443,40 +444,16 @@ const giaReferencePageDrafts: SlugPage[] = giaReferenceCards.map((card) =>
 
 export const giaReferencePages = withRelated(giaReferencePageDrafts, "Другие справочные страницы ГИА");
 
-const commonExamSections: ExamSection[] = [
-  {
-    id: "docs",
-    title: "Нормативные документы",
-    description: "Приказы, положения и методические материалы по проведению государственной итоговой аттестации.",
-  },
-  {
-    id: "demo",
-    title: "Демоверсии",
-    description: "Демонстрационные варианты, спецификации и кодификаторы экзаменационных материалов.",
-  },
-  {
-    id: "dates",
-    title: "Сроки проведения",
-    description: "Расписание экзаменов, резервные дни и важные даты для участников государственной итоговой аттестации.",
-  },
-  {
-    id: "results",
-    title: "Результаты",
-    description: "Информация о публикации результатов, сроках обработки экзаменационных работ и рассмотрении апелляций.",
-  },
-  {
-    id: "reports",
-    title: "Отчеты председателей предметных комиссий",
-    description: "Аналитические материалы и отчеты председателей предметных комиссий по итогам экзаменационной кампании.",
-  },
-];
-
 export const gia9Page: ExamPageData = {
   title: "ГИА-9",
   eyebrow: "Государственная итоговая аттестация",
   href: "/gia-9",
   description: "Информация для участников ГИА-9, родителей и образовательных организаций: документы, сроки проведения, демоверсии и результаты.",
-  sections: commonExamSections,
+  sections: getGiaSections("gia-9").map(({ id, title, description }) => ({
+    id,
+    title,
+    description,
+  })),
 };
 
 export const gia11Page: ExamPageData = {
@@ -484,19 +461,11 @@ export const gia11Page: ExamPageData = {
   eyebrow: "Государственная итоговая аттестация",
   href: "/gia-11",
   description: "Информация по ЕГЭ и ГИА-11: нормативные документы, сроки проведения, результаты, итоговое сочинение и аналитические материалы.",
-  sections: [
-    ...commonExamSections,
-    {
-      id: "essay",
-      title: "Итоговое сочинение",
-      description: "Материалы, порядок проведения и результаты итогового сочинения и изложения.",
-    },
-    {
-      id: "analytics",
-      title: "Аналитические материалы ЕГЭ",
-      description: "Сводные аналитические материалы по результатам проведения единого государственного экзамена.",
-    },
-  ],
+  sections: getGiaSections("gia-11").map(({ id, title, description }) => ({
+    id,
+    title,
+    description,
+  })),
 };
 
 export const contacts = {

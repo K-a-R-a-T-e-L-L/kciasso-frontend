@@ -7,6 +7,7 @@ import {
   Box,
   Button,
   Card,
+  Collapse,
   Group,
   Modal,
   NumberInput,
@@ -21,6 +22,7 @@ import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
 import { IconEdit, IconPlus, IconTrash } from "@tabler/icons-react";
 import type { AdminGlobalHtmlSection } from "@/shared/api/adapters/admin-page-layout.adapter";
+import { clampPreviewHeight } from "@/widgets/admin/AdminPageLayoutEditor/admin-section-view-model";
 
 type FormState = {
   name: string;
@@ -38,29 +40,40 @@ const empty: FormState = {
   iframeHeight: 320,
 };
 
-export default function AdminGlobalHtmlSections({ initialSections }: { initialSections: AdminGlobalHtmlSection[] }) {
+export default function AdminGlobalHtmlSections({
+  initialSections,
+}: {
+  initialSections: AdminGlobalHtmlSection[];
+}) {
   const [sections, setSections] = useState(initialSections);
   const [editing, setEditing] = useState<AdminGlobalHtmlSection | null>(null);
   const [form, setForm] = useState<FormState>(empty);
   const [opened, setOpened] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [previewId, setPreviewId] = useState<number | null>(null);
 
   const begin = (section?: AdminGlobalHtmlSection) => {
     setEditing(section ?? null);
-    setForm(section ? {
-      name: section.name,
-      html: section.html ?? "",
-      css: section.css ?? "",
-      javascript: section.javascript ?? "",
-      iframeHeight: section.iframeHeight ?? 320,
-    } : empty);
+    setForm(
+      section
+        ? {
+            name: section.name,
+            html: section.html ?? "",
+            css: section.css ?? "",
+            javascript: section.javascript ?? "",
+            iframeHeight: section.iframeHeight ?? 320,
+          }
+        : empty,
+    );
     setOpened(true);
   };
 
   const reload = async () => {
-    const response = await fetch("/api/admin/pages/global-sections", { cache: "no-store" });
+    const response = await fetch("/api/admin/pages/global-sections", {
+      cache: "no-store",
+    });
     if (!response.ok) throw new Error("Не удалось обновить глобальные секции");
-    setSections(await response.json() as AdminGlobalHtmlSection[]);
+    setSections((await response.json()) as AdminGlobalHtmlSection[]);
   };
 
   const save = async () => {
@@ -73,42 +86,80 @@ export default function AdminGlobalHtmlSections({ initialSections }: { initialSe
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             ...form,
-            ...(editing ? { expectedDefinitionRevision: editing.revision } : {}),
+            ...(editing
+              ? { expectedDefinitionRevision: editing.revision }
+              : {}),
           }),
         },
       );
       if (response.status === 409) {
-        throw new Error("Секция была изменена в другой вкладке. Данные обновлены.");
+        throw new Error(
+          "Секция была изменена в другой вкладке. Данные обновлены.",
+        );
       }
-      if (!response.ok) throw new Error("Не удалось сохранить глобальную секцию");
+      if (!response.ok)
+        throw new Error("Не удалось сохранить глобальную секцию");
       await reload();
       setOpened(false);
-      notifications.show({ color: "teal", message: "Глобальная секция сохранена" });
+      notifications.show({
+        color: "teal",
+        message: "Глобальная секция сохранена",
+      });
     } catch (error) {
       await reload().catch(() => undefined);
-      notifications.show({ color: "red", message: error instanceof Error ? error.message : "Ошибка сохранения" });
+      notifications.show({
+        color: "red",
+        message: error instanceof Error ? error.message : "Ошибка сохранения",
+      });
     } finally {
       setBusy(false);
     }
   };
 
-  const remove = (section: AdminGlobalHtmlSection) => modals.openConfirmModal({
-    title: "Удалить глобальную секцию?",
-    children: <Text size="sm">Definition и её placements будут удалены со всех публичных страниц.</Text>,
-    labels: { confirm: "Удалить", cancel: "Отмена" },
-    confirmProps: { color: "red" },
-    onConfirm: async () => {
-      const response = await fetch(`/api/admin/pages/global-sections/${section.definitionId}`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ expectedDefinitionRevision: section.revision }),
-      });
-      if (!response.ok) {
-        notifications.show({ color: "red", message: "Не удалось удалить секцию" });
-      }
-      await reload();
-    },
-  });
+  const remove = (section: AdminGlobalHtmlSection) =>
+    modals.openConfirmModal({
+      title: "Удалить глобальную секцию?",
+      children: (
+        <Text size="sm">
+          Секция будет удалена со всех публичных страниц. Это действие нельзя
+          отменить.
+        </Text>
+      ),
+      labels: { confirm: "Удалить", cancel: "Отмена" },
+      confirmProps: { color: "red" },
+      onConfirm: async () => {
+        const response = await fetch(
+          `/api/admin/pages/global-sections/${section.definitionId}`,
+          {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              expectedDefinitionRevision: section.revision,
+            }),
+          },
+        );
+        if (response.status === 409) {
+          await reload().catch(() => undefined);
+          notifications.show({
+            color: "orange",
+            message: "Секция была изменена в другой вкладке. Список обновлён.",
+          });
+          return;
+        }
+        if (!response.ok) {
+          notifications.show({
+            color: "red",
+            message: "Не удалось удалить секцию",
+          });
+          return;
+        }
+        await reload();
+        notifications.show({
+          color: "teal",
+          message: "Глобальная секция удалена",
+        });
+      },
+    });
 
   return (
     <Stack gap="lg">
@@ -116,44 +167,91 @@ export default function AdminGlobalHtmlSections({ initialSections }: { initialSe
         <Stack gap={2}>
           <Title order={2}>Глобальные секции</Title>
           <Text c="dimmed">
-            Содержимое хранится один раз; порядок и видимость каждого placement управляются на соответствующей странице.
+            Содержимое хранится один раз; порядок и видимость каждого placement
+            управляются на соответствующей странице.
           </Text>
         </Stack>
-        <Button leftSection={<IconPlus size={18} />} onClick={() => begin()}>Создать секцию</Button>
+        <Button leftSection={<IconPlus size={18} />} onClick={() => begin()}>
+          Создать секцию
+        </Button>
       </Group>
       {sections.length ? (
-        <SimpleGrid cols={{ base: 1, md: 2 }}>
+        <SimpleGrid cols={{ base: 1, md: 2, xl: 3 }}>
           {sections.map((section) => (
             <Card key={section.definitionId} withBorder shadow="sm">
               <Stack gap="sm">
                 <Group justify="space-between">
                   <Stack gap={1}>
-                    <Title order={3} size="h5">{section.name}</Title>
-                    <Text size="xs" c="dimmed">{section.key ?? `definition #${section.definitionId}`}</Text>
+                    <Title order={3} size="h5">
+                      {section.name}
+                    </Title>
+                    <Text size="xs" c="dimmed">
+                      Содержимое используется на нескольких страницах
+                    </Text>
                   </Stack>
-                  <Badge color="violet">GLOBAL_CUSTOM_HTML</Badge>
+                  <Badge color="violet">Глобальная HTML-секция</Badge>
                 </Group>
-                <Group>
-                  <Text size="sm">Placements: {section.totalPlacements}</Text>
-                  <Text size="sm">Видимых: {section.visiblePlacements}</Text>
-                  <Text size="sm">Скрытых: {section.hiddenPlacements}</Text>
-                  <Text size="sm">Ревизия: {section.revision}</Text>
+                <Group gap={6}>
+                  <Badge variant="light" color="gray">
+                    На страницах: {section.totalPlacements}
+                  </Badge>
+                  <Badge variant="light" color="teal">
+                    Видима: {section.visiblePlacements}
+                  </Badge>
+                  <Badge variant="light" color="orange">
+                    Скрыта: {section.hiddenPlacements}
+                  </Badge>
                 </Group>
-                <Box
-                  component="iframe"
-                  title={`Предпросмотр: ${section.name}`}
-                  srcDoc={`<style>${section.css ?? ""}</style>${section.html ?? ""}<script>${section.javascript ?? ""}</script>`}
-                  sandbox="allow-scripts allow-forms allow-modals allow-popups allow-downloads"
-                  referrerPolicy="no-referrer"
-                  w="100%"
-                  h={Math.min(section.iframeHeight ?? 320, 260)}
-                  bd="1px solid var(--mantine-color-gray-3)"
-                />
+                <Button
+                  variant="subtle"
+                  size="xs"
+                  onClick={() =>
+                    setPreviewId((current) =>
+                      current === section.definitionId
+                        ? null
+                        : section.definitionId,
+                    )
+                  }
+                  aria-expanded={previewId === section.definitionId}
+                >
+                  {previewId === section.definitionId
+                    ? "Скрыть предпросмотр"
+                    : "Показать предпросмотр"}
+                </Button>
+                <Collapse in={previewId === section.definitionId}>
+                  {previewId === section.definitionId ? (
+                    section.html ? (
+                      <Box
+                        component="iframe"
+                        title={`Предпросмотр: ${section.name}`}
+                        srcDoc={`<style>${section.css ?? ""}</style>${section.html ?? ""}<script>${section.javascript ?? ""}</script>`}
+                        sandbox="allow-scripts allow-forms allow-modals allow-popups allow-downloads"
+                        referrerPolicy="no-referrer"
+                        w="100%"
+                        h={clampPreviewHeight(section.iframeHeight)}
+                        bd="1px solid var(--mantine-color-gray-3)"
+                      />
+                    ) : (
+                      <Text size="sm" c="dimmed">
+                        Предпросмотр пока пуст
+                      </Text>
+                    )
+                  ) : null}
+                </Collapse>
                 <Group justify="flex-end">
-                  <ActionIcon variant="light" aria-label="Редактировать" onClick={() => begin(section)}>
+                  <ActionIcon
+                    variant="light"
+                    aria-label="Редактировать"
+                    onClick={() => begin(section)}
+                  >
                     <IconEdit size={17} />
                   </ActionIcon>
-                  <ActionIcon color="red" variant="light" aria-label="Удалить" onClick={() => remove(section)}>
+                  <ActionIcon
+                    color="red"
+                    variant="light"
+                    aria-label="Удалить"
+                    onClick={() => remove(section)}
+                  >
                     <IconTrash size={17} />
                   </ActionIcon>
                 </Group>
@@ -162,23 +260,109 @@ export default function AdminGlobalHtmlSections({ initialSections }: { initialSe
           ))}
         </SimpleGrid>
       ) : (
-        <Card withBorder><Text c="dimmed">Глобальные секции ещё не созданы.</Text></Card>
+        <Card withBorder>
+          <Text c="dimmed">Глобальные секции ещё не созданы.</Text>
+        </Card>
       )}
       <Modal
         opened={opened}
         onClose={() => setOpened(false)}
-        title={editing ? "Редактирование глобальной секции" : "Новая глобальная секция"}
+        title={
+          editing
+            ? "Редактирование глобальной секции"
+            : "Новая глобальная секция"
+        }
         size="xl"
       >
         <Stack>
-          <TextInput label="Название" value={form.name} onChange={(event) => setForm((current) => ({ ...current, name: event.currentTarget.value }))} />
-          <Textarea label="HTML" minRows={8} autosize value={form.html} onChange={(event) => setForm((current) => ({ ...current, html: event.currentTarget.value }))} />
-          <Textarea label="CSS" minRows={4} autosize value={form.css} onChange={(event) => setForm((current) => ({ ...current, css: event.currentTarget.value }))} />
-          <Textarea label="JavaScript" minRows={4} autosize value={form.javascript} onChange={(event) => setForm((current) => ({ ...current, javascript: event.currentTarget.value }))} />
-          <NumberInput label="Высота iframe" min={120} max={4000} value={form.iframeHeight} onChange={(value) => setForm((current) => ({ ...current, iframeHeight: Number(value) || 320 }))} />
+          <TextInput
+            label="Название"
+            value={form.name}
+            onChange={(event) => {
+              const value = event.currentTarget.value;
+
+              setForm((current) => ({
+                ...current,
+                name: value,
+              }));
+            }}
+          />
+
+          <Textarea
+            label="HTML"
+            minRows={8}
+            autosize
+            value={form.html}
+            onChange={(event) => {
+              const value = event.currentTarget.value;
+
+              setForm((current) => ({
+                ...current,
+                html: value,
+              }));
+            }}
+          />
+
+          <Textarea
+            label="CSS"
+            minRows={4}
+            autosize
+            value={form.css}
+            onChange={(event) => {
+              const value = event.currentTarget.value;
+
+              setForm((current) => ({
+                ...current,
+                css: value,
+              }));
+            }}
+          />
+
+          <Textarea
+            label="JavaScript"
+            minRows={4}
+            autosize
+            value={form.javascript}
+            onChange={(event) => {
+              const value = event.currentTarget.value;
+
+              setForm((current) => ({
+                ...current,
+                javascript: value,
+              }));
+            }}
+          />
+
+          <NumberInput
+            label="Высота iframe"
+            min={120}
+            max={4000}
+            value={form.iframeHeight}
+            onChange={(value) => {
+              const iframeHeight =
+                typeof value === "number" && Number.isFinite(value)
+                  ? value
+                  : 320;
+
+              setForm((current) => ({
+                ...current,
+                iframeHeight,
+              }));
+            }}
+          />
+
           <Group justify="flex-end">
-            <Button variant="default" onClick={() => setOpened(false)}>Отмена</Button>
-            <Button loading={busy} disabled={!form.name.trim() || !form.html.trim()} onClick={() => void save()}>Сохранить</Button>
+            <Button variant="default" onClick={() => setOpened(false)}>
+              Отмена
+            </Button>
+
+            <Button
+              loading={busy}
+              disabled={!form.name.trim() || !form.html.trim()}
+              onClick={() => void save()}
+            >
+              Сохранить
+            </Button>
           </Group>
         </Stack>
       </Modal>

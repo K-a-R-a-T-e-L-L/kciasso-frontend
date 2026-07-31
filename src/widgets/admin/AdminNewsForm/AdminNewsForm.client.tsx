@@ -1,6 +1,22 @@
 "use client";
 
-import { Box, Text, Title, Button, Image } from "@mantine/core";
+import {
+  Alert,
+  Button,
+  FileButton,
+  FileInput,
+  Group,
+  Image,
+  Input,
+  Paper,
+  Select,
+  SimpleGrid,
+  Stack,
+  Text,
+  Textarea,
+  TextInput,
+  Title,
+} from "@mantine/core";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type {
   AdminNewsCategoryDto,
@@ -92,7 +108,7 @@ export default function AdminNewsForm({
   const [uploading, setUploading] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  const fileRef = useRef<HTMLInputElement>(null);
+  const fileResetRef = useRef<() => void>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const objectUrl = useRef<string | null>(null);
   const abort = useRef<AbortController | null>(null);
@@ -122,7 +138,7 @@ export default function AdminNewsForm({
     objectUrl.current = null;
     setPreview("");
     setSelectedFile(null);
-    if (clearInput && fileRef.current) fileRef.current.value = "";
+    if (clearInput) fileResetRef.current?.();
   }, []);
   const choose = (file: File | null) => {
     setCoverError(null);
@@ -281,80 +297,63 @@ export default function AdminNewsForm({
   };
   const actionError = submitError;
   return (
-    <Box component="form" ref={formRef} className={""} onSubmit={submit}>
-      <Box component="input" type="hidden" name="coverMutationKind" defaultValue="unchanged" />
-      <Box component="input" type="hidden" name="coverImageUrl" defaultValue="" />
-      <Box component="input" type="hidden" name="coverImageSource" defaultValue="" />
-      <Box component="input" type="hidden" name="pendingOwnedMediaKey" defaultValue="" />
-      <Box className={""}>
-        <Box component="label" className={""}>
-          <Text>Заголовок</Text>
-          <Box component="input"
-            name="title"
-            type="text"
-            defaultValue={state.values?.title ?? initialData?.title ?? ""}
-            required
-          />
-        </Box>
-        <Box component="label">
-          <Text>Slug (необязательно)</Text>
-          <Box component="input"
-            name="slug"
-            type="text"
-            defaultValue={state.values?.slug ?? initialData?.slug ?? ""}
-          />
-          <Text>
-            Оставьте поле пустым — адрес создастся автоматически из заголовка.
-          </Text>
-        </Box>
-        <Box component="label">
-          <Text>Категория</Text>
-          <Box component="select"
-            name="categoryId"
-            defaultValue={
-              state.values?.categoryId ??
-              (initialData?.category?.id ? String(initialData.category.id) : "")
-            }
-          >
-            <Box component="option" value="">Без рубрики</Box>
-            {categories.map((x) => (
-              <Box component="option" key={x.id} value={x.id}>
-                {x.title}
-              </Box>
-            ))}
-          </Box>
-        </Box>
-        <Box component="label" className={""}>
-          <Text>Краткое описание</Text>
-          <Box component="textarea"
-            name="excerpt"
-            rows={4}
-            defaultValue={state.values?.excerpt ?? initialData?.excerpt ?? ""}
-            required
-          />
-        </Box>
-        <Box component="label" className={""}>
-          <Text>Содержание</Text>
-          <Box component="textarea"
-            name="content"
-            rows={14}
-            defaultValue={state.values?.content ?? initialData?.content ?? ""}
-            required
-          />
-        </Box>
-        <Box component="section"
-          className={`${""} ${""}`}
-          aria-labelledby="cover-title"
-        >
-          <Box>
-            <Title id="cover-title">Обложка новости</Title>
-            <Text>Добавьте JPG, PNG или WebP до 10 МБ.</Text>
-          </Box>
-          <Box className={""}>
+    <Stack component="form" ref={formRef as never} gap="lg" onSubmit={submit as never}>
+      <Input type="hidden" name="coverMutationKind" defaultValue="unchanged" />
+      <Input type="hidden" name="coverImageUrl" defaultValue="" />
+      <Input type="hidden" name="coverImageSource" defaultValue="" />
+      <Input type="hidden" name="pendingOwnedMediaKey" defaultValue="" />
+
+      <SimpleGrid cols={{ base: 1, md: 2 }}>
+        <TextInput
+          name="title"
+          label="Заголовок"
+          defaultValue={state.values?.title ?? initialData?.title ?? ""}
+          required
+        />
+        <TextInput
+          name="slug"
+          label="Slug (необязательно)"
+          description="Оставьте поле пустым — адрес создастся автоматически из заголовка."
+          defaultValue={state.values?.slug ?? initialData?.slug ?? ""}
+        />
+      </SimpleGrid>
+      <Select
+        name="categoryId"
+        label="Категория"
+        clearable
+        defaultValue={
+          state.values?.categoryId
+          ?? (initialData?.category?.id ? String(initialData.category.id) : null)
+        }
+        data={categories.map((category) => ({ value: String(category.id), label: category.title }))}
+      />
+      <Textarea
+        name="excerpt"
+        label="Краткое описание"
+        minRows={4}
+        defaultValue={state.values?.excerpt ?? initialData?.excerpt ?? ""}
+        required
+      />
+      <Textarea
+        name="content"
+        label="Содержание"
+        minRows={14}
+        autosize
+        defaultValue={state.values?.content ?? initialData?.content ?? ""}
+        required
+      />
+
+      <Paper component="section" p="lg" withBorder aria-labelledby="cover-title">
+        <Stack gap="md">
+          <Stack gap={2}>
+            <Title order={3} id="cover-title">Обложка новости</Title>
+            <Text size="sm" c="dimmed">Добавьте JPG, PNG или WebP до 10 МБ.</Text>
+          </Stack>
+          <Group>
             <Button
               disabled={busy}
               type="button"
-              data-active={editorMode === "upload"}
+              variant={editorMode === "upload" ? "filled" : "light"}
               onClick={() => setEditorMode("upload")}
             >
               Загрузить файл
@@ -362,170 +361,144 @@ export default function AdminNewsForm({
             <Button
               disabled={busy}
               type="button"
-              data-active={editorMode === "external"}
+              variant={editorMode === "external" ? "filled" : "light"}
               onClick={() => setEditorMode("external")}
             >
               Указать ссылку
             </Button>
-          </Box>
+          </Group>
           {editorMode === "upload" ? (
-            <Box className={""}>
-              <Box component="input"
-                ref={fileRef}
-                className={""}
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                onChange={(e: any) => choose(e.target.files?.[0] ?? null)}
-                aria-label="Файл изображения"
-              />
-              <Button
-                type="button"
-                disabled={busy}
-                onClick={() => fileRef.current?.click()}
-              >
-                {selectedFile || persistedCover.kind === "owned"
-                  ? "Заменить файл"
-                  : "Выбрать изображение"}
-              </Button>
-              <Text>Перетащите изображение сюда или выберите файл</Text>
-            </Box>
+            <FileInput
+              label="Файл изображения"
+              description="Один файл JPG, PNG или WebP, не более 10 МБ"
+              accept="image/jpeg,image/png,image/webp"
+              value={selectedFile}
+              onChange={choose}
+              disabled={busy}
+              clearable
+            />
           ) : (
-            <Box component="label">
-              <Text>Ссылка на изображение</Text>
-              <Box component="input"
-                type="text"
+            <Stack gap="sm">
+              <TextInput
+                label="Ссылка на изображение"
+                placeholder="https://example.org/cover.jpg"
                 inputMode="url"
                 autoComplete="url"
                 value={externalUrl}
-                onChange={(e: any) => {
-                  setExternalUrl(e.target.value);
+                onChange={(event) => {
+                  setExternalUrl(event.currentTarget.value);
                   setImportedMedia(null);
                   setRemoveCover(false);
                 }}
               />
-            </Box>
+              <Button
+                type="button"
+                loading={uploading}
+                disabled={busy || !externalUrl.trim()}
+                onClick={() => void importExternal()}
+              >
+                Загрузить на сервер
+              </Button>
+            </Stack>
           )}
-        {editorMode === "external" ? <Button type="button" disabled={busy} onClick={() => void importExternal()}>Загрузить на сервер</Button> : null}
-        {visiblePreview || persistedCover.kind === "external" ? (
-            <Box className={""}>
-              {visiblePreview ? (
-                <Image
-                  src={visiblePreview}
-                  alt="Предпросмотр изображения новости"
-                />
-              ) : (
-                <Text c="dimmed">Внешняя обложка сохранена в старом формате. Импортируйте её на сервер или удалите.</Text>
-              )}
-              <Box>
-                <Text>
+
+          {visiblePreview || persistedCover.kind === "external" ? (
+            <Paper p="md" withBorder>
+              <Stack gap="sm">
+                {visiblePreview ? (
+                  <Image
+                    src={visiblePreview}
+                    alt="Предпросмотр изображения новости"
+                    mah={320}
+                    fit="contain"
+                    radius="md"
+                  />
+                ) : (
+                  <Text c="dimmed">Внешняя обложка сохранена в старом формате. Импортируйте её на сервер или удалите.</Text>
+                )}
+                <Text fw={700}>
                   {selectedFile
                     ? "Новое изображение"
                     : importedMedia
-                      ? "Загружено с внешнего адреса"
-                    : persistedCover.kind === "owned"
-                      ? "Загружено с компьютера"
-                      : "Внешняя ссылка"}
+                      ? "Загружено на сервер"
+                      : persistedCover.kind === "owned"
+                        ? "Текущая обложка"
+                        : "Внешняя ссылка"}
                 </Text>
-                <Text>
+                <Text size="sm" c="dimmed" style={{ overflowWrap: "anywhere" }}>
                   {selectedFile
                     ? `${selectedFile.name} · ${size(selectedFile.size)}`
                     : importedMedia
                       ? importedMedia.url
-                    : persistedCover.kind === "owned"
-                      ? persistedCover.filename
-                      : editorMode === "external"
-                        ? externalUrl
-                        : "Текущее изображение"}
+                      : persistedCover.kind === "owned"
+                        ? persistedCover.filename
+                        : externalUrl || "Текущее изображение"}
                 </Text>
-                <Button
-                  type="button"
-                  disabled={busy}
-                  onClick={() => fileRef.current?.click()}
-                >
-                  Заменить
-                </Button>
-                <Button type="button" disabled={busy} onClick={remove}>
-                  Удалить изображение
-                </Button>
-                {selectedFile ? (
-                  <Button
-                    type="button"
-                    disabled={busy}
-                    onClick={() => clearFile()}
+                <Group>
+                  <FileButton
+                    resetRef={fileResetRef}
+                    onChange={choose}
+                    accept="image/jpeg,image/png,image/webp"
                   >
-                    Убрать выбранный файл
+                    {(props) => <Button {...props} type="button" disabled={busy}>Заменить</Button>}
+                  </FileButton>
+                  <Button type="button" color="red" variant="light" disabled={busy} onClick={remove}>
+                    Удалить изображение
                   </Button>
-                ) : null}
-              </Box>
-            </Box>
+                  {selectedFile ? (
+                    <Button type="button" variant="default" disabled={busy} onClick={() => clearFile()}>
+                      Убрать выбранный файл
+                    </Button>
+                  ) : null}
+                </Group>
+              </Stack>
+            </Paper>
           ) : null}
-          {coverError ? (
-            <Text className={""} role="alert">
-              {coverError}
-            </Text>
-          ) : null}
-        </Box>
-        <Box component="label">
-          <Text>Статус публикации</Text>
-          <Box component="select"
-            name="publishMode"
-            value={publishMode}
-            onChange={(e: any) => setPublishMode(e.target.value as PublishMode)}
-          >
-            <Box component="option" value="draft">Черновик</Box>
-            <Box component="option" value="publish-now">Опубликовать сейчас</Box>
-            <Box component="option" value="schedule">Запланировать</Box>
-          </Box>
-        </Box>
-        {publishMode === "schedule" ? (
-          <Box component="label">
-            <Text>Дата и время публикации</Text>
-            <Box component="input"
-              name="publishedAt"
-              type="datetime-local"
-              defaultValue={
-                state.values?.publishedAt ?? dateLocal(initialData?.publishedAt)
-              }
-              required
-            />
-          </Box>
-        ) : (
-          <Box className={""}>
-            <Text>Пояснение</Text>
-            <Text>
-              {publishMode === "draft"
-                ? "Запись сохранится без публикации в публичной ленте."
-                : "Дата публикации будет установлена текущим временем."}
-            </Text>
-          </Box>
-        )}
-        <Box component="label">
-          <Text>Показывать до (необязательно)</Text>
-          <Box component="input" name="publishUntil" type="datetime-local" />
-        </Box>
-        <Box component="label">
-          <Text>Дата на сайте (необязательно)</Text>
-          <Box component="input"
-            name="displayPublishedAt"
-            type="datetime-local"
-            defaultValue={dateLocal(initialData?.publishedAt)}
-          />
-        </Box>
-      </Box>
-      {actionError ? (
-        <Text className={""} role="alert">
-          {actionError}
-        </Text>
-      ) : null}
-      <Box className={""}>
-        <Button type="submit" disabled={busy}>
-          {uploading
-            ? "Загрузка изображения…"
-            : pending
-              ? "Сохранение новости…"
-              : submitLabel}
+          {coverError ? <Alert color="red" role="alert">{coverError}</Alert> : null}
+        </Stack>
+      </Paper>
+
+      <Select
+        name="publishMode"
+        label="Статус публикации"
+        value={publishMode}
+        onChange={(value) => setPublishMode((value as PublishMode) ?? "draft")}
+        data={[
+          { value: "draft", label: "Черновик" },
+          { value: "publish-now", label: "Опубликовать сейчас" },
+          { value: "schedule", label: "Запланировать" },
+        ]}
+      />
+      {publishMode === "schedule" ? (
+        <TextInput
+          name="publishedAt"
+          type="datetime-local"
+          label="Дата и время публикации"
+          defaultValue={state.values?.publishedAt ?? dateLocal(initialData?.publishedAt)}
+          required
+        />
+      ) : (
+        <Alert color="blue" title="Пояснение">
+          {publishMode === "draft"
+            ? "Запись сохранится без публикации в публичной ленте."
+            : "Дата публикации будет установлена текущим временем."}
+        </Alert>
+      )}
+      <SimpleGrid cols={{ base: 1, sm: 2 }}>
+        <TextInput name="publishUntil" type="datetime-local" label="Показывать до (необязательно)" />
+        <TextInput
+          name="displayPublishedAt"
+          type="datetime-local"
+          label="Дата на сайте (необязательно)"
+          defaultValue={dateLocal(initialData?.publishedAt)}
+        />
+      </SimpleGrid>
+      {actionError ? <Alert color="red" role="alert">{actionError}</Alert> : null}
+      <Group justify="flex-end">
+        <Button type="submit" loading={busy}>
+          {uploading ? "Загрузка изображения…" : pending ? "Сохранение новости…" : submitLabel}
         </Button>
-      </Box>
-    </Box>
+      </Group>
+    </Stack>
   );
 }

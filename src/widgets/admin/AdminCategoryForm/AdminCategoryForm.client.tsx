@@ -1,7 +1,6 @@
 "use client";
 
-import { Box, Text, Button } from "@mantine/core";
-
+import { Alert, Button, Checkbox, Group, Stack, Textarea, TextInput } from "@mantine/core";
 import { useActionState } from "react";
 import type { AdminNewsCategoryDto } from "@/shared/api/generated/types";
 import type { AdminCategoryFormState } from "./AdminCategoryForm.types";
@@ -17,37 +16,37 @@ export default function AdminCategoryForm({ initialData, action, submitLabel }: 
   const [state, formAction, pending] = useActionState(action, adminCategoryFormInitialState);
 
   return (
-    <Box component="form" className={""} action={formAction}>
-      <Box className={""}>
-        <Box component="label">
-          <Text>Название</Text>
-          <Box component="input" type="text" name="title" defaultValue={initialData?.title ?? ""} required />
-        </Box>
-
-        <Box component="label">
-          <Text>Slug (необязательно)</Text>
-          <Box component="input" type="text" name="slug" defaultValue={initialData?.slug ?? ""} />
-          <Text>Оставьте поле пустым — адрес создастся автоматически из названия.</Text>
-        </Box>
-
-        <Box component="label" className={""}>
-          <Text>Описание</Text>
-          <Box component="textarea" name="description" rows={5} defaultValue={initialData?.description ?? ""} />
-        </Box>
-
-        <Box component="label" className={""}>
-          <Box component="input" type="checkbox" name="isActive" defaultChecked={initialData?.isActive ?? true} />
-          <Text>Категория активна</Text>
-        </Box>
-      </Box>
-
-      {state.error ? <Text className={""}>{state.error}</Text> : null}
-
-      <Box className={""}>
-        <Button type="submit" disabled={pending}>
-          {pending ? "Сохранение..." : submitLabel}
-        </Button>
-      </Box>
-    </Box>
+    <Stack component="form" gap="lg" {...({ action: formAction } as { action: typeof formAction })}>
+      <TextInput
+        label="Название"
+        description="Видимое название рубрики в административной и публичной части."
+        name="title"
+        defaultValue={initialData?.title ?? ""}
+        required
+      />
+      <TextInput
+        label="Slug (необязательно)"
+        description="Оставьте пустым — адрес создастся автоматически из названия."
+        name="slug"
+        defaultValue={initialData?.slug ?? ""}
+      />
+      <Textarea
+        label="Описание"
+        description="Короткое пояснение для редакторов."
+        name="description"
+        minRows={5}
+        defaultValue={initialData?.description ?? ""}
+      />
+      <Checkbox
+        name="isActive"
+        label="Рубрика активна"
+        description="Неактивная рубрика не предлагается для новых публикаций."
+        defaultChecked={initialData?.isActive ?? true}
+      />
+      {state.error ? <Alert color="red" role="alert">{state.error}</Alert> : null}
+      <Group justify="flex-end">
+        <Button type="submit" loading={pending}>{submitLabel}</Button>
+      </Group>
+    </Stack>
   );
 }

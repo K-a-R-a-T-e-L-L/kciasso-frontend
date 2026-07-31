@@ -22,6 +22,7 @@ describe("PublicCustomHtmlSection", () => {
     );
 
     const iframe = screen.getByTitle("Custom");
+    expect(iframe.parentElement?.className).toMatch(/container/);
     expect(iframe).toHaveAttribute(
       "sandbox",
       "allow-scripts allow-forms allow-modals allow-popups allow-downloads",

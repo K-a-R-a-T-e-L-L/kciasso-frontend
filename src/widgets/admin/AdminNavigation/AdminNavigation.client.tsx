@@ -4,6 +4,10 @@ import Link from "next/link";
 import { IconFileDescription } from "@tabler/icons-react";
 import { NavLink, Stack } from "@mantine/core";
 import { usePathname } from "next/navigation";
+import {
+  ADMIN_NAV_COLORS,
+  ADMIN_NAV_FOCUS,
+} from "@/shared/lib/theme/mantine/admin-theme";
 
 type NavigationItem = { href: string; title: string; icon?: "pages" };
 
@@ -18,12 +22,19 @@ export default function AdminNavigation({ items, onNavigate }: { items: Navigati
         aria-current={active ? "page" : undefined}
         styles={{
           root: {
-            background: active ? "var(--mantine-color-kciassoBlue-6)" : "transparent",
+            background: active ? ADMIN_NAV_COLORS.activeBackground : ADMIN_NAV_COLORS.defaultBackground,
             borderRadius: "var(--mantine-radius-md)",
             fontWeight: active ? 800 : 600,
-            color: "rgba(255,255,255,0.92)",
-            "&:hover": { background: active ? "var(--mantine-color-kciassoBlue-5)" : "rgba(255,255,255,0.12)", color: "#fff" },
-            "&:focus-visible": { outline: "2px solid rgba(255,255,255,0.95)", outlineOffset: 2, color: "#fff" },
+            color: ADMIN_NAV_COLORS.foreground,
+            "&:hover": {
+              background: active ? ADMIN_NAV_COLORS.activeHoverBackground : ADMIN_NAV_COLORS.hoverBackground,
+              color: ADMIN_NAV_COLORS.foreground,
+            },
+            "&:focus-visible": {
+              outline: `${ADMIN_NAV_FOCUS.outlineWidth}px solid ${ADMIN_NAV_FOCUS.outlineColor}`,
+              outlineOffset: ADMIN_NAV_FOCUS.outlineOffset,
+              color: ADMIN_NAV_COLORS.foreground,
+            },
           },
           label: { color: "inherit" },
           section: { color: "inherit" },

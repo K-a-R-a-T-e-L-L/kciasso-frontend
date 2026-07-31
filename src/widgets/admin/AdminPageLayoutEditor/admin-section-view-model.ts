@@ -10,6 +10,69 @@ export interface AdminSectionUiModel {
   settingsHref: string | null;
 }
 
+const pageTitles: Record<string, string> = {
+  home: "Главная",
+  "news.archive": "Архив новостей",
+  "news.article": "Страница новости",
+  gia: "Государственная итоговая аттестация",
+  "gia.9": "ГИА-9",
+  "gia.11": "ГИА-11",
+  quality: "Качество образования",
+  "quality.section": "Раздел качества образования",
+  "regional-project": "Региональный проект",
+  "regional-project.section": "Раздел регионального проекта",
+  about: "О центре",
+  "about.contacts": "Контакты",
+  resources: "Ресурсы",
+};
+
+export function pageUiModel(pageKey: string): { title: string } {
+  return { title: pageTitles[pageKey] ?? "Страница сайта" };
+}
+
+export const PAGE_DND_SENSOR_OPTIONS = {
+  pointer: { activationConstraint: { distance: 7 } },
+  touch: { activationConstraint: { delay: 250, tolerance: 5 } },
+  keyboard: true,
+} as const;
+
+export function clampPreviewHeight(value?: number | null) {
+  return Math.max(160, Math.min(value ?? 260, 420));
+}
+
+export function reorderSections<T extends { placementId: number }>(
+  sections: T[],
+  activeId: number,
+  overId: number,
+): T[] {
+  const from = sections.findIndex((item) => item.placementId === activeId);
+  const to = sections.findIndex((item) => item.placementId === overId);
+  if (from < 0 || to < 0 || from === to) return sections;
+  const next = sections.slice();
+  const [active] = next.splice(from, 1);
+  next.splice(to, 0, active);
+  return next;
+}
+
+export function reorderFailureState<T>(previous: T[], stale: boolean) {
+  return { sections: previous, reload: stale };
+}
+
+export function sectionActionModel(section: AdminPageSection) {
+  const edit = section.type === "PAGE_CUSTOM_HTML" && section.canEditContent;
+  const remove = section.type === "PAGE_CUSTOM_HTML" && section.canDelete;
+  const preview = section.type === "PAGE_CUSTOM_HTML" || section.type === "GLOBAL_CUSTOM_HTML";
+  const globalHref = section.type === "GLOBAL_CUSTOM_HTML" ? section.editHref : null;
+  const actions: Array<"toggle" | "reorder" | "edit" | "delete" | "preview" | "open-global"> = [];
+  if (section.canToggle) actions.push("toggle");
+  if (section.canReorder) actions.push("reorder");
+  if (edit) actions.push("edit");
+  if (remove) actions.push("delete");
+  if (preview) actions.push("preview");
+  if (globalHref) actions.push("open-global");
+  return { edit, remove, preview, globalHref, actions };
+}
+
 const rendererLabels: Record<string, string> = {
   "home.hero": "\u0413\u043b\u0430\u0432\u043d\u044b\u0439 \u0431\u0430\u043d\u043d\u0435\u0440",
   "home.carousel": "\u041a\u0430\u0440\u0443\u0441\u0435\u043b\u044c",
@@ -34,6 +97,6 @@ export function sectionUiModel(section: Pick<AdminPageSection, "type" | "name" |
   const isContacts = section.key === "global.contacts" || section.systemRendererKey === "global.contacts";
   const friendlyTitle = isContacts ? rendererLabels["global.contacts"] : section.systemRendererKey ? rendererLabels[section.systemRendererKey] ?? "\u0421\u0438\u0441\u0442\u0435\u043c\u043d\u044b\u0439 \u0440\u0430\u0437\u0434\u0435\u043b" : section.name;
   if (section.type === "PAGE_SYSTEM") return { kind: section.type, badgeLabel: "\u0421\u0438\u0441\u0442\u0435\u043c\u043d\u0430\u044f", badgeColor: "blue", friendlyTitle, friendlyDescription: section.description ?? "\u0423\u043f\u0440\u0430\u0432\u043b\u044f\u0435\u0442\u0441\u044f \u043f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u0435\u043c", immutableReason: "\u0421\u043e\u0434\u0435\u0440\u0436\u0438\u043c\u043e\u0435 \u0441\u0438\u0441\u0442\u0435\u043c\u043d\u043e\u0439 \u0441\u0435\u043a\u0446\u0438\u0438 \u043d\u0435\u043b\u044c\u0437\u044f \u0440\u0435\u0434\u0430\u043a\u0442\u0438\u0440\u043e\u0432\u0430\u0442\u044c", settingsHref: null };
-  if (section.type === "GLOBAL_SYSTEM") return { kind: section.type, badgeLabel: "\u0413\u043b\u043e\u0431\u0430\u043b\u044c\u043d\u0430\u044f \u0441\u0438\u0441\u0442\u0435\u043c\u043d\u0430\u044f", badgeColor: "grape", friendlyTitle, friendlyDescription: section.description ?? "\u041e\u0431\u0449\u0430\u044f \u0441\u0438\u0441\u0442\u0435\u043c\u043d\u0430\u044f \u0441\u0435\u043a\u0446\u0438\u044f", immutableReason: isContacts ? "\u041a\u043e\u043d\u0442\u0430\u043a\u0442\u043d\u044b\u0435 \u0434\u0430\u043d\u043d\u044b\u0435 \u0440\u0435\u0434\u0430\u043a\u0442\u0438\u0440\u0443\u044e\u0442\u0441\u044f \u0432 \u043d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0430\u0445 \u0441\u0430\u0439\u0442\u0430" : "\u0421\u043e\u0434\u0435\u0440\u0436\u0438\u043c\u043e\u0435 \u043d\u0430\u0441\u0442\u0440\u0430\u0438\u0432\u0430\u0435\u0442\u0441\u044f \u0432 \u0441\u043e\u043e\u0442\u0432\u0435\u0442\u0441\u0442\u0432\u0443\u044e\u0449\u0435\u043c \u0440\u0430\u0437\u0434\u0435\u043b\u0435", settingsHref: isContacts ? "/admin/settings" : null };
+  if (section.type === "GLOBAL_SYSTEM") return { kind: section.type, badgeLabel: "\u0413\u043b\u043e\u0431\u0430\u043b\u044c\u043d\u0430\u044f \u0441\u0438\u0441\u0442\u0435\u043c\u043d\u0430\u044f", badgeColor: "grape", friendlyTitle, friendlyDescription: section.description ?? "\u041e\u0431\u0449\u0430\u044f \u0441\u0438\u0441\u0442\u0435\u043c\u043d\u0430\u044f \u0441\u0435\u043a\u0446\u0438\u044f", immutableReason: isContacts ? "\u041a\u043e\u043d\u0442\u0430\u043a\u0442\u043d\u044b\u0435 \u0434\u0430\u043d\u043d\u044b\u0435 \u0440\u0435\u0434\u0430\u043a\u0442\u0438\u0440\u0443\u044e\u0442\u0441\u044f \u0432 \u043d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0430\u0445 \u0441\u0430\u0439\u0442\u0430" : "\u0421\u043e\u0434\u0435\u0440\u0436\u0438\u043c\u043e\u0435 \u043d\u0430\u0441\u0442\u0440\u0430\u0438\u0432\u0430\u0435\u0442\u0441\u044f \u0432 \u0441\u043e\u043e\u0442\u0432\u0435\u0442\u0441\u0442\u0432\u0443\u044e\u0449\u0435\u043c \u0440\u0430\u0437\u0434\u0435\u043b\u0435", settingsHref: isContacts ? "/admin/site-settings" : null };
   return section.type === "PAGE_CUSTOM_HTML" ? { kind: section.type, badgeLabel: "HTML \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u044b", badgeColor: "teal", friendlyTitle, friendlyDescription: section.description, immutableReason: null, settingsHref: null } : { kind: section.type, badgeLabel: "\u0413\u043b\u043e\u0431\u0430\u043b\u044c\u043d\u0430\u044f HTML", badgeColor: "orange", friendlyTitle, friendlyDescription: section.description, immutableReason: null, settingsHref: null };
 }

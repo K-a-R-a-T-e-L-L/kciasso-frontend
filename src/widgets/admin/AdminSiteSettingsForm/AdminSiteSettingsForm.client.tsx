@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
-import { Alert, Box, Button, Paper, SimpleGrid, Stack, Text, TextInput } from "@mantine/core";
+import { Alert, Button, Paper, SimpleGrid, Stack, Text, TextInput } from "@mantine/core";
 import type { AdminSiteSettingsFormData, AdminSiteSettingsFormState } from "./AdminSiteSettingsForm.types";
 import { adminSiteSettingsFormInitialState } from "./AdminSiteSettingsForm.types";
 
@@ -10,7 +10,7 @@ type Props = { initialData: AdminSiteSettingsFormData; action: (state: AdminSite
 
 export default function AdminSiteSettingsForm({ initialData, action }: Props) {
   const [state, formAction, pending] = useActionState(action, adminSiteSettingsFormInitialState);
-  return <Box component="form" action={formAction}><Stack gap="lg">
+  return <Stack component="form" {...({ action: formAction } as { action: typeof formAction })} gap="lg">
     <Paper p="lg"><SimpleGrid cols={{ base: 1, sm: 2 }}>
       <TextInput label="Горячая линия ГИА" name="giaHotlinePhone" defaultValue={initialData.giaHotlinePhone} description="Отображается в header, mobile menu и контактах." required />
       <TextInput label="Телефон для справок" name="informationPhone" defaultValue={initialData.informationPhone} description="Используется в блоках справочной информации и footer." required />
@@ -24,5 +24,5 @@ export default function AdminSiteSettingsForm({ initialData, action }: Props) {
     {state.error ? <Alert color="red">{state.error}</Alert> : null}
     {state.success ? <Alert color="green">{state.success}</Alert> : null}
     <Button type="submit" loading={pending}>{pending ? "Сохранение..." : "Сохранить настройки"}</Button>
-  </Stack></Box>;
+  </Stack>;
 }

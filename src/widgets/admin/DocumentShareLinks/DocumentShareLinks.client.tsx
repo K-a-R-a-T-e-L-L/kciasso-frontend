@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Title, Text, Button } from "@mantine/core";
+import { Alert, Badge, Button, Code, Group, Paper, Stack, Text, TextInput, Title } from "@mantine/core";
 
 import { FormEvent, useEffect, useState } from "react";
 import {
@@ -188,61 +188,56 @@ export default function DocumentShareLinks({ version }: Props) {
   }
 
   return (
-    <Box component="section" className={""} aria-label="Ссылки для согласования">
-      <Box className={""}>
-        <Box>
-          <Title>Ссылки для согласования</Title>
-          <Text>
-            Версия {version.versionNumber} · {version.originalFilename}
-          </Text>
-        </Box>
+    <Stack component="section" gap="md" aria-label="Ссылки для согласования">
+      <Group justify="space-between" align="flex-start">
+        <Stack gap={2}>
+          <Title order={3}>Ссылки для согласования</Title>
+          <Text size="sm" c="dimmed">Версия {version.versionNumber} · {version.originalFilename}</Text>
+        </Stack>
         <Button
           type="button"
-          className={""}
+          variant="light"
           onClick={() => void refresh()}
           disabled={busy !== null}
         >
           Обновить
         </Button>
-      </Box>
-      <Box className={""}>
+      </Group>
+      <Text size="sm">
         Текущая версия: {version.versionNumber} · {version.mimeType} · {formatSize(version.sizeBytes)}
-      </Box>
-      <Box component="form"
-        className={""}
+      </Text>
+      <Stack component="form"
+        gap="sm"
         data-testid={`share-links-version-${version.id}`}
-        onSubmit={create}
+        onSubmit={create as never}
       >
-        <Box component="label">
-          Срок действия{" "}
-          <Box component="input"
-            type="datetime-local"
-            value={expiresAt}
-            onChange={(event: any) => setExpiresAt(event.target.value)}
-            disabled={busy !== null}
-          />
-        </Box>
-        <Text>
-          Время указывается в часовом поясе браузера; пустое поле — без срока.
-        </Text>
+        <TextInput
+          type="datetime-local"
+          label="Срок действия ссылки"
+          description="Время указывается в часовом поясе браузера"
+          value={expiresAt}
+          onChange={(event) => setExpiresAt(event.currentTarget.value)}
+          disabled={busy !== null}
+        />
         <Button
           type="submit"
           data-testid={`share-create-${version.id}`}
-          disabled={busy !== null}
+          loading={busy === "create"}
+          disabled={busy !== null && busy !== "create"}
         >
-          {busy === "create" ? "Создание…" : currentLink ? "Создать новую" : "Создать секретную ссылку"}
+          {currentLink ? "Создать новую" : "Создать секретную ссылку"}
         </Button>
-      </Box>
+      </Stack>
       {created ? (
-        <Box className={""}>
-          <Text>Новая ссылка создана</Text>
-          <Text className={""}>{created.url}</Text>
-          <Text>Любой человек, у которого есть эта ссылка, сможет открыть файл.</Text>
+        <Alert color="orange" title="Новая ссылка создана — сохраните её сейчас">
+          <Stack gap="xs">
+          <Code style={{ overflowWrap: "anywhere" }}>{created.url}</Code>
+          <Text size="sm">Повторно получить этот секретный токен нельзя. Любой человек со ссылкой сможет открыть файл.</Text>
           <Text>
             Версия {created.dto.versionNumber} ·{" "}
             {formatDate(created.dto.expiresAt)}
           </Text>
-          <Box className={""}>
+          <Group>
             <Button
               type="button"
               onClick={() =>
@@ -268,47 +263,51 @@ export default function DocumentShareLinks({ version }: Props) {
             </Button>
             <Button
               type="button"
-              className={""}
+              variant="default"
               onClick={() => setCreated(null)}
             >
               Закрыть
             </Button>
-          </Box>
-        </Box>
+          </Group>
+          </Stack>
+        </Alert>
       ) : null}
       {message ? (
-        <Text
-          className={message.type === "error" ? "" : ""}
+        <Alert
+          color={message.type === "error" ? "red" : "teal"}
           role={message.type === "error" ? "alert" : "status"}
         >
           {message.text}
-        </Text>
+        </Alert>
       ) : null}
       {!currentLink && busy !== "load" ? (
-        <Text className={""}>Активной секретной ссылки нет.</Text>
+        <Paper p="md" withBorder><Text c="dimmed">Активной секретной ссылки нет.</Text></Paper>
       ) : null}
       {currentLink ? (
-        <Box className={""}>
+        <Stack>
           {[currentLink].map((link) => (
-            <Box
-              className={""}
+            <Paper
+              p="md"
+              withBorder
               data-testid={`share-link-row-${link.id}`}
               key={link.id}
             >
-              <Box>
-                <Text>{statusLabel(link)}</Text>
-                <Text>Ссылка действует только для текущей версии документа.</Text>
-              </Box>
-              <Box>
-                <Text>Создана: {formatDate(link.createdAt)}</Text>
-                <Text>Срок: {formatDate(link.expiresAt)}</Text>
-                <Text>Открытий: {link.accessCount}</Text>
-                <Text>Последнее открытие: {formatDate(link.lastAccessAt)}</Text>
-              </Box>
+              <Stack gap="xs">
+              <Group justify="space-between">
+                <Badge color={link.isActive ? "teal" : "gray"}>{statusLabel(link)}</Badge>
+                <Text size="sm" c="dimmed">Только для текущей версии</Text>
+              </Group>
+              <Group gap="lg">
+                <Text size="sm">Создана: {formatDate(link.createdAt)}</Text>
+                <Text size="sm">Срок: {formatDate(link.expiresAt)}</Text>
+                <Text size="sm">Открытий: {link.accessCount}</Text>
+                <Text size="sm">Последнее открытие: {formatDate(link.lastAccessAt)}</Text>
+              </Group>
               {link.isActive ? (
                 <Button
                   type="button"
-                  className={""}
+                  color="red"
+                  variant="light"
                   data-testid={`share-revoke-${link.id}`}
                   onClick={() => void revoke(link.id)}
                   disabled={busy !== null}
@@ -316,10 +315,11 @@ export default function DocumentShareLinks({ version }: Props) {
                   {busy === "revoke" ? "Отзыв…" : "Отозвать"}
                 </Button>
               ) : null}
-            </Box>
+              </Stack>
+            </Paper>
           ))}
-        </Box>
+        </Stack>
       ) : null}
-    </Box>
+    </Stack>
   );
 }

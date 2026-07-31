@@ -55,7 +55,7 @@ describe("AdminNewsForm cover image", () => {
     vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:preview");
     vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => undefined);
     render(<AdminNewsForm categories={[]} mutation={{ method: "create" }} submitLabel="Сохранить" />);
-    const input = screen.getByLabelText("Файл изображения") as HTMLInputElement;
+    const input = document.querySelector<HTMLInputElement>('input[type="file"]')!;
     await userEvent.upload(input, new File(["image"], "cover.webp", { type: "image/webp" }));
     expect(input.files).toHaveLength(1);
     expect(screen.getByRole("img", { name: "Предпросмотр изображения новости" })).toHaveAttribute(
@@ -69,7 +69,7 @@ describe("AdminNewsForm cover image", () => {
 
   it("accepts only supported raster formats and caps the browser input at one file", () => {
     render(<AdminNewsForm categories={[]} mutation={{ method: "create" }} submitLabel="Сохранить" />);
-    const input = screen.getByLabelText("Файл изображения") as HTMLInputElement;
+    const input = document.querySelector<HTMLInputElement>('input[type="file"]')!;
     expect(input.accept).toBe("image/jpeg,image/png,image/webp");
     expect(input.multiple).toBe(false);
     expect(input).not.toHaveAttribute("name");

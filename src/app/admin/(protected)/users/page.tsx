@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { Anchor, Box, Button, Grid, GridCol, Group, Paper, Select, Stack, TextInput } from "@mantine/core";
+import { Anchor, Button, Grid, GridCol, Group, Paper, Select, Stack, TextInput } from "@mantine/core";
 
 import { clearAdminTokenCookie, requireSuperAdminToken } from "@/shared/admin/auth";
 import { isAdminApiErrorStatus } from "@/shared/admin/api-error";
@@ -42,14 +42,14 @@ export default async function Page({ searchParams }: { searchParams: Promise<Sea
         actions={<AdminLinkButton href="/admin/users/new">Добавить пользователя</AdminLinkButton>}
       />
       <Paper p="md" shadow="sm">
-        <Box component="form" action="/admin/users" method="get">
+        <Stack component="form" {...({ action: "/admin/users", method: "get" } as { action: string; method: string })}>
           <Grid align="flex-end">
             <GridCol span={{ base: 12, md: 5 }}><TextInput name="search" label="Поиск" placeholder="Имя или email" defaultValue={params.search ?? ""} /></GridCol>
             <GridCol span={{ base: 12, sm: 6, md: 2 }}><Select name="role" label="Роль" defaultValue={role || null} clearable data={[{ value: "SUPER_ADMIN", label: "Super-admin" }, { value: "ADMIN", label: "Admin" }]} /></GridCol>
             <GridCol span={{ base: 12, sm: 6, md: 2 }}><Select name="status" label="Статус" defaultValue={status || null} clearable data={[{ value: "active", label: "Активен" }, { value: "inactive", label: "Отключён" }]} /></GridCol>
             <GridCol span={{ base: 12, md: 3 }}><Group gap="xs" wrap="nowrap"><Button type="submit" flex={1}>Применить</Button><Anchor href="/admin/users" size="sm">Сбросить</Anchor></Group></GridCol>
           </Grid>
-        </Box>
+        </Stack>
       </Paper>
       <Paper p={{ base: "xs", sm: "md" }} shadow="sm">
         <AdminUsersRegistry users={filtered} currentUserId={user.id} deleteAction={deleteUserAction} />

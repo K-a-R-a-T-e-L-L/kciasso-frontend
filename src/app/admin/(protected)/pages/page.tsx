@@ -1,9 +1,11 @@
 import { redirect } from "next/navigation";
-import { Anchor, Badge, Card, Group, SimpleGrid, Stack, Tabs, TabsList, TabsPanel, TabsTab, Text, Title } from "@mantine/core";
+import { Badge, Card, Group, SimpleGrid, Stack, Tabs, TabsList, TabsPanel, TabsTab, Text, Title } from "@mantine/core";
 import { clearAdminTokenCookie, requireAdminSectionToken } from "@/shared/admin/auth";
 import { isAdminApiErrorStatus } from "@/shared/admin/api-error";
 import { getAdminGlobalSections, getAdminPageRegistry } from "@/shared/api/adapters/admin-page-layout.adapter";
 import AdminGlobalHtmlSections from "@/widgets/admin/AdminGlobalHtmlSections/AdminGlobalHtmlSections.client";
+import { pageUiModel } from "@/widgets/admin/AdminPageLayoutEditor/admin-section-view-model";
+import AdminLinkButton from "@/shared/ui/admin/AdminLinkButton.client";
 
 export default async function AdminPagesPage({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
   const params = await searchParams;
@@ -42,19 +44,32 @@ export default async function AdminPagesPage({ searchParams }: { searchParams: P
         </TabsList>
         <TabsPanel value="pages" pt="lg">
           {pages.length === 0 ? <Text c="dimmed">Страницы пока не зарегистрированы.</Text> : (
-            <SimpleGrid cols={{ base: 1, md: 2 }}>
-              {pages.map((page) => (
-                <Card key={page.pageKey} component="article" withBorder shadow="sm" p="lg">
+            <SimpleGrid cols={{ base: 1, sm: 2, xl: 3 }}>
+              {pages.map((page) => {
+                const presentation = pageUiModel(page.pageKey);
+                return (
+                <Card key={page.pageKey} component="article" withBorder shadow="sm" p="md">
                   <Stack gap="xs">
-                    <Title order={2} size="h3">{page.title}</Title>
-                    <Group gap="xs"><Badge variant="light">{page.pageKey}</Badge><Badge color={page.isMaterialized ? "green" : "gray"}>{page.isMaterialized ? "Layout создан" : "Fallback"}</Badge></Group>
-                    <Text size="sm">Маршрут: {page.routePattern}</Text>
-                    <Text size="sm">Секций: {page.totalSections}; видимых: {page.visibleSections}; HTML: {page.pageCustomHtmlSections + page.globalCustomHtmlSections}</Text>
-                    <Text size="sm" c="dimmed">Ревизия: {page.revision}</Text>
-                    <Anchor href={`/admin/pages/${encodeURIComponent(page.pageKey)}`}>Редактировать →</Anchor>
+                    <Group justify="space-between" align="flex-start" wrap="nowrap">
+                      <Title order={2} size="h4">{presentation.title}</Title>
+                      <Badge color={page.isMaterialized ? "teal" : "gray"}>{page.isMaterialized ? "Активна" : "Не подготовлена"}</Badge>
+                    </Group>
+                    <Text size="sm" c="dimmed">{page.routePattern}</Text>
+                    <Group gap={6}>
+                      <Badge variant="light" color="gray">Всего: {page.totalSections}</Badge>
+                      <Badge variant="light" color="teal">Видимые: {page.visibleSections}</Badge>
+                      <Badge variant="light" color="orange">Скрытые: {page.hiddenSections}</Badge>
+                    </Group>
+                    <Group gap={6}>
+                      <Badge variant="outline">Локальные HTML: {page.pageCustomHtmlSections}</Badge>
+                      <Badge variant="outline" color="grape">Глобальные HTML: {page.globalCustomHtmlSections}</Badge>
+                    </Group>
+                    <AdminLinkButton href={`/admin/pages/${encodeURIComponent(page.pageKey)}`} mt="xs">
+                      Настроить страницу
+                    </AdminLinkButton>
                   </Stack>
                 </Card>
-              ))}
+              )})}
             </SimpleGrid>
           )}
         </TabsPanel>

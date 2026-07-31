@@ -6,6 +6,24 @@
 import type { ErrorDto } from "./ErrorDto";
 import type { PaginatedAdminNewsDto } from "./PaginatedAdminNewsDto";
 
+export const adminNewsControllerGetNewsQueryParamsStatusEnum = {
+  draft: "draft",
+  scheduled: "scheduled",
+  published: "published",
+} as const;
+
+export type AdminNewsControllerGetNewsQueryParamsStatusEnumKey =
+  (typeof adminNewsControllerGetNewsQueryParamsStatusEnum)[keyof typeof adminNewsControllerGetNewsQueryParamsStatusEnum];
+
+export const adminNewsControllerGetNewsQueryParamsSortEnum = {
+  newest: "newest",
+  oldest: "oldest",
+  title: "title",
+} as const;
+
+export type AdminNewsControllerGetNewsQueryParamsSortEnumKey =
+  (typeof adminNewsControllerGetNewsQueryParamsSortEnum)[keyof typeof adminNewsControllerGetNewsQueryParamsSortEnum];
+
 export type AdminNewsControllerGetNewsQueryParams = {
   /**
    * @default 1
@@ -29,6 +47,14 @@ export type AdminNewsControllerGetNewsQueryParams = {
    * @type boolean | undefined
    */
   isPublished?: boolean;
+  /**
+   * @type string | undefined
+   */
+  status?: AdminNewsControllerGetNewsQueryParamsStatusEnumKey;
+  /**
+   * @type string | undefined
+   */
+  sort?: AdminNewsControllerGetNewsQueryParamsSortEnumKey;
 };
 
 export type AdminNewsControllerGetNews200 = PaginatedAdminNewsDto;

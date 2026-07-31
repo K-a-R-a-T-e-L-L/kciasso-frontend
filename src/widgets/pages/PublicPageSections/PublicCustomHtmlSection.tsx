@@ -1,4 +1,5 @@
 import type { PublicPageSectionViewModel } from "@/shared/api/adapters/page-layout.adapter";
+import Container from "@/shared/ui/Container/Container";
 
 const DEFAULT_IFRAME_HEIGHT = 320;
 
@@ -44,14 +45,16 @@ export default function PublicCustomHtmlSection({
   );
 
   return (
-    <iframe
-      title={section.name}
-      srcDoc={buildPublicCustomHtmlSrcDoc(section)}
-      sandbox="allow-scripts allow-forms allow-modals allow-popups allow-downloads"
-      referrerPolicy="no-referrer"
-      width="100%"
-      height={height}
-      style={{ border: 0 }}
-    />
+    <Container data-public-custom-html-container>
+      <iframe
+        title={section.name}
+        srcDoc={buildPublicCustomHtmlSrcDoc(section)}
+        sandbox="allow-scripts allow-forms allow-modals allow-popups allow-downloads"
+        referrerPolicy="no-referrer"
+        width="100%"
+        height={height}
+        style={{ border: 0 }}
+      />
+    </Container>
   );
 }

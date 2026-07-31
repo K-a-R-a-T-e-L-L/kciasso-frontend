@@ -1,5 +1,35 @@
 import { createTheme } from "@mantine/core";
 
+export const ADMIN_NAV_COLORS = {
+  foreground: "#ffffff",
+  defaultBackground: "#031d43",
+  hoverBackground: "#17456e",
+  activeBackground: "#07549b",
+  activeHoverBackground: "#06457f",
+} as const;
+
+export const ADMIN_NAV_FOCUS = {
+  outlineWidth: 2,
+  outlineOffset: 2,
+  outlineColor: "#ffffff",
+} as const;
+
+function luminance(hex: string) {
+  const channels = hex.slice(1).match(/.{2}/g)?.map((value) => Number.parseInt(value, 16) / 255) ?? [];
+  return channels.reduce(
+    (sum, channel, index) =>
+      sum
+      + (channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4)
+      * [0.2126, 0.7152, 0.0722][index],
+    0,
+  );
+}
+
+export function contrastRatio(foreground: string, background: string) {
+  const [lighter, darker] = [luminance(foreground), luminance(background)].sort((a, b) => b - a);
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
 export const kciassoTheme = createTheme({
   primaryColor: "kciassoBlue",
   primaryShade: { light: 6, dark: 5 },
