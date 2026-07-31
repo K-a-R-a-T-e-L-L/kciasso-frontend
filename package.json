@@ -30,6 +30,7 @@
     "sass": "^1.83.0"
   },
   "devDependencies": {
+    "@emnapi/runtime": "1.11.3",
     "@kubb/plugin-client": "^4.39.2",
     "@kubb/plugin-oas": "^4.39.2",
     "@kubb/plugin-ts": "^4.39.2",
