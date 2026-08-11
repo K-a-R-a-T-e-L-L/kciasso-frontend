@@ -1,0 +1,22 @@
+{
+  "type": "object",
+  "properties": {
+    "id": { "type": "number" },
+    "title": { "type": "string" },
+    "subtitle": { "type": "string" },
+    "primaryUrl": { "type": "string" },
+    "secondaryUrl": { "type": "string" },
+    "imageUrl": { "type": "string" },
+    "sortOrder": { "type": "number" }
+  },
+  "required": [
+    "id",
+    "title",
+    "subtitle",
+    "primaryUrl",
+    "secondaryUrl",
+    "imageUrl",
+    "sortOrder"
+  ],
+  "x-readme-ref-name": "HomeCarouselSlideDto"
+}

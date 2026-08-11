@@ -54,12 +54,7 @@ export async function getPublicPageLayout(
 ): Promise<PublicPageLayoutViewModel | null> {
   const response = await fetch(
     `${backendUrl}/api/public/pages/${encodeURIComponent(pageKey)}/layout`,
-    {
-      next: {
-        revalidate: 60,
-        tags: [`page-layout:${pageKey}`],
-      },
-    },
+    { cache: "no-store" },
   );
 
   if (response.status === 404) return null;

@@ -11,7 +11,9 @@ describe("document mutation entry points", () => {
         <AdminDocumentsPanel initialDocuments={[]} sectionKey="gia9-results" />
       </MantineProvider>,
     );
-    await userEvent.click(screen.getByRole("button", { name: "Добавить документ" }));
+    await userEvent.click(
+      screen.getByRole("button", { name: "Добавить документ" }),
+    );
     expect(await screen.findByText("Новый документ")).toBeInTheDocument();
     expect(document.body).toHaveAttribute("data-scroll-locked");
   });

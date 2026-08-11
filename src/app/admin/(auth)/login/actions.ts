@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { getAdminApiErrorMessage } from "@/shared/admin/api-error";
-import { setAdminTokenCookie } from "@/shared/admin/auth";
+import { setAdminSessionCookies } from "@/shared/admin/auth";
 import { loginAdmin } from "@/shared/api/adapters/admin-auth.adapter";
 import type { LoginFormState } from "@/widgets/admin/AdminLoginForm/AdminLoginForm.types";
 
@@ -19,13 +19,13 @@ export async function loginAdminAction(_: LoginFormState, formData: FormData): P
   try {
     const session = await loginAdmin({ email, password });
 
-    if (!session.token) {
+    if (!session.token || !session.refreshToken) {
       return {
         error: "Сервер не вернул токен авторизации.",
       };
     }
 
-    await setAdminTokenCookie(session.token);
+    await setAdminSessionCookies(session);
   } catch (error) {
     return {
       error: getAdminApiErrorMessage(error, "Не удалось выполнить вход."),

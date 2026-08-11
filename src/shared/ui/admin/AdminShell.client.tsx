@@ -7,7 +7,7 @@ import type { CurrentUserDto } from "@/shared/api/generated/types";
 import AdminNavigation from "@/widgets/admin/AdminNavigation/AdminNavigation.client";
 import LogoutButton from "@/widgets/admin/LogoutButton/LogoutButton.client";
 
-type NavigationItem = { href: string; title: string; icon?: "pages" };
+type NavigationItem = { href: string; title: string; icon: "dashboard" | "documents" | "home" | "news" | "pages" | "settings" | "users" };
 
 export default function AdminShell({
   admin,

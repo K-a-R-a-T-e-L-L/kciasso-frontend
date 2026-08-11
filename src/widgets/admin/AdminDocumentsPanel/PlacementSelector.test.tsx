@@ -5,7 +5,10 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { DOCUMENT_PLACEMENT_GROUPS } from "@/shared/documents/document-placement-registry";
 import PlacementSelector from "./PlacementSelector.client";
 
-function render(ui: Parameters<typeof rtlRender>[0], options: Parameters<typeof rtlRender>[1] = {}) {
+function render(
+  ui: Parameters<typeof rtlRender>[0],
+  options: Parameters<typeof rtlRender>[1] = {},
+) {
   return rtlRender(ui, { ...options, wrapper: MantineProvider });
 }
 
@@ -13,31 +16,54 @@ afterEach(() => cleanup());
 
 describe("PlacementSelector", () => {
   function renderSelector(value: string[] = []) {
-    const onApply = vi.fn(); const onCancel = vi.fn();
-    render(<PlacementSelector value={value} onApply={onApply} onCancel={onCancel} />);
+    const onApply = vi.fn();
+    const onCancel = vi.fn();
+    render(
+      <PlacementSelector value={value} onApply={onApply} onCancel={onCancel} />,
+    );
     return { onApply, onCancel };
   }
 
   it("starts closed and keeps at most one group open", async () => {
     renderSelector();
-    const groups = screen.getAllByRole("button", { name: /ГИА|Качество|Региональный|О центре/ });
-    expect(groups.every((group) => group.getAttribute("aria-expanded") === "false")).toBe(true);
-    await userEvent.click(groups[0]); await userEvent.click(groups[1]);
-    expect(groups[0]).toHaveAttribute("aria-expanded", "false"); expect(groups[1]).toHaveAttribute("aria-expanded", "true");
+    const groups = screen.getAllByRole("button", {
+      name: /ГИА|Качество|Региональный|О центре/,
+    });
+    expect(
+      groups.every((group) => group.getAttribute("aria-expanded") === "false"),
+    ).toBe(true);
+    await userEvent.click(groups[0]);
+    await userEvent.click(groups[1]);
+    expect(groups[0]).toHaveAttribute("aria-expanded", "false");
+    expect(groups[1]).toHaveAttribute("aria-expanded", "true");
   });
 
   it("searches matching items and closes groups after clearing", async () => {
-    renderSelector(); const search = screen.getByRole("textbox", { name: "Поиск по названию раздела" });
+    renderSelector();
+    const search = screen.getByRole("textbox", {
+      name: "Поиск по названию раздела",
+    });
     await userEvent.type(search, "ГИА-9 Нормативные документы");
     expect(screen.getAllByText("ГИА-9").length).toBeGreaterThan(0);
-    expect(screen.getAllByRole("button", { name: /ГИА|Качество|Региональный|О центре/ }).filter((button) => button.getAttribute("aria-expanded") === "true")).toHaveLength(1);
+    expect(
+      screen
+        .getAllByRole("button", { name: /ГИА|Качество|Региональный|О центре/ })
+        .filter((button) => button.getAttribute("aria-expanded") === "true"),
+    ).toHaveLength(1);
     await userEvent.clear(search);
-    expect(screen.getAllByRole("button", { name: /ГИА|Качество|Региональный|О центре/ }).every((button) => button.getAttribute("aria-expanded") === "false")).toBe(true);
+    expect(
+      screen
+        .getAllByRole("button", { name: /ГИА|Качество|Региональный|О центре/ })
+        .every((button) => button.getAttribute("aria-expanded") === "false"),
+    ).toBe(true);
   });
 
   it("keeps only one matching group expanded during a broad search", async () => {
     renderSelector();
-    await userEvent.type(screen.getByRole("textbox", { name: "Поиск по названию раздела" }), "нормативные");
+    await userEvent.type(
+      screen.getByRole("textbox", { name: "Поиск по названию раздела" }),
+      "нормативные",
+    );
     expect(
       screen
         .getAllByRole("button", { name: /ГИА|Качество|Региональный|О центре/ })
@@ -47,7 +73,9 @@ describe("PlacementSelector", () => {
 
   it("locks body scrolling and restores the previous value on close", () => {
     document.body.style.overflow = "clip";
-    const view = render(<PlacementSelector value={[]} onApply={vi.fn()} onCancel={vi.fn()} />);
+    const view = render(
+      <PlacementSelector value={[]} onApply={vi.fn()} onCancel={vi.fn()} />,
+    );
     expect(document.body).toHaveAttribute("data-scroll-locked", "1");
     view.unmount();
     expect(document.body).not.toHaveAttribute("data-scroll-locked");
@@ -57,24 +85,50 @@ describe("PlacementSelector", () => {
 
   it("renders every item from the largest placement group", async () => {
     renderSelector();
-    const qualityGroup = DOCUMENT_PLACEMENT_GROUPS.find((group) => group.id === "quality");
-    await userEvent.click(screen.getByRole("button", { name: /Качество образования/ }));
-    expect(screen.getAllByRole("checkbox")).toHaveLength(qualityGroup?.items.length ?? 0);
-    expect(screen.getByText(qualityGroup?.items.at(-1)?.title ?? "missing")).toBeInTheDocument();
+    const qualityGroup = DOCUMENT_PLACEMENT_GROUPS.find(
+      (group) => group.id === "quality",
+    );
+    await userEvent.click(
+      screen.getByRole("button", { name: /Качество образования/ }),
+    );
+    expect(screen.getAllByRole("checkbox")).toHaveLength(
+      qualityGroup?.items.length ?? 0,
+    );
+    expect(
+      screen.getByText(qualityGroup?.items.at(-1)?.title ?? "missing"),
+    ).toBeInTheDocument();
   });
 
   it("selects and clears a group and reports the count", async () => {
-    renderSelector(); await userEvent.click(screen.getByRole("button", { name: /ГИА-9/ })); await userEvent.click(screen.getByRole("button", { name: "Выбрать все" }));
-    const group = DOCUMENT_PLACEMENT_GROUPS.find((item) => item.title === "ГИА-9");
-    expect(screen.getByText(`Выбрано разделов: ${group?.items.length}`)).toBeInTheDocument();
-    await userEvent.click(screen.getByRole("button", { name: "Очистить" })); expect(screen.getByText("Выбрано разделов: 0")).toBeInTheDocument();
+    renderSelector();
+    await userEvent.click(screen.getByRole("button", { name: /ГИА-9/ }));
+    await userEvent.click(screen.getByRole("button", { name: "Выбрать все" }));
+    const group = DOCUMENT_PLACEMENT_GROUPS.find(
+      (item) => item.title === "ГИА-9",
+    );
+    expect(
+      screen.getByText(`Выбрано разделов: ${group?.items.length}`),
+    ).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "Очистить" }));
+    expect(screen.getByText("Выбрано разделов: 0")).toBeInTheDocument();
   });
 
   it("does not persist Cancel and applies the exact placement set", async () => {
-    const initial = [DOCUMENT_PLACEMENT_GROUPS[0].items[0].key]; const { onApply, onCancel } = renderSelector(initial);
-    await userEvent.click(screen.getByRole("button", { name: /ГИА-9/ })); await userEvent.click(screen.getAllByRole("checkbox")[1]); await userEvent.click(screen.getByRole("button", { name: "Отмена" }));
-    expect(onCancel).toHaveBeenCalledOnce(); expect(onApply).not.toHaveBeenCalled();
-    cleanup(); const second = renderSelector(initial); await userEvent.click(screen.getByRole("button", { name: /ГИА-9/ })); await userEvent.click(screen.getAllByRole("checkbox")[1]); await userEvent.click(screen.getByRole("button", { name: "Применить" }));
-    expect(second.onApply).toHaveBeenCalledWith([initial[0], DOCUMENT_PLACEMENT_GROUPS[0].items[1].key]);
+    const initial = [DOCUMENT_PLACEMENT_GROUPS[0].items[0].key];
+    const { onApply, onCancel } = renderSelector(initial);
+    await userEvent.click(screen.getByRole("button", { name: /ГИА-9/ }));
+    await userEvent.click(screen.getAllByRole("checkbox")[1]);
+    await userEvent.click(screen.getByRole("button", { name: "Отмена" }));
+    expect(onCancel).toHaveBeenCalledOnce();
+    expect(onApply).not.toHaveBeenCalled();
+    cleanup();
+    const second = renderSelector(initial);
+    await userEvent.click(screen.getByRole("button", { name: /ГИА-9/ }));
+    await userEvent.click(screen.getAllByRole("checkbox")[1]);
+    await userEvent.click(screen.getByRole("button", { name: "Применить" }));
+    expect(second.onApply).toHaveBeenCalledWith([
+      initial[0],
+      DOCUMENT_PLACEMENT_GROUPS[0].items[1].key,
+    ]);
   });
 });

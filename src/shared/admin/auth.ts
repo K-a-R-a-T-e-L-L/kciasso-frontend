@@ -5,31 +5,47 @@ import { redirect } from "next/navigation";
 import type { CurrentUserDto } from "@/shared/api/generated/types";
 import { getCurrentAdmin } from "@/shared/api/adapters/admin-auth.adapter";
 import { isAdminApiErrorStatus } from "@/shared/admin/api-error";
+import {
+  ADMIN_ACCESS_TOKEN_COOKIE,
+  ADMIN_ACCESS_TOKEN_MAX_AGE_SECONDS,
+  ADMIN_REFRESH_TOKEN_COOKIE,
+  ADMIN_REFRESH_TOKEN_MAX_AGE_SECONDS,
+  adminSessionCookieOptions,
+} from "@/shared/admin/session-config";
 
-export const ADMIN_TOKEN_COOKIE = "kciasso_admin_token";
-
-function getAdminCookieOptions() {
-  return {
-    httpOnly: true,
-    sameSite: "lax" as const,
-    secure: process.env.NODE_ENV === "production",
-    path: "/",
-  };
-}
+export { ADMIN_ACCESS_TOKEN_COOKIE, ADMIN_REFRESH_TOKEN_COOKIE };
+const LEGACY_ADMIN_TOKEN_COOKIE = "kciasso_admin_token";
 
 export async function getAdminTokenFromCookies() {
   const cookieStore = await cookies();
-  return cookieStore.get(ADMIN_TOKEN_COOKIE)?.value ?? null;
+  return cookieStore.get(ADMIN_ACCESS_TOKEN_COOKIE)?.value ?? null;
 }
 
-export async function setAdminTokenCookie(token: string) {
+export async function getAdminRefreshTokenFromCookies() {
   const cookieStore = await cookies();
-  cookieStore.set(ADMIN_TOKEN_COOKIE, token, getAdminCookieOptions());
+  return cookieStore.get(ADMIN_REFRESH_TOKEN_COOKIE)?.value ?? null;
+}
+
+export async function setAdminSessionCookies(session: { token: string; refreshToken: string }) {
+  const cookieStore = await cookies();
+  cookieStore.set(
+    ADMIN_ACCESS_TOKEN_COOKIE,
+    session.token,
+    adminSessionCookieOptions(ADMIN_ACCESS_TOKEN_MAX_AGE_SECONDS),
+  );
+  cookieStore.set(
+    ADMIN_REFRESH_TOKEN_COOKIE,
+    session.refreshToken,
+    adminSessionCookieOptions(ADMIN_REFRESH_TOKEN_MAX_AGE_SECONDS),
+  );
+  cookieStore.delete(LEGACY_ADMIN_TOKEN_COOKIE);
 }
 
 export async function clearAdminTokenCookie() {
   const cookieStore = await cookies();
-  cookieStore.delete(ADMIN_TOKEN_COOKIE);
+  cookieStore.delete(ADMIN_ACCESS_TOKEN_COOKIE);
+  cookieStore.delete(ADMIN_REFRESH_TOKEN_COOKIE);
+  cookieStore.delete(LEGACY_ADMIN_TOKEN_COOKIE);
 }
 
 export async function getOptionalAdmin(): Promise<CurrentUserDto | null> {

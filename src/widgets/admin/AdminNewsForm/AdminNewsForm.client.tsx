@@ -47,6 +47,8 @@ type Props = {
   initialData?: AdminNewsDto;
   mutation: { method: "create" | "update"; id?: string };
   submitLabel: string;
+  onSaved?: () => void;
+  footer?: React.ReactNode;
 };
 type PublishMode = "draft" | "publish-now" | "schedule";
 type EditorMode = "upload" | "external";
@@ -84,6 +86,8 @@ export default function AdminNewsForm({
   initialData,
   mutation,
   submitLabel,
+  onSaved,
+  footer,
 }: Props) {
   const initialCover = classifyNewsCover(initialData?.coverImageUrl);
   const [persistedCover] = useState<ExistingNewsCover>(initialCover);
@@ -282,6 +286,15 @@ export default function AdminNewsForm({
         ...(importedMedia ? { mediaId: importedMedia.mediaId } : {}),
       },
     };
+    const publishFrom = input.publishMode === "schedule" ? input.publishedAt : input.publishMode === "publish-now" ? new Date().toISOString() : null;
+    if (input.publishMode === "schedule" && (!publishFrom || new Date(publishFrom).getTime() <= Date.now())) {
+      setSubmitError("Дата и время запланированной публикации должны быть в будущем.");
+      return;
+    }
+    if (publishFrom && input.publishUntil && new Date(input.publishUntil) <= new Date(publishFrom)) {
+      setSubmitError("Дата окончания показа должна быть позже даты и времени публикации.");
+      return;
+    }
     setSaving(true);
     setSubmitError(null);
     const result =
@@ -293,7 +306,8 @@ export default function AdminNewsForm({
       setSubmitError(result.message);
       return;
     }
-    window.location.assign("/admin/news");
+    if (onSaved) onSaved();
+    else window.location.assign("/admin/news");
   };
   const actionError = submitError;
   return (
@@ -485,16 +499,23 @@ export default function AdminNewsForm({
         </Alert>
       )}
       <SimpleGrid cols={{ base: 1, sm: 2 }}>
-        <TextInput name="publishUntil" type="datetime-local" label="Показывать до (необязательно)" />
+        <TextInput
+          name="publishUntil"
+          type="datetime-local"
+          label="Показывать до (необязательно)"
+          description="Дата должна быть позже даты и времени публикации."
+          defaultValue={dateLocal(initialData?.publishUntil)}
+        />
         <TextInput
           name="displayPublishedAt"
           type="datetime-local"
           label="Дата на сайте (необязательно)"
-          defaultValue={dateLocal(initialData?.publishedAt)}
+          defaultValue={dateLocal(initialData?.displayPublishedAt)}
         />
       </SimpleGrid>
       {actionError ? <Alert color="red" role="alert">{actionError}</Alert> : null}
       <Group justify="flex-end">
+        {footer}
         <Button type="submit" loading={busy}>
           {uploading ? "Загрузка изображения…" : pending ? "Сохранение новости…" : submitLabel}
         </Button>

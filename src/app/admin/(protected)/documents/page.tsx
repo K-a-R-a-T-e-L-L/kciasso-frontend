@@ -21,6 +21,7 @@ type Props = {
     sortDirection?: string
     page?: string
     pageSize?: string
+    create?: string
   }>
 }
 
@@ -75,5 +76,5 @@ export default async function Page({ searchParams }: Props) {
     throw error
   }
 
-  return <AdminDocumentsPanel initialDocuments={documents.items} sectionKey={pageContext.queryPlacementKey} allowedGroupIds={allowedGroupIds} canSeeAll={admin.role === 'SUPER_ADMIN' || admin.documentsAccessMode === 'ALL'} pageContext={pageContext} query={queryState} pagination={documents.meta} />
+  return <AdminDocumentsPanel initialDocuments={documents.items} sectionKey={pageContext.queryPlacementKey} allowedGroupIds={allowedGroupIds} canSeeAll={admin.role === 'SUPER_ADMIN' || admin.documentsAccessMode === 'ALL'} pageContext={pageContext} query={queryState} pagination={documents.meta} initialCreateOpen={params.create === '1'} />
 }

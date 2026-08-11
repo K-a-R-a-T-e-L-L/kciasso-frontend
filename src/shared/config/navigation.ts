@@ -2,6 +2,7 @@ export type NavLink = {
   title: string;
   href: string;
   description?: string;
+  newTab?: boolean;
 };
 
 export type NavGroup = {
@@ -171,6 +172,7 @@ export const navigation: NavItem[] = [
       },
       { title: "Совещания", href: "/o-centre/soveshchaniya" },
       { title: "Обучение", href: "/o-centre/obuchenie" },
+      { title: "Сотрудникам", href: "/admin/login", newTab: true },
     ],
   },
 ];

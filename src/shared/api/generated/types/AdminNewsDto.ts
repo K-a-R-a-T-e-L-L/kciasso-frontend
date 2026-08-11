@@ -37,6 +37,14 @@ export type AdminNewsDto = {
    */
   publishedAt?: string | null;
   /**
+   * @type string, date-time
+   */
+  publishUntil?: string | null;
+  /**
+   * @type string, date-time
+   */
+  displayPublishedAt?: string | null;
+  /**
    * @type boolean
    */
   isPublished: boolean;

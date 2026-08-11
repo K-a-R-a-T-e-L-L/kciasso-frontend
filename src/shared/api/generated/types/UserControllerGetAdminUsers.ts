@@ -3,10 +3,51 @@
  * Do not edit manually.
  */
 
-import type { AdminUserDto } from "./AdminUserDto";
 import type { ErrorDto } from "./ErrorDto";
+import type { PaginatedAdminUsersDto } from "./PaginatedAdminUsersDto";
 
-export type UserControllerGetAdminUsers200 = AdminUserDto[];
+export const userControllerGetAdminUsersQueryParamsRoleEnum = {
+  SUPER_ADMIN: "SUPER_ADMIN",
+  ADMIN: "ADMIN",
+} as const;
+
+export type UserControllerGetAdminUsersQueryParamsRoleEnumKey =
+  (typeof userControllerGetAdminUsersQueryParamsRoleEnum)[keyof typeof userControllerGetAdminUsersQueryParamsRoleEnum];
+
+export const userControllerGetAdminUsersQueryParamsStatusEnum = {
+  active: "active",
+  inactive: "inactive",
+} as const;
+
+export type UserControllerGetAdminUsersQueryParamsStatusEnumKey =
+  (typeof userControllerGetAdminUsersQueryParamsStatusEnum)[keyof typeof userControllerGetAdminUsersQueryParamsStatusEnum];
+
+export type UserControllerGetAdminUsersQueryParams = {
+  /**
+   * @default 1
+   * @type number | undefined
+   */
+  page?: number;
+  /**
+   * @default 20
+   * @type number | undefined
+   */
+  limit?: number;
+  /**
+   * @type string | undefined
+   */
+  search?: string;
+  /**
+   * @type string | undefined
+   */
+  role?: UserControllerGetAdminUsersQueryParamsRoleEnumKey;
+  /**
+   * @type string | undefined
+   */
+  status?: UserControllerGetAdminUsersQueryParamsStatusEnumKey;
+};
+
+export type UserControllerGetAdminUsers200 = PaginatedAdminUsersDto;
 
 export type UserControllerGetAdminUsers403 = ErrorDto;
 
@@ -15,5 +56,6 @@ export type UserControllerGetAdminUsersQueryResponse =
 
 export type UserControllerGetAdminUsersQuery = {
   Response: UserControllerGetAdminUsers200;
+  QueryParams: UserControllerGetAdminUsersQueryParams;
   Errors: UserControllerGetAdminUsers403;
 };

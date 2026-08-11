@@ -26,18 +26,21 @@ import {
   IconTrash,
 } from "@tabler/icons-react";
 import type { AdminNewsCategoryDto } from "@/shared/api/generated/types";
+import type { AdminCategoryFormState } from "@/widgets/admin/AdminCategoryForm/AdminCategoryForm.types";
+import CategoryEditorDrawer from "@/widgets/admin/AdminCategoryForm/CategoryEditorDrawer.client";
 
 type Props = {
   initialCategories: AdminNewsCategoryDto[];
   move: (id: number, direction: "up" | "down") => Promise<{ items: AdminNewsCategoryDto[] }>;
   deleteCategory: (id: number) => Promise<void>;
+  updateCategory: (id: number, state: AdminCategoryFormState, formData: FormData) => Promise<AdminCategoryFormState>;
 };
 
-export default function AdminCategoryReorder({ initialCategories, move, deleteCategory }: Props) {
+export default function AdminCategoryReorder({ initialCategories, move, deleteCategory, updateCategory }: Props) {
   const [categories, setCategories] = useState(initialCategories);
+  const [editing, setEditing] = useState<AdminNewsCategoryDto | null>(null);
   const [busy, setBusy] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
-
   async function onMove(id: number, direction: "up" | "down") {
     if (busy !== null) return;
     setBusy(id);
@@ -117,7 +120,7 @@ export default function AdminCategoryReorder({ initialCategories, move, deleteCa
                 <TableTd>
                   <Group gap={4} justify="flex-end" wrap="nowrap">
                     <Tooltip label="Редактировать">
-                      <ActionIcon size={44} component={Link} href={`/admin/news/categories/${item.id}/edit`} variant="subtle" aria-label={`Редактировать ${item.title}`}>
+                      <ActionIcon size={44} variant="subtle" aria-label={`Редактировать ${item.title}`} onClick={() => setEditing(item)}>
                         <IconEdit size={18} />
                       </ActionIcon>
                     </Tooltip>
@@ -141,6 +144,8 @@ export default function AdminCategoryReorder({ initialCategories, move, deleteCa
           </TableTbody>
         </Table>
       </TableScrollContainer>
+      <CategoryEditorDrawer opened={editing !== null} onClose={() => setEditing(null)} initialData={editing ?? undefined}
+        action={editing ? updateCategory.bind(null, editing.id) : async () => ({ error: null })} />
     </>
   );
 }

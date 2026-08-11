@@ -60,6 +60,7 @@ export default async function GiaRootPage({
         sections={partitions.content}
       />
       <PublicPageSections pageKey={pageKey} sections={partitions.contacts} />
+      <PublicPageSections pageKey={pageKey} sections={partitions.trailingGlobal} />
     </PublicSystemSectionsProvider>
   );
 }

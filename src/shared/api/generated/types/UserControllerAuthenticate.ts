@@ -3,11 +3,11 @@
  * Do not edit manually.
  */
 
+import type { AdminAuthSessionDto } from "./AdminAuthSessionDto";
 import type { ErrorDto } from "./ErrorDto";
-import type { Session } from "./Session";
 import type { UserAuthDto } from "./UserAuthDto";
 
-export type UserControllerAuthenticate200 = Session;
+export type UserControllerAuthenticate200 = AdminAuthSessionDto;
 
 export type UserControllerAuthenticate400 = ErrorDto;
 

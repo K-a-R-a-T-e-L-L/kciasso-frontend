@@ -4,15 +4,15 @@
 
 Связанный backend:
 
-`D:\Desktop\dev\web\orders\kciasso-backend`
+`D:\Desktop\dev\web\orders\kciasso\kciasso-backend`
 
 Канонический `PROJECT_STATE.md`:
 
-`D:\Desktop\dev\web\orders\kciasso-backend\PROJECT_STATE.md`
+`D:\Desktop\dev\web\orders\kciasso\kciasso-backend\PROJECT_STATE.md`
 
 Канонический отчёт:
 
-`D:\Desktop\dev\web\orders\kciasso-backend\отчёт.txt`
+`D:\Desktop\dev\web\orders\kciasso\kciasso-backend\отчёт.txt`
 
 Не создавать `PROJECT_STATE.md` или `отчёт.txt` во frontend.
 

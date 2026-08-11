@@ -1,7 +1,7 @@
 "use client";
 
 import { Alert, Button, Checkbox, Group, Stack, Textarea, TextInput } from "@mantine/core";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import type { AdminNewsCategoryDto } from "@/shared/api/generated/types";
 import type { AdminCategoryFormState } from "./AdminCategoryForm.types";
 import { adminCategoryFormInitialState } from "./AdminCategoryForm.types";
@@ -10,10 +10,13 @@ type Props = {
   initialData?: AdminNewsCategoryDto;
   action: (state: AdminCategoryFormState, formData: FormData) => Promise<AdminCategoryFormState>;
   submitLabel: string;
+  onCancel?: () => void;
+  onSaved?: () => void;
 };
 
-export default function AdminCategoryForm({ initialData, action, submitLabel }: Props) {
+export default function AdminCategoryForm({ initialData, action, submitLabel, onCancel, onSaved }: Props) {
   const [state, formAction, pending] = useActionState(action, adminCategoryFormInitialState);
+  useEffect(() => { if (state.success) onSaved?.(); }, [state.success, onSaved]);
 
   return (
     <Stack component="form" gap="lg" {...({ action: formAction } as { action: typeof formAction })}>
@@ -45,6 +48,7 @@ export default function AdminCategoryForm({ initialData, action, submitLabel }: 
       />
       {state.error ? <Alert color="red" role="alert">{state.error}</Alert> : null}
       <Group justify="flex-end">
+        {onCancel ? <Button type="button" variant="default" onClick={onCancel}>Назад к рубрикам</Button> : null}
         <Button type="submit" loading={pending}>{submitLabel}</Button>
       </Group>
     </Stack>

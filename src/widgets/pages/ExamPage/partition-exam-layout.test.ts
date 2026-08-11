@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import type { PublicPageSectionViewModel } from "@/shared/api/adapters/page-layout.adapter";
-import { partitionExamLayout } from "./partition-exam-layout";
+import {
+  partitionExamLayout,
+  selectGiaSectionLayout,
+} from "./partition-exam-layout";
 
 const section = (
   rendererKey: string | null,
@@ -44,5 +47,22 @@ describe("partitionExamLayout", () => {
     expect(() =>
       partitionExamLayout("gia-11", [section("gia-11.additional")]),
     ).toThrow("UNKNOWN_GIA_LAYOUT_RENDERER:gia-11:gia-11.additional");
+  });
+
+  it("keeps global custom sections on a GIA child route in API order", () => {
+    const result = selectGiaSectionLayout("gia-11", "gia-11.essay", [
+      section("gia-11.hero"),
+      section("gia-11.analytics"),
+      section("gia-11.essay"),
+      section("global.contacts", "GLOBAL_SYSTEM"),
+      section(null, "GLOBAL_CUSTOM_HTML"),
+    ]);
+
+    expect(result.map((item) => [item.type, item.systemRendererKey])).toEqual([
+      ["PAGE_SYSTEM", "gia-11.hero"],
+      ["PAGE_SYSTEM", "gia-11.essay"],
+      ["GLOBAL_SYSTEM", "global.contacts"],
+      ["GLOBAL_CUSTOM_HTML", null],
+    ]);
   });
 });

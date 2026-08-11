@@ -11,6 +11,7 @@ import type {
 } from "@/shared/api/client";
 import type {
   UserControllerGetAdminUsersQueryResponse,
+  UserControllerGetAdminUsersQueryParams,
   UserControllerGetAdminUsers403,
 } from "../../types/UserControllerGetAdminUsers";
 
@@ -24,6 +25,7 @@ function getUserControllerGetAdminUsersUrl() {
  * {@link /api/user/admin/users}
  */
 export async function userControllerGetAdminUsers(
+  params?: UserControllerGetAdminUsersQueryParams,
   config: Partial<RequestConfig> & { client?: Client } = {},
 ) {
   const { client: request = fetch, ...requestConfig } = config;
@@ -35,6 +37,7 @@ export async function userControllerGetAdminUsers(
   >({
     method: "GET",
     url: getUserControllerGetAdminUsersUrl().url.toString(),
+    params,
     ...requestConfig,
   });
   return res.data;

@@ -34,15 +34,18 @@ export default function PlacementSelector({
   const normalizedQuery = query.trim().toLocaleLowerCase("ru-RU");
   const groups = useMemo(
     () =>
-      DOCUMENT_PLACEMENT_GROUPS
-        .filter((group) => !allowedGroupIds || allowedGroupIds.includes(group.id))
+      DOCUMENT_PLACEMENT_GROUPS.filter(
+        (group) => !allowedGroupIds || allowedGroupIds.includes(group.id),
+      )
         .map((group) => ({
           ...group,
           allItems: group.items,
           items: group.items.filter(
             (item) =>
-              !normalizedQuery
-              || `${group.title} ${item.title}`.toLocaleLowerCase("ru-RU").includes(normalizedQuery),
+              !normalizedQuery ||
+              `${group.title} ${item.title}`
+                .toLocaleLowerCase("ru-RU")
+                .includes(normalizedQuery),
           ),
         }))
         .filter((group) => group.items.length > 0),
@@ -54,13 +57,15 @@ export default function PlacementSelector({
     const normalized = nextQuery.trim().toLocaleLowerCase("ru-RU");
     setOpenGroupId(
       normalized
-        ? DOCUMENT_PLACEMENT_GROUPS
-          .filter((group) => !allowedGroupIds || allowedGroupIds.includes(group.id))
-          .find((group) =>
+        ? (DOCUMENT_PLACEMENT_GROUPS.filter(
+            (group) => !allowedGroupIds || allowedGroupIds.includes(group.id),
+          ).find((group) =>
             group.items.some((item) =>
-              `${group.title} ${item.title}`.toLocaleLowerCase("ru-RU").includes(normalized),
+              `${group.title} ${item.title}`
+                .toLocaleLowerCase("ru-RU")
+                .includes(normalized),
             ),
-          )?.id ?? null
+          )?.id ?? null)
         : null,
     );
   };
@@ -74,7 +79,9 @@ export default function PlacementSelector({
       aria-label="Выбор размещений"
     >
       <Stack gap="md">
-        <Text size="sm" c="dimmed">Выбрано разделов: {draft.length}</Text>
+        <Text size="sm" c="dimmed">
+          Выбрано разделов: {draft.length}
+        </Text>
         <TextInput
           value={query}
           onChange={(event) => handleSearchChange(event.currentTarget.value)}
@@ -91,13 +98,17 @@ export default function PlacementSelector({
               transitionDuration={0}
             >
               {groups.map((group) => {
-                const selected = group.allItems.filter((item) => draft.includes(item.key)).length;
+                const selected = group.allItems.filter((item) =>
+                  draft.includes(item.key),
+                ).length;
                 return (
                   <Accordion.Item key={group.id} value={group.id}>
                     <Accordion.Control>
                       <Group justify="space-between" wrap="nowrap" pr="sm">
                         <Text fw={700}>{group.title}</Text>
-                        <Text size="xs" c="dimmed">выбрано {selected} из {group.allItems.length}</Text>
+                        <Text size="xs" c="dimmed">
+                          выбрано {selected} из {group.allItems.length}
+                        </Text>
                       </Group>
                     </Accordion.Control>
                     <Accordion.Panel>
@@ -110,7 +121,10 @@ export default function PlacementSelector({
                             leftSection={<IconSelectAll size={16} />}
                             onClick={() =>
                               setDraft((current) => [
-                                ...new Set([...current, ...group.allItems.map((item) => item.key)]),
+                                ...new Set([
+                                  ...current,
+                                  ...group.allItems.map((item) => item.key),
+                                ]),
                               ])
                             }
                           >
@@ -124,8 +138,11 @@ export default function PlacementSelector({
                             leftSection={<IconTrash size={16} />}
                             onClick={() =>
                               setDraft((current) =>
-                                current.filter((key) =>
-                                  !group.allItems.some((item) => item.key === key),
+                                current.filter(
+                                  (key) =>
+                                    !group.allItems.some(
+                                      (item) => item.key === key,
+                                    ),
                                 ),
                               )
                             }
@@ -150,11 +167,17 @@ export default function PlacementSelector({
                 );
               })}
             </Accordion>
-          ) : <Text c="dimmed">Ничего не найдено.</Text>}
+          ) : (
+            <Text c="dimmed">Ничего не найдено.</Text>
+          )}
         </ScrollArea.Autosize>
         <Group justify="flex-end">
-          <Button type="button" variant="default" onClick={onCancel}>Отмена</Button>
-          <Button type="button" onClick={() => onApply(draft)}>Применить</Button>
+          <Button type="button" variant="default" onClick={onCancel}>
+            Отмена
+          </Button>
+          <Button type="button" onClick={() => onApply(draft)}>
+            Применить
+          </Button>
         </Group>
       </Stack>
     </Modal>

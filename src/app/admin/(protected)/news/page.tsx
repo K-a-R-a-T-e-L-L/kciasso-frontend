@@ -1,7 +1,5 @@
 import { redirect } from "next/navigation";
 import {
-  ActionIcon,
-  Anchor,
   Badge,
   Box,
   Button,
@@ -42,6 +40,7 @@ import { isOwnedNewsMediaUrl } from "@/shared/news/news-cover";
 import { deleteNewsAction } from "./actions";
 import { adminNewsRequest, parseAdminNewsQuery } from "./admin-news-query";
 import AdminNewsPagination from "./AdminNewsPagination.client";
+import NewsEditorTrigger from "@/widgets/admin/AdminNewsForm/NewsEditorTrigger.client";
 
 function formatDate(value?: string | null) {
   if (!value) return "Не опубликовано";
@@ -108,12 +107,7 @@ export default async function Page({
             >
               Управление рубриками
             </AdminLinkButton>
-            <AdminLinkButton
-              href="/admin/news/new"
-              leftSection={<IconPlus size={18} />}
-            >
-              Создать новость
-            </AdminLinkButton>
+            <NewsEditorTrigger categories={categories} />
           </Group>
         }
       />
@@ -173,16 +167,12 @@ export default async function Page({
                 ]}
               />
             </GridCol>
-            <GridCol span={{ base: 12, sm: 6, md: 1 }}>
+            <GridCol span={{ base: 12, sm: 6, md: 2 }}>
               <Group gap="xs" wrap="nowrap">
                 <Button type="submit" p={0} w={35} h={35}>
                   <IconSearch size={20} />
                 </Button>
-                <ActionIcon color="red" flex={1} h={35}>
-                  <Anchor href="/admin/news" size="sm" c='white'>
-                    Сбросить
-                  </Anchor>
-                </ActionIcon>
+                <AdminLinkButton href="/admin/news" color="red" flex={1} h={35}>Сбросить</AdminLinkButton>
               </Group>
             </GridCol>
           </Grid>
@@ -259,6 +249,7 @@ export default async function Page({
                         <TableTd>
                           <AdminNewsListActions
                             id={item.id}
+                            categories={categories}
                             deleteAction={deleteNewsAction.bind(null, item.id)}
                           />
                         </TableTd>
@@ -312,6 +303,7 @@ export default async function Page({
                     </Text>
                     <AdminNewsListActions
                       id={item.id}
+                      categories={categories}
                       deleteAction={deleteNewsAction.bind(null, item.id)}
                     />
                   </Stack>

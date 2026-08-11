@@ -21,8 +21,13 @@ function formatSize(sizeBytes?: number) {
 }
 
 export default function DocumentCard({ item }: Props) {
-  const meta = [item.extension.toUpperCase(), item.publishedAt, formatSize(item.sizeBytes)].filter(Boolean);
-  const actionLabel = item.actionLabel ?? (item.isExternal ? "Открыть" : "Скачать");
+  const meta = [
+    item.extension.toUpperCase(),
+    item.publishedAt,
+    formatSize(item.sizeBytes),
+  ].filter(Boolean);
+  const actionLabel =
+    item.actionLabel ?? (item.isExternal ? "Открыть" : "Скачать");
 
   return (
     <article className={cls.card}>
@@ -36,19 +41,30 @@ export default function DocumentCard({ item }: Props) {
         </div>
         <h3>{item.title}</h3>
         {item.description ? <p>{item.description}</p> : null}
-        {item.isExternal ? (
-          <Link href={item.url} target="_blank" rel="noreferrer">
-            {actionLabel}
-          </Link>
-        ) : item.openInNewTab ? (
-          <a href={item.url} target="_blank" rel="noreferrer">
-            {actionLabel}
-          </a>
-        ) : (
-          <a href={item.url} download={!item.isExternal}>
-            {actionLabel}
-          </a>
-        )}
+        <div className={cls.actions}>
+          {item.isExternal ? (
+            <Link href={item.url} target="_blank" rel="noreferrer">
+              {actionLabel}
+            </Link>
+          ) : item.downloadUrl ? (
+            <>
+              <a href={item.url} target="_blank" rel="noopener noreferrer">
+                Открыть
+              </a>
+              <a className={cls.download} href={item.downloadUrl} download>
+                Скачать
+              </a>
+            </>
+          ) : item.openInNewTab ? (
+            <a href={item.url} target="_blank" rel="noreferrer">
+              {actionLabel}
+            </a>
+          ) : (
+            <a href={item.url} download={!item.isExternal}>
+              {actionLabel}
+            </a>
+          )}
+        </div>
       </div>
     </article>
   );

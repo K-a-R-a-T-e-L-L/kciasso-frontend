@@ -34,6 +34,10 @@ vi.mock("@/shared/api/adapters/site-settings.adapter", () => ({
   getPublicSiteSettings: vi.fn(async () => ({ marker: "contacts" })),
 }));
 
+vi.mock("@/shared/api/adapters/home-carousel.adapter", () => ({
+  getPublicHomeCarouselSlides: vi.fn(async () => null),
+}));
+
 vi.mock("@/shared/api/adapters/home.adapter", () => ({
   getHomePageData: vi.fn(async () => ({
     homeDirections: [

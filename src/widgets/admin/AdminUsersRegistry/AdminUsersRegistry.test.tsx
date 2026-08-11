@@ -4,13 +4,18 @@ import { describe, expect, it, vi } from "vitest";
 
 import AdminUsersRegistry from "./AdminUsersRegistry";
 
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ refresh: vi.fn() }),
+}));
+
 describe("AdminUsersRegistry", () => {
   it("renders Mantine desktop table and mobile cards", () => {
     render(
       <MantineProvider>
         <AdminUsersRegistry
           currentUserId={1}
-          deleteAction={vi.fn()}
+      deleteAction={vi.fn()}
+      updateAction={vi.fn()}
           users={[{
             id: 1,
             name: "Администратор",

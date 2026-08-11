@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getHomePageData } from "@/shared/api/adapters/home.adapter";
 import { getPublicPageLayout } from "@/shared/api/adapters/page-layout.adapter";
 import { getPublicSiteSettings } from "@/shared/api/adapters/site-settings.adapter";
+import { getPublicHomeCarouselSlides } from "@/shared/api/adapters/home-carousel.adapter";
 import Container from "@/shared/ui/Container/Container";
 import DirectionCard from "@/shared/ui/DirectionCard/DirectionCard";
 import ResourceCard from "@/shared/ui/ResourceCard/ResourceCard";
@@ -16,10 +17,11 @@ import HomeHeroSection from "./HomeHeroSection";
 import cls from "./HomePage.module.scss";
 
 export default async function HomePage() {
-  const [data, layout, contacts] = await Promise.all([
+  const [data, layout, contacts, carouselSlides] = await Promise.all([
     getHomePageData(),
     getPublicPageLayout("home"),
     getPublicSiteSettings(),
+    getPublicHomeCarouselSlides(),
   ]);
 
   if (!layout) {
@@ -47,10 +49,19 @@ export default async function HomePage() {
   ];
 
   const systemSections = {
-    "home.hero": (
-      <HomeHeroSection latestNewsPreview={latestNewsPreview} />
+    "home.hero": <HomeHeroSection latestNewsPreview={latestNewsPreview} />,
+    "home.carousel": (
+      <HomeImageCarousel
+        slides={carouselSlides?.map((slide) => ({
+          id: slide.id,
+          imageSrc: slide.imageUrl,
+          title: slide.title,
+          description: slide.subtitle,
+          primaryHref: slide.primaryUrl,
+          secondaryHref: slide.secondaryUrl,
+        }))}
+      />
     ),
-    "home.carousel": <HomeImageCarousel />,
     "home.main-sections": (
       <Section id="quick-access">
         <Container>

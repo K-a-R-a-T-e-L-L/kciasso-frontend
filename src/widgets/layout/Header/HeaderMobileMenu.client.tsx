@@ -174,6 +174,8 @@ export default function HeaderMobileMenu({ hotline }: Props) {
                                   <Link
                                     key={link.href}
                                     href={link.href}
+                                    target={link.newTab ? "_blank" : undefined}
+                                    rel={link.newTab ? "noopener noreferrer" : undefined}
                                     onClick={closeMenu}
                                   >
                                     {link.title}

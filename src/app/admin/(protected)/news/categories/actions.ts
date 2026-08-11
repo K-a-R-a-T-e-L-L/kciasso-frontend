@@ -64,7 +64,7 @@ export async function createCategoryAction(
     return handleCategoryError(error, "Не удалось создать рубрику.");
   }
 
-  redirect("/admin/news/categories");
+  return { error: null, success: true };
 }
 
 export async function updateCategoryAction(
@@ -87,7 +87,7 @@ export async function updateCategoryAction(
     return handleCategoryError(error, "Не удалось сохранить рубрику.");
   }
 
-  redirect("/admin/news/categories");
+  return { error: null, success: true };
 }
 
 export async function deleteCategoryAction(id: number) {

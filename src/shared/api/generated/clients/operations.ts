@@ -8,6 +8,14 @@ export const operations = {
     path: "/api/user/authenticate",
     method: "post",
   },
+  UserController_refresh: {
+    path: "/api/user/refresh",
+    method: "post",
+  },
+  UserController_logout: {
+    path: "/api/user/logout",
+    method: "post",
+  },
   UserController_get: {
     path: "/api/user",
     method: "get",
@@ -124,6 +132,30 @@ export const operations = {
     path: "/api/admin/site-settings",
     method: "patch",
   },
+  PublicHomeCarouselController_list: {
+    path: "/api/public/home-carousel",
+    method: "get",
+  },
+  AdminHomeCarouselController_list: {
+    path: "/api/admin/home-carousel",
+    method: "get",
+  },
+  AdminHomeCarouselController_create: {
+    path: "/api/admin/home-carousel",
+    method: "post",
+  },
+  AdminHomeCarouselController_update: {
+    path: "/api/admin/home-carousel/:id",
+    method: "patch",
+  },
+  AdminHomeCarouselController_remove: {
+    path: "/api/admin/home-carousel/:id",
+    method: "delete",
+  },
+  AdminHomeCarouselController_reorder: {
+    path: "/api/admin/home-carousel/reorder",
+    method: "post",
+  },
   DocumentsController_create: {
     path: "/api/admin/documents",
     method: "post",
@@ -172,6 +204,10 @@ export const operations = {
     path: "/api/admin/documents/:id/versions/:versionId/file",
     method: "get",
   },
+  DocumentsController_download: {
+    path: "/api/admin/documents/:id/versions/:versionId/download",
+    method: "get",
+  },
   DocumentPlacementsController_reorder: {
     path: "/api/admin/document-placements/reorder",
     method: "patch",
@@ -198,6 +234,10 @@ export const operations = {
   },
   PublicDocumentsController_file: {
     path: "/api/public/documents/:id/file",
+    method: "get",
+  },
+  PublicDocumentsController_download: {
+    path: "/api/public/documents/:id/download",
     method: "get",
   },
   PagesController_getPublic: {

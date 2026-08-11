@@ -17,6 +17,16 @@
             "type": "string",
             "nullable": true
           },
+          "publishUntil": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "displayPublishedAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
           "isPublished": { "type": "boolean" },
           "status": {
             "type": "string",

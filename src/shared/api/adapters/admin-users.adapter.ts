@@ -8,6 +8,8 @@ import {
 import type {
   AdminUserDto,
   CreateAdminUserDto,
+  PaginatedAdminUsersDto,
+  UserControllerGetAdminUsersQueryParams,
   UserControllerUpdateAdminUserMutationRequest,
 } from "@/shared/api/generated/types";
 import { toAdminApiError } from "@/shared/admin/api-error";
@@ -21,9 +23,9 @@ function buildAdminConfig(token: string) {
   } as const;
 }
 
-export async function getAdminUsers(token: string): Promise<AdminUserDto[]> {
+export async function getAdminUsers(token: string, query: UserControllerGetAdminUsersQueryParams = {}): Promise<PaginatedAdminUsersDto> {
   try {
-    return await userControllerGetAdminUsers(buildAdminConfig(token));
+    return await userControllerGetAdminUsers(query, buildAdminConfig(token));
   } catch (error) {
     throw toAdminApiError(error);
   }

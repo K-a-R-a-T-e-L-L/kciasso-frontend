@@ -7,8 +7,6 @@ export const documentPlacementPublicationDtoCommandEnum = {
   draft: "draft",
   publish_now: "publish_now",
   schedule: "schedule",
-  actualize: "actualize",
-  publish_as_of: "publish_as_of",
 } as const;
 
 export type DocumentPlacementPublicationDtoCommandEnumKey =

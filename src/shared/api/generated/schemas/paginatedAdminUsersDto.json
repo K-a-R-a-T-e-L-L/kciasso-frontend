@@ -1,0 +1,56 @@
+{
+  "type": "object",
+  "properties": {
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "role": { "type": "string", "enum": ["SUPER_ADMIN", "ADMIN"] },
+          "isActive": { "type": "boolean" },
+          "canManageSiteSettings": { "type": "boolean" },
+          "canManageNews": { "type": "boolean" },
+          "documentsAccessMode": {
+            "type": "string",
+            "enum": ["NONE", "ALL", "SELECTED_GROUPS"]
+          },
+          "documentGroups": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["GIA_9", "GIA_11", "GIA", "QUALITY", "REGIONAL", "ABOUT"]
+            }
+          },
+          "id": { "type": "number" },
+          "name": { "type": "string" },
+          "email": { "type": "string" }
+        },
+        "required": [
+          "role",
+          "isActive",
+          "canManageSiteSettings",
+          "canManageNews",
+          "documentsAccessMode",
+          "documentGroups",
+          "id",
+          "name",
+          "email"
+        ],
+        "x-readme-ref-name": "AdminUserDto"
+      }
+    },
+    "meta": {
+      "type": "object",
+      "properties": {
+        "page": { "type": "number" },
+        "limit": { "type": "number" },
+        "total": { "type": "number" },
+        "totalPages": { "type": "number" }
+      },
+      "required": ["page", "limit", "total", "totalPages"],
+      "x-readme-ref-name": "NewsPaginationMetaDto"
+    }
+  },
+  "required": ["items", "meta"],
+  "x-readme-ref-name": "PaginatedAdminUsersDto"
+}

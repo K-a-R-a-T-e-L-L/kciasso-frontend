@@ -16,8 +16,9 @@ import {
 } from "@mantine/core";
 
 import type { AdminUserDto } from "@/shared/api/generated/types";
-import AdminLinkButton from "@/shared/ui/admin/AdminLinkButton.client";
 import DeleteNewsButton from "@/widgets/admin/DeleteNewsButton/DeleteNewsButton.client";
+import UserEditorDrawer from "@/widgets/admin/AdminUserForm/UserEditorDrawer.client";
+import type { AdminUserFormState } from "@/widgets/admin/AdminUserForm/AdminUserForm.types";
 
 function Permissions({ user }: { user: AdminUserDto }) {
   return (
@@ -36,10 +37,10 @@ function Permissions({ user }: { user: AdminUserDto }) {
   );
 }
 
-function Actions({ user, currentUserId, deleteAction }: { user: AdminUserDto; currentUserId: number; deleteAction: (id: number) => Promise<void> }) {
+function Actions({ user, currentUserId, deleteAction, updateAction }: { user: AdminUserDto; currentUserId: number; deleteAction: (id: number) => Promise<void>; updateAction: (id: number, state: AdminUserFormState, formData: FormData) => Promise<AdminUserFormState> }) {
   return (
     <Group gap="xs" wrap="nowrap">
-      <AdminLinkButton href={`/admin/users/${user.id}/edit`} variant="light" size="xs">Редактировать</AdminLinkButton>
+      <UserEditorDrawer user={user} updateAction={updateAction} />
       {user.id !== currentUserId ? (
         <DeleteNewsButton
           action={deleteAction.bind(null, user.id)}
@@ -54,10 +55,12 @@ export default function AdminUsersRegistry({
   users,
   currentUserId,
   deleteAction,
+  updateAction,
 }: {
   users: AdminUserDto[];
   currentUserId: number;
   deleteAction: (id: number) => Promise<void>;
+  updateAction: (id: number, state: AdminUserFormState, formData: FormData) => Promise<AdminUserFormState>;
 }) {
   if (users.length === 0) return <Alert color="blue" title="Пользователи не найдены">Измените параметры поиска или создайте нового администратора.</Alert>;
 
@@ -79,7 +82,7 @@ export default function AdminUsersRegistry({
                 <TableTd><Stack gap={2}><Text fw={700}>{item.name}</Text><Text size="sm" c="dimmed">{item.email}</Text></Stack></TableTd>
                 <TableTd><Stack gap={6} align="flex-start"><Badge color={item.role === "SUPER_ADMIN" ? "blue" : "gray"}>{item.role === "SUPER_ADMIN" ? "Super-admin" : "Admin"}</Badge><Badge color={item.isActive ? "teal" : "red"} variant="light">{item.isActive ? "Активен" : "Отключён"}</Badge></Stack></TableTd>
                 <TableTd><Permissions user={item} /></TableTd>
-                <TableTd><Actions user={item} currentUserId={currentUserId} deleteAction={deleteAction} /></TableTd>
+                <TableTd><Actions user={item} currentUserId={currentUserId} deleteAction={deleteAction} updateAction={updateAction} /></TableTd>
               </TableTr>
             ))}
           </TableTbody>
@@ -99,7 +102,7 @@ export default function AdminUsersRegistry({
               </Group>
               <Badge color={item.role === "SUPER_ADMIN" ? "blue" : "gray"} w="fit-content">{item.role === "SUPER_ADMIN" ? "Super-admin" : "Admin"}</Badge>
               <Permissions user={item} />
-              <Actions user={item} currentUserId={currentUserId} deleteAction={deleteAction} />
+              <Actions user={item} currentUserId={currentUserId} deleteAction={deleteAction} updateAction={updateAction} />
             </Stack>
           </Card>
         ))}

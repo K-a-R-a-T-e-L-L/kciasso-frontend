@@ -18,9 +18,14 @@ export type PublicDocumentsResult = {
   error: boolean;
 };
 
-const backendUrl = process.env.API_BASE_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+const backendUrl =
+  process.env.API_BASE_URL ||
+  process.env.NEXT_PUBLIC_API_URL ||
+  "http://localhost:4000";
 
-export async function getPublicDocuments(sectionKey: string): Promise<PublicDocumentsResult> {
+export async function getPublicDocuments(
+  sectionKey: string,
+): Promise<PublicDocumentsResult> {
   try {
     const response = await fetch(
       `${backendUrl}/api/public/documents?sectionKey=${encodeURIComponent(sectionKey)}`,
@@ -37,4 +42,8 @@ export async function getPublicDocuments(sectionKey: string): Promise<PublicDocu
 
 export function publicDocumentFileUrl(id: number) {
   return `/api/public-documents/${encodeURIComponent(String(id))}/file`;
+}
+
+export function publicDocumentDownloadUrl(id: number) {
+  return `/api/public-documents/${encodeURIComponent(String(id))}/download`;
 }

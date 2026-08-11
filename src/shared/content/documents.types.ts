@@ -3,6 +3,7 @@ export type DocumentFile = {
   title: string;
   description?: string;
   url: string;
+  downloadUrl?: string;
   extension: string;
   mimeType: string;
   sizeBytes?: number;

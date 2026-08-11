@@ -24,7 +24,7 @@ export async function DELETE(request: NextRequest, context: { params: Promise<{ 
 }
 
 async function forward(request: NextRequest, params: { path: string[] }) {
-  const token = (await cookies()).get('kciasso_admin_token')?.value
+  const token = (await cookies()).get('kciasso_admin_access_token')?.value
   if (!token) return NextResponse.json({ statusCode: 401, errorMessage: 'NOT_AUTH', error: 'Unauthorized' }, { status: 401 })
 
   const path = params.path.map(segment => encodeURIComponent(segment)).join('/')

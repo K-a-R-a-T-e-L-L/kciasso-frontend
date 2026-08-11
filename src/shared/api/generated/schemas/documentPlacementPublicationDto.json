@@ -3,7 +3,7 @@
   "properties": {
     "command": {
       "type": "string",
-      "enum": ["draft", "publish_now", "schedule", "actualize", "publish_as_of"]
+      "enum": ["draft", "publish_now", "schedule"]
     },
     "publishFrom": { "type": "string" },
     "publishUntil": { "type": "string" },

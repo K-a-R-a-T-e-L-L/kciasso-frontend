@@ -65,7 +65,7 @@ export async function createUserAction(_: AdminUserFormState, formData: FormData
     return handleUserError(error, "Не удалось создать пользователя.");
   }
 
-  redirect("/admin/users");
+  return { error: null, success: true };
 }
 
 export async function deleteUserAction(id: number) {
@@ -86,7 +86,7 @@ export async function deleteUserAction(id: number) {
     throw error;
   }
 
-  redirect("/admin/users");
+  return;
 }
 
 export async function updateUserAction(
@@ -119,5 +119,5 @@ export async function updateUserAction(
     return handleUserError(error, "Не удалось сохранить пользователя.");
   }
 
-  redirect("/admin/users");
+  return { error: null, success: true };
 }

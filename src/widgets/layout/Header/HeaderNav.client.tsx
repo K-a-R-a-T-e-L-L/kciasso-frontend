@@ -140,7 +140,7 @@ function NavigationPanel({
                     {link.title}
                   </a>
                 ) : (
-                  <Link key={link.href} href={link.href}>
+                  <Link key={link.href} href={link.href} target={link.newTab ? "_blank" : undefined} rel={link.newTab ? "noopener noreferrer" : undefined}>
                     {link.title}
                   </Link>
                 ),
@@ -170,7 +170,7 @@ function NavigationPanel({
               {link.title}
             </a>
           ) : (
-            <Link key={link.href} href={link.href}>
+            <Link key={link.href} href={link.href} target={link.newTab ? "_blank" : undefined} rel={link.newTab ? "noopener noreferrer" : undefined}>
               {link.title}
             </Link>
           ),

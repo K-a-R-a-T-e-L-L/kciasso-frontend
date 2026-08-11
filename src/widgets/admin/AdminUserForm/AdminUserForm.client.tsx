@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { Alert, Button, Checkbox, Divider, Group, PasswordInput, Radio, Select, SimpleGrid, Stack, Text, TextInput, Title } from "@mantine/core";
 import type { AdminUserDto } from "@/shared/api/generated/types";
 import type { AdminUserFormState } from "./AdminUserForm.types";
@@ -14,10 +14,11 @@ const GROUPS: Array<{ value: Group; label: string }> = [
   { value: "QUALITY", label: "Качество образования" }, { value: "REGIONAL", label: "Региональный проект" }, { value: "ABOUT", label: "О центре" },
 ];
 
-type Props = { initialData?: AdminUserDto; includePassword?: boolean; action: (state: AdminUserFormState, formData: FormData) => Promise<AdminUserFormState>; submitLabel: string };
+type Props = { initialData?: AdminUserDto; includePassword?: boolean; action: (state: AdminUserFormState, formData: FormData) => Promise<AdminUserFormState>; submitLabel: string; onSaved?: () => void; onCancel?: () => void };
 
-export default function AdminUserForm({ initialData, includePassword = false, action, submitLabel }: Props) {
+export default function AdminUserForm({ initialData, includePassword = false, action, submitLabel, onSaved, onCancel }: Props) {
   const [state, formAction, pending] = useActionState(action, adminUserFormInitialState);
+  useEffect(() => { if (state.success) onSaved?.(); }, [state.success, onSaved]);
   const [role, setRole] = useState<Role>(initialData?.role ?? "ADMIN");
   const [isActive, setIsActive] = useState(initialData?.isActive ?? true);
   const [siteSettings, setSiteSettings] = useState(initialData?.canManageSiteSettings ?? false);
@@ -46,6 +47,9 @@ export default function AdminUserForm({ initialData, includePassword = false, ac
       <Text><Text span fw={700}>Итог:</Text> {summary}</Text>
     </Stack>
     {state.error ? <Alert color="red">{state.error}</Alert> : null}
-    <Button type="submit" loading={pending}>{pending ? "Сохранение..." : submitLabel}</Button>
+    <Group justify="flex-end">
+      {onCancel ? <Button type="button" variant="default" onClick={onCancel}>Назад</Button> : null}
+      <Button type="submit" loading={pending}>{pending ? "Сохранение..." : submitLabel}</Button>
+    </Group>
   </Stack>;
 }

@@ -1,0 +1,8 @@
+{
+  "type": "object",
+  "properties": {
+    "slideIds": { "type": "array", "items": { "type": "number" } }
+  },
+  "required": ["slideIds"],
+  "x-readme-ref-name": "ReorderHomeCarouselSlidesDto"
+}

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ColorSchemeScript, mantineHtmlProps } from "@mantine/core";
+import { mantineHtmlProps } from "@mantine/core";
 import "@mantine/core/styles.css";
 import "@mantine/carousel/styles.css";
 import "@mantine/notifications/styles.css";
@@ -23,10 +23,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ru" {...mantineHtmlProps}>
-      <head>
-        <ColorSchemeScript defaultColorScheme="light" />
-      </head>
+    <html lang="ru" data-scroll-behavior="smooth" {...mantineHtmlProps}>
+      <head />
       <body><AppProviders>{children}</AppProviders></body>
     </html>
   );

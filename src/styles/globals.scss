@@ -74,6 +74,12 @@ html {
   background: var(--color-bg);
 }
 
+.admin-navigation-link:focus-visible {
+  color: var(--mantine-color-white);
+  outline: 3px solid var(--mantine-color-kciassoTeal-3);
+  outline-offset: 2px;
+}
+
 body {
   margin: 0;
   background: radial-gradient(circle at top left, rgba(19, 168, 199, 0.12), transparent 32rem), var(--color-bg);
