@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { isSiteNoindexEnabled } from "@/shared/config/site-indexing";
 import {
   ADMIN_ACCESS_TOKEN_COOKIE,
   ADMIN_ACCESS_TOKEN_MAX_AGE_SECONDS,
@@ -25,7 +26,7 @@ function clearSession(response: NextResponse) {
   return response;
 }
 
-export async function proxy(request: NextRequest) {
+async function adminProxy(request: NextRequest) {
   if (request.nextUrl.pathname === "/admin/login") return NextResponse.next();
   const access = request.cookies.get(ADMIN_ACCESS_TOKEN_COOKIE)?.value;
   if (!isExpired(access)) return NextResponse.next();
@@ -67,4 +68,15 @@ export async function proxy(request: NextRequest) {
   return response;
 }
 
-export const config = { matcher: ["/admin/:path*"] };
+export async function proxy(request: NextRequest) {
+  const path = request.nextUrl.pathname;
+  const response = path === "/admin" || path.startsWith("/admin/")
+    ? await adminProxy(request)
+    : NextResponse.next();
+  if (isSiteNoindexEnabled()) {
+    response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
+  }
+  return response;
+}
+
+export const config = { matcher: ["/((?!_next/static|_next/image).*)"] };

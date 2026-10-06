@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import { mantineHtmlProps } from "@mantine/core";
 import "@mantine/core/styles.css";
 import "@mantine/carousel/styles.css";
 import "@mantine/notifications/styles.css";
 import "@/styles/globals.scss";
 import AppProviders from "./AppProviders.client";
+import { getSiteRobotsMetadata } from "@/shared/config/site-indexing";
 
-export const metadata: Metadata = {
+const siteMetadata: Metadata = {
   title: 'ГКУ "КЦИАССО"',
   description: "Кузбасский центр информационно-аналитического сопровождения системы образования",
   manifest: "/site.webmanifest",
@@ -20,6 +22,12 @@ export const metadata: Metadata = {
     apple: "/apple-touch-icon.png",
   },
 };
+
+export async function generateMetadata(): Promise<Metadata> {
+  await connection();
+  const robots = getSiteRobotsMetadata();
+  return robots ? { ...siteMetadata, robots } : siteMetadata;
+}
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
